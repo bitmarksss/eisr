@@ -1,0 +1,27 @@
+@import "tailwindcss";
+@import "@fortawesome/fontawesome-free/css/all.css";
+
+@source "../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php";
+@source "../../storage/framework/views/*.php";
+@source "../**/*.blade.php";
+@source "../**/*.js";
+
+:root {
+    --text: #08060d;
+    --text-light: #6a7282;
+
+    --sidebar-bg-main: #0f172b;
+    --sidebar-bg-header: #020618;
+}
+
+.module-card {
+    display: flex; 
+    align-items: center; 
+    justify-content: space-between; 
+    border-radius: 0.75rem; 
+    border-width: 1px; 
+    border-color: rgb(229,231,235); 
+    background-color: rgb(255,255,255); 
+    padding: 1.5rem; 
+    box-shadow: 0 0 #0000, 0 0 #0000, 0 1px 2px 0 rgb(0,0,0,0.05);
+}
