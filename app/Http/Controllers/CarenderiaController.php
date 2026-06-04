@@ -2,21 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\{
-    Employee,
-    CarenderiaItem,
-    UploadedFile,
-};
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Validator;
+use App\Models\UploadedFile;
+use App\Services\UploadExcelService;
 
-use App\Imports\CarenderiaItemImport;
-use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class CarenderiaController extends Controller
 {
+    public $uploadExcelService;
+    public function __construct(UploadExcelService $uploadExcelService)
+    {
+        $this->uploadExcelService = $uploadExcelService;
+    }
+
     /**
      * Display the file list with search and filters.
      */
@@ -57,38 +56,28 @@ class CarenderiaController extends Controller
         ]);
 
         if ($validator->fails()) {
-            // Your custom logic when validation fails
             return back()->with('notification', [
-                'status' => 'error',
-                'title' => 'Validation Error',
+                'status'   => 'error',
+                'title'    => 'Validation Error',
                 'messages' => $validator->errors()->messages(),
             ])->withInput();
         }
 
-        $file = $request->file('excel_file');
-        
-        // 1. Store the file securely
-        $path = $file->store('uploads/carenderia');
+        try {
+            // Extract the file object explicitly out of the request payload
+            $file = $request->file('excel_file');
 
-        // 2. Create the master Upload registry record
-        $upload = UploadedFile::create([
-            'original_filename' => $file->getClientOriginalName(),
-            'storage_path' => $path,
-            'module_type' => 'carenderia',
-            'status' => 'processing', // Ideal state if using queues
-            'row_count' => 0,
-            'uploaded_by' => auth()->id() ?? 1, // Fallback to ID 1 for testing if auth isn't setup
-        ]);
+            // Set the module type
+            $module_type = 'carenderia';
 
-       try {
-            // This pushes the import logic to the queue automatically!
-            Excel::queueImport(new CarenderiaItemImport($upload->id), storage_path('app/' . $path));
+            // Service handles the heavy lifting and returns the tracking record
+            $upload = $this->uploadExcelService->make($file, $module_type);
 
-            return redirect()->back()->with('success', 'Excel file uploaded and is processing in the background!');
+            return back()->with('success', "File \"{$upload->original_filename}\" uploaded and is processing in the background!");
 
         } catch (\Exception $e) {
-            $upload->update(['status' => 'failed']);
-            return redirect()->back()->with('error', 'Could not queue the spreadsheet: ' . $e->getMessage());
+            // Any structural bugs/failures gracefully fallback here
+            return back()->with('error', $e->getMessage());
         }
     }
 }

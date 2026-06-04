@@ -18,5 +18,5 @@ class GroceryItem extends Model
     ];
 
     public function employee(): BelongsTo { return $this->belongsTo(Employee::class); }
-    public function upload(): BelongsTo { return $this->belongsTo(Upload::class); }
+    public function upload(): BelongsTo { return $this->belongsTo(UploadedFile::class); }
 }

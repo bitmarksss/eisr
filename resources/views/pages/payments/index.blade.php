@@ -50,7 +50,7 @@
                         <span class="text-sm font-medium text-gray-600 block">Click to select or drag document here</span>
                         <span class="text-xs text-gray-400 mt-1 block">XLSX, XLS, or CSV up to 10MB</span>
                     </div>
-                    <button type="submit" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-semibold py-2.5 px-4 rounded-xl text-sm transition shadow-sm">
+                    <button type="submit" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-semibold py-2.5 px-4 rounded-xl text-sm transition shadow-sm cursor-pointer">
                         Process Payment Batch
                     </button>
                 </form>

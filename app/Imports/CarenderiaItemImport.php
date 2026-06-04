@@ -17,16 +17,17 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Facades\Log;
 
-// class CarenderiaItemImport implements ToModel, WithHeadingRow, ShouldQueue, WithChunkReading, WithEvents
 class CarenderiaItemImport implements ToModel, WithHeadingRow, ShouldQueue, WithChunkReading
 {
     use InteractsWithQueue;
     
     protected $uploadId;
+    protected $module;
 
-    public function __construct($uploadId)
+    public function __construct($uploadId, $module)
     {
         $this->uploadId = $uploadId;
+        $this->module = $module;
     }
 
     /** 
@@ -62,35 +63,6 @@ class CarenderiaItemImport implements ToModel, WithHeadingRow, ShouldQueue, With
     {
         return 500;
     }
-
-    /**
-     * Handle updating status upon completion or failure using Excel Events
-     */
-    // public function registerEvents(): array
-    // {
-    //     return [
-    //         AfterImport::class => function(AfterImport $event) {
-    //             Log::info('Import finished successfully for upload: ' . $this->uploadId);
-                
-    //             $upload = UploadedFile::find($this->uploadId);
-    //             if ($upload) {
-    //                 $count = CarenderiaItem::where('upload_id', $this->uploadId)->count();
-    //                 $upload->update([
-    //                     'status' => 'completed',
-    //                     'row_count' => $count
-    //                 ]);
-    //             }
-    //         },
-    //         ImportFailed::class => function(ImportFailed $event) {
-    //             Log::error('Import FAILED for upload: ' . $this->uploadId);
-                
-    //             $upload = UploadedFile::find($this->uploadId);
-    //             if ($upload) {
-    //                 $upload->update(['status' => 'failed']);
-    //             }
-    //         },
-    //     ];
-    // }
     
     /**
      * Trait automatically detects this static method for AfterImport

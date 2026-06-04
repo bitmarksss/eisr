@@ -3,13 +3,19 @@
 namespace App\Http\Controllers;
 
 use App\Models\UploadedFile; // Using your updated model name
-use App\Models\Employee;
-use App\Models\GroceryItem;
+use App\Services\UploadExcelService;
+
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 
 class GroceryController extends Controller
 {
+    public $uploadExcelService;
+    public function __construct(UploadExcelService $uploadExcelService)
+    {
+        $this->uploadExcelService = $uploadExcelService;
+    }
+
     /**
      * Display the grocery files list with search and filters.
      */
@@ -41,67 +47,37 @@ class GroceryController extends Controller
     }
 
     /**
-     * Handle the Grocery Excel batch upload.
+     * Handle the Excel batch upload and process rows.
      */
     public function upload(Request $request)
     {
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'excel_file' => 'required|file|mimes:xlsx,xls,csv|max:10240',
         ]);
 
-        $file = $request->file('excel_file');
-        $path = $file->store('uploads/grocery');
-
-        // Create the master registry record linked to 'grocery'
-        $upload = UploadedFile::create([
-            'original_filename' => $file->getClientOriginalName(),
-            'storage_path' => $path,
-            'module_type' => 'grocery',
-            'status' => 'processing',
-            'row_count' => 0,
-            'uploaded_by' => auth()->id() ?? 1,
-        ]);
+        if ($validator->fails()) {
+            return back()->with('notification', [
+                'status'   => 'error',
+                'title'    => 'Validation Error',
+                'messages' => $validator->errors()->messages(),
+            ])->withInput();
+        }
 
         try {
-            DB::transaction(function () use ($upload) {
-                
-                // --- MOCK READING EXCEL ROWS FOR DEMONSTRATION ---
-                $mockExcelRows = [
-                    ['empid' => 'EMP-001', 'total' => 1250.00, 'date' => '2026-05-25'],
-                    ['empid' => 'EMP-004', 'total' => 3100.50, 'date' => '2026-05-26'],
-                ];
+            // Extract the file object explicitly out of the request payload
+            $file = $request->file('excel_file');
 
-                $insertedCount = 0;
+            // Set the module type
+            $module_type = 'grocery';
 
-                foreach ($mockExcelRows as $row) {
-                    $employee = Employee::firstOrCreate(
-                        ['employee_code' => $row['empid']],
-                        ['name' => 'Employee ' . $row['empid']]
-                    );
+            // Service handles the heavy lifting and returns the tracking record
+            $upload = $this->uploadExcelService->make($file, $module_type);
 
-                    // Insert specifically into grocery_items
-                    GroceryItem::create([
-                        'upload_id' => $upload->id,
-                        'employee_id' => $employee->id,
-                        'total' => $row['total'],
-                        'date' => $row['date'],
-                    ]);
-
-                    $insertedCount++;
-                }
-                // -------------------------------------------------
-
-                $upload->update([
-                    'status' => 'completed',
-                    'row_count' => $insertedCount
-                ]);
-            });
-
-            return redirect()->back()->with('success', 'Grocery spreadsheet processed successfully!');
+            return back()->with('success', "File \"{$upload->original_filename}\" uploaded and is processing in the background!");
 
         } catch (\Exception $e) {
-            $upload->update(['status' => 'failed']);
-            return redirect()->back()->with('error', 'Error processing grocery file: ' . $e->getMessage());
+            // Any structural bugs/failures gracefully fallback here
+            return back()->with('error', $e->getMessage());
         }
     }
 }
