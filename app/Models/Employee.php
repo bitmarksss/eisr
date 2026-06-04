@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Employee extends Model
 {
-    protected $fillable = ['emp_id', 'name', 'is_active'];
+    protected $fillable = ['employee_code', 'name', 'is_active'];
 
     public function carenderiaItems(): HasMany 
     { 

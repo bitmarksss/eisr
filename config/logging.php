@@ -51,6 +51,14 @@ return [
     */
 
     'channels' => [
+        // CUSTOM
+        'structured_daily' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/' . date('Y-F') . '/' . date('d') . '.log'),
+            'level' => env('LOG_LEVEL', 'debug'),
+            'permission' => 0664,
+        ],
+
         'stack' => [
             'driver' => 'stack',
             'channels' => ['single'],

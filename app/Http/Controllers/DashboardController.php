@@ -13,16 +13,7 @@ class DashboardController extends Controller
 {
     public function index(Request $request)
     {
-        // 1. Get Grand Totals for Summary Cards
-        // Using cache or standard queries (Indexes on the tables keep this fast!)
-        $stats = [
-            'carenderia' => CarenderiaItem::sum('total'),
-            'loans'      => LoanItem::sum('total'),
-            'grocery'    => GroceryItem::sum('total'),
-            'payments'   => PaymentItem::sum('total'),
-        ];
-
-        // 2. Handle Search Query against the DB View
+        // 1. Handle Search Query against the DB View
         $search = $request->input('search');
 
         $results = EmployeeSearch::with('employee')
@@ -35,6 +26,16 @@ class DashboardController extends Controller
             ->latest('date')
             ->take(50) // Limit to top 50 results for rapid UI rendering
             ->get();
+
+            
+        // 2. Get Grand Totals for Summary Cards
+        // Using cache or standard queries (Indexes on the tables keep this fast!)
+        $stats = [
+            'carenderia' => CarenderiaItem::searchModuleByEmployee($search)->sum('total'),
+            'loans'      => LoanItem::searchModuleByEmployee($search)->sum('total'),
+            'grocery'    => GroceryItem::searchModuleByEmployee($search)->sum('total'),
+            'payments'   => PaymentItem::searchModuleByEmployee($search)->sum('total'),
+        ];
 
         return view('pages.dashboard', compact('stats', 'results', 'search'));
     }

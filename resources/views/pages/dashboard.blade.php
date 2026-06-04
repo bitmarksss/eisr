@@ -9,27 +9,31 @@
     <!-- Main Content Section -->
     <main class="flex-1 flex flex-col overflow-y-auto">
         
-        <!-- Top Navbar -->
-         @include('components.topbar')
-
-        <!-- Search -->
-        <form action="{{ route('dashboard') }}" method="GET" class="w-full max-w-xl flex gap-2">
-            <div class="relative w-full">
-                <input 
-                    type="text" 
-                    name="search" 
-                    value="{{ $search ?? '' }}"
-                    placeholder="Search by Employee ID or Name across all modules..." 
-                    class="w-full bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 pl-4 outline-none transition"
-                />
-                @if($search)
-                    <a href="{{ route('dashboard') }}" class="absolute right-3 top-3 text-sm text-gray-400 hover:text-gray-600">✕ Clear</a>
-                @endif
+        <!-- Dashboard Top Navbar -->
+        <header class="bg-white border-b border-gray-200 px-8 py-4 flex items-center justify-between sticky top-0 z-10 shadow-xs min-h-16 max-h-16">
+             <!-- Search -->
+            <form action="{{ route('dashboard') }}" method="GET" class="w-full max-w-xl flex gap-2">
+                @csrf
+                <div class="relative w-full flex items-center">
+                    <input 
+                        type="text" 
+                        name="search" 
+                        value="{{ $search ?? '' }}"
+                        placeholder="Search by Employee ID or Name across all modules..." 
+                        class="w-full bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block pl-4 outline-none transition"
+                    />
+                    @if($search)
+                        <a href="{{ route('dashboard') }}" class="absolute right-3 text-sm text-gray-400 hover:text-gray-600">✕ Clear</a>
+                    @endif
+                </div>
+                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-medium px-5 rounded-lg text-sm cursor-pointer transition-all active:translate-0.25">
+                    Search
+                </button>
+            </form>
+            <div class="text-sm font-medium text-gray-600">
+                {{ now()->format('F d, Y') }}
             </div>
-            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-medium px-5 py-2.5 rounded-lg text-sm transition">
-                Search
-            </button>
-        </form>
+        </header>
         
         <!-- Dashboard Content -->
         <div class="p-8 max-w-7xl w-full mx-auto space-y-8">

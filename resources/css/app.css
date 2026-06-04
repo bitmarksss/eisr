@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "@fortawesome/fontawesome-free/css/all.css";
+@import "./components.css";
 
 @source "../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php";
 @source "../../storage/framework/views/*.php";
@@ -15,7 +16,7 @@
 }
 
 .module-card {
-    display: flex; 
+    display: flex;
     align-items: center; 
     justify-content: space-between; 
     border-radius: 0.75rem; 

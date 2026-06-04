@@ -36,9 +36,12 @@
                 
                 <form action="{{ route('loan.upload') }}" method="POST" enctype="multipart/form-data" class="space-y-4">
                     @csrf
-                    <div class="border-2 border-dashed border-gray-300 rounded-xl p-6 text-center hover:border-emerald-500 transition cursor-pointer relative bg-gray-50/50">
+                    <div class="group border-2 border-dashed border-gray-300 rounded-xl p-6 text-center hover:border-emerald-500 transition cursor-pointer relative bg-gray-50/50">
                         <input type="file" name="excel_file" required class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
-                        <span class="text-3xl block mb-2">📊</span>
+                        <span class="text-3xl block mb-2">
+                            <i class="fa-solid fa-file-excel
+                            text-gray-300 group-hover:text-emerald-500 transition"></i>
+                        </span>
                         <span class="text-sm font-medium text-gray-600 block">Click to select or drag document here</span>
                         <span class="text-xs text-gray-400 mt-1 block">XLSX, XLS, or CSV up to 10MB</span>
                     </div>

@@ -13,7 +13,7 @@
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-gray-200 pb-5">
             <div>
                 <h1 class="text-2xl font-bold text-gray-900 tracking-tight">
-                    <i class="fa-solid fa-credit-card text-blue-400"></i>
+                    <i class="fa-solid fa-hand-holding-dollar text-rose-500"></i>
                     Employee Payments
                 </h1>
                 <p class="text-sm text-gray-500 mt-1">Upload and track payments received or salary deductions processed.</p>
@@ -41,10 +41,11 @@
                 
                 <form action="{{ route('payments.upload') }}" method="POST" enctype="multipart/form-data" class="space-y-4">
                     @csrf
-                    <div class="border-2 border-dashed border-gray-300 rounded-xl p-6 text-center hover:border-rose-500 transition cursor-pointer relative bg-gray-50/50">
+                    <div class="group border-2 border-dashed border-gray-300 rounded-xl p-6 text-center hover:border-rose-500 transition cursor-pointer relative bg-gray-50/50">
                         <input type="file" name="excel_file" required class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
                         <span class="text-3xl block mb-2">
-                            <i class="fa-regular fa-file-excel text-emerald-700"></i>
+                            <i class="fa-solid fa-file-excel
+                            text-gray-300 group-hover:text-rose-500 transition"></i>
                         </span>
                         <span class="text-sm font-medium text-gray-600 block">Click to select or drag document here</span>
                         <span class="text-xs text-gray-400 mt-1 block">XLSX, XLS, or CSV up to 10MB</span>

@@ -63,13 +63,20 @@ class UserController extends Controller
             'password' => 'required|string|min:8|confirmed',
         ]);
 
+        $checkUser = User::where('email', $request->email)->first();
+        if ($checkUser) {
+            return redirect()->route('users.index', ['tab' => 'admins'])
+                ->with('error', 'Email already exists. Please use a different email address.')
+                ->withInput();
+        }
+
         User::create([
             'name'     => $request->name,
             'email'    => $request->email,
             'password' => Hash::make($request->password),
         ]);
 
-        return redirect()->route('pages.users.index', ['tab' => 'admins'])
+        return redirect()->route('users.index', ['tab' => 'admins'])
             ->with('success', 'System Administrator created successfully!');
     }
 }

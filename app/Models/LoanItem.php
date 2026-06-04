@@ -2,11 +2,14 @@
 
 namespace App\Models;
 
+use App\Traits\SearchModuleByEmployee;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class LoanItem extends Model
 {
+    use SearchModuleByEmployee;
+    
     protected $fillable = ['upload_id', 'employee_id', 'total', 'date'];
 
     protected $casts = [

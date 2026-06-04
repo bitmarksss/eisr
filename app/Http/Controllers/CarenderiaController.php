@@ -12,6 +12,9 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
+use App\Imports\CarenderiaItemImport;
+use Maatwebsite\Excel\Facades\Excel;
+
 class CarenderiaController extends Controller
 {
     /**
@@ -54,16 +57,13 @@ class CarenderiaController extends Controller
         ]);
 
         if ($validator->fails()) {
-            // dd($validator);
             // Your custom logic when validation fails
             return back()->with('notification', [
                 'status' => 'error',
-                'message' => $validator->errors(),
-
+                'title' => 'Validation Error',
+                'messages' => $validator->errors()->messages(),
             ])->withInput();
         }
-
-        dd($validator);
 
         $file = $request->file('excel_file');
         
@@ -80,54 +80,15 @@ class CarenderiaController extends Controller
             'uploaded_by' => auth()->id() ?? 1, // Fallback to ID 1 for testing if auth isn't setup
         ]);
 
-        try {
-            // Use a Database Transaction for safe batch imports
-            DB::transaction(function () use ($upload, $path) {
-                
-                // Note: In production, you would pass this to Maatwebsite Laravel Excel:
-                // Excel::import(new CarenderiaImport($upload->id), storage_path('app/' . $path));
-                
-                // --- MOCK READING EXCEL ROWS FOR DEMONSTRATION ---
-                $mockExcelRows = [
-                    ['empid' => 'EMP-001', 'total' => 150.00, 'date' => '2026-05-20'],
-                    ['empid' => 'EMP-002', 'total' => 85.50,  'date' => '2026-05-21'],
-                    ['empid' => 'EMP-003', 'total' => 210.00, 'date' => '2026-05-21'],
-                ];
+       try {
+            // This pushes the import logic to the queue automatically!
+            Excel::queueImport(new CarenderiaItemImport($upload->id), storage_path('app/' . $path));
 
-                $insertedCount = 0;
-
-                foreach ($mockExcelRows as $row) {
-                    // Match or gracefully initialize the employee profile
-                    $employee = Employee::firstOrCreate(
-                        ['employee_code' => $row['empid']],
-                        ['name' => 'Employee ' . $row['empid']] // Placeholder name
-                    );
-
-                    // Insert the item linked to the upload and employee
-                    CarenderiaItem::create([
-                        'upload_id' => $upload->id,
-                        'employee_id' => $employee->id,
-                        'total' => $row['total'],
-                        'date' => $row['date'],
-                    ]);
-
-                    $insertedCount++;
-                }
-                // -------------------------------------------------
-
-                // Update registry with complete stats
-                $upload->update([
-                    'status' => 'completed',
-                    'row_count' => $insertedCount
-                ]);
-            });
-
-            return redirect()->back()->with('success', 'Excel batch processed successfully!');
+            return redirect()->back()->with('success', 'Excel file uploaded and is processing in the background!');
 
         } catch (\Exception $e) {
-            // Fail safely without corrupting data state
             $upload->update(['status' => 'failed']);
-            return redirect()->back()->with('error', 'Error reading spreadsheet data: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Could not queue the spreadsheet: ' . $e->getMessage());
         }
     }
 }
