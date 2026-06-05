@@ -38,15 +38,36 @@
                     
                     <form action="{{ route('carenderia.upload') }}" method="POST" enctype="multipart/form-data" class="space-y-4">
                         @csrf
-                        <div class="group border-2 border-dashed border-gray-300 rounded-xl p-6 text-center hover:border-amber-500 transition cursor-pointer relative bg-gray-50/50">
-                            <input type="file" name="excel_file" required class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
+                        
+                        <!-- File Dropzone Container -->
+                        <div id="dropzone" class="group border-2 border-dashed border-gray-300 rounded-xl p-6 text-center hover:border-amber-500 transition cursor-pointer relative bg-gray-50/50">
+                            
+                            <!-- File Input -->
+                            <input type="file" id="fileInput" name="excel_file" required class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" />
+                            
+                            <!-- Icon -->
                             <span class="text-3xl block mb-2">
-                                <i class="fa-solid fa-file-excel
-                                text-gray-300 group-hover:text-amber-500 transition"></i>
+                                <i id="fileIcon" class="fa-solid fa-file-excel text-gray-300 group-hover:text-amber-500 transition"></i>
                             </span>
-                            <span class="text-sm font-medium text-gray-600 block">Click to select or drag document here</span>
-                            <span class="text-xs text-gray-400 mt-1 block">XLSX, XLS, or CSV format up to 10MB</span>
+                            
+                            <!-- Dynamic Main Text -->
+                            <span id="mainText" class="text-sm font-medium text-gray-600 block pointer-events-none">
+                                Click to select or drag document here
+                            </span>
+                            
+                            <!-- Dynamic Sub Text / Extension -->
+                            <span id="subText" class="text-xs text-gray-400 mt-1 block pointer-events-none">
+                                XLSX, XLS, or CSV format up to 10MB
+                            </span>
+
+                            <!-- Remove Button (Hidden by default via 'hidden' class) -->
+                            <div id="removeButtonContainer" class="mt-3 hidden relative z-20">
+                                <button type="button" id="btnRemove" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-rose-600 bg-rose-50 border border-rose-200 rounded-lg hover:bg-rose-100 transition cursor-pointer">
+                                    ✕ Remove File
+                                </button>
+                            </div>
                         </div>
+
                         <button type="submit" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-semibold py-2.5 px-4 rounded-xl text-sm transition shadow-sm cursor-pointer">
                             Process Batch Upload
                         </button>

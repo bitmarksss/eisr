@@ -7,12 +7,15 @@
     @include('components.sidebar')
     
     <div class="flex-1 flex flex-col overflow-y-auto">
-        @include('components.topbar')
 
+        @include('components.topbar')
         <main class="flex-1 flex flex-col overflow-y-auto p-8 max-w-7xl mx-auto w-full space-y-8">
             
-            <div class="border-b border-gray-200 pb-5">
-                <h1 class="text-2xl font-bold text-gray-900 tracking-tight">👥 User & Employee Directory</h1>
+            <div class="module-header border-b border-gray-200 pb-5">
+                <h1 class="text-2xl font-bold text-gray-900 tracking-tight"> 
+                    <i class="fa-solid fa-user-group text-violet-500"></i>
+                    User & Employee Directory
+                </h1>
                 <p class="text-sm text-gray-500 mt-1">Manage system platform administrators and monitor registered trackable company profiles.</p>
             </div>
 
@@ -32,7 +35,10 @@
                 <div class="space-y-6">
                     
                     <section class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm space-y-4">
-                        <h2 class="font-bold text-gray-800 text-md">➕ Register New Employee</h2>
+                        <h2 class="flex items-center font-bold text-gray-800 text-md"> 
+                            <i class="fa-solid fa-plus text-indigo-600"></i>
+                            Register New Employee
+                        </h2>
                         <p class="text-xs text-gray-400">Creates a reference profile for logging Excel transaction entries.</p>
                         
                         <form action="{{ route('users.store.employee') }}" method="POST" class="space-y-3">
@@ -53,7 +59,10 @@
                     </section>
 
                     <section class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm space-y-4">
-                        <h2 class="font-bold text-gray-800 text-md">🔐 Create Platform Admin</h2>
+                        <h2 class="font-bold text-gray-800 text-md">
+                            <i class="fa-solid fa-user-lock text-slate-900"></i>
+                            Create Platform Admin
+                        </h2>
                         <p class="text-xs text-gray-400">Grants login and upload execution authorizations to managers.</p>
                         
                         <form action="{{ route('users.store.admin') }}" method="POST" class="space-y-3">
@@ -85,11 +94,13 @@
                 <section class="lg:col-span-2 bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden flex flex-col">
                     
                     <div class="flex border-b border-gray-100 bg-gray-50/70">
-                        <a href="{{ route('users.index', ['tab' => 'employees']) }}" class="flex-1 text-center py-3 font-semibold text-sm transition {{ $tab === 'employees' ? 'bg-white border-b-2 border-slate-800 text-slate-900' : 'text-gray-400 hover:text-gray-600' }}">
-                            👥 Registered Employees ({{ $employees->total() }})
+                        <a href="{{ route('users.index', ['tab' => 'employees']) }}" class="flex-1 text-center py-3 font-semibold text-sm transition {{ $tab === 'employees' ? 'bg-white border-b-2 border-indigo-600 text-indigo-600' : 'text-gray-400 hover:text-gray-600' }}">
+                           <i class="fa-solid fa-user-group text-violet-400"></i>
+                            Registered Employees ({{ $employees->total() }})
                         </a>
-                        <a href="{{ route('users.index', ['tab' => 'admins']) }}" class="flex-1 text-center py-3 font-semibold text-sm transition {{ $tab === 'admins' ? 'bg-white border-b-2 border-indigo-600 text-indigo-600' : 'text-gray-400 hover:text-gray-600' }}">
-                            🔐 System Operators/Admins ({{ $admins->total() }})
+                        <a href="{{ route('users.index', ['tab' => 'admins']) }}" class="flex-1 text-center py-3 font-semibold text-sm transition {{ $tab === 'admins' ? 'bg-white border-b-2 border-slate-800 text-slate-900' : 'text-gray-400 hover:text-gray-600' }}"> 
+                            <i class="fa-solid fa-user-lock text-slate-900"></i>
+                            System Operators/Admins ({{ $admins->total() }})
                         </a>
                     </div>
 
@@ -158,7 +169,7 @@
                                             <td class="px-6 py-4 font-semibold text-gray-900">{{ $admin->name }}</td>
                                             <td class="px-6 py-4 text-gray-600 text-xs">{{ $admin->email }}</td>
                                             <td class="px-6 py-4">
-                                                <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-700 border border-indigo-100">Full System Admin</span>
+                                                <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-slate-50 text-slate-700 border border-slate-100">Full System Admin</span>
                                             </td>
                                         </tr>
                                     @empty

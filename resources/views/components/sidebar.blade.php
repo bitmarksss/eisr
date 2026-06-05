@@ -1,5 +1,5 @@
 <aside class="w-64 bg-slate-900 text-white flex flex-col">
-    <div class="p-5 text-xl font-bold tracking-wider bg-slate-950">🏢 PGECC</div>
+    <div class="p-5 text-2xl font-bold text-center tracking-wider bg-slate-950">PGECC</div>
     <nav class="mt-6 px-4 flex-1 space-y-2">
         
         <a href="{{ route('dashboard') }}" 
@@ -42,7 +42,7 @@
         <a href="{{ route('users.index') }}" 
            class="block px-4 py-2.5 rounded transition-all 
            {{ request()->routeIs('users.*') ? 'bg-amber-600 text-white font-medium' : 'text-slate-300 hover:bg-slate-800' }}">
-            <i class="fa-solid fa-user-group text-white"></i>
+            <i class="fa-solid fa-user-group {{ request()->routeIs('users.*') ? 'text-violet-300' : 'text-slate-300' }}"></i>
             User Management
         </a>
            

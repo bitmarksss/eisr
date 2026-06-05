@@ -75,3 +75,12 @@
 .close-notification:hover {
     background-color: rgb(229, 231, 235);
 }
+
+/* Module Headers */
+@keyframes slidedown {
+    from { transform: translateY(-100%); }
+    to { transform: translateY(0); }
+}
+.animate-slidedown {
+    animation: slidedown 0.4s ease-in-out forwards;
+}
