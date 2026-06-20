@@ -26,10 +26,12 @@
                     ✅ {{ session('success') }}
                 </div>
             @endif
-            @if(session('error'))
-                <div class="bg-rose-50 border border-rose-200 text-rose-800 px-4 py-3 rounded-xl text-sm font-medium">
-                    ⚠️ {{ session('error') }}
-                </div>
+            @if(session('errors'))
+                @foreach(session('errors') as $error)
+                    <div class="bg-rose-50 border border-rose-200 text-rose-800 px-4 py-3 rounded-xl text-sm font-medium">
+                        ⚠️ {{ $error }}
+                    </div>
+                @endforeach
             @endif
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
@@ -54,12 +56,12 @@
                             </span>
                             
                             <!-- Dynamic Main Text -->
-                            <span id="mainText" class="text-sm font-medium text-gray-600 block pointer-events-none">
+                            <span id="mainText" class="text-sm font-medium text-gray-400 group-hover:text-gray-600 block pointer-events-none transition">
                                 Click to select or drag document here
                             </span>
                             
                             <!-- Dynamic Sub Text / Extension -->
-                            <span id="subText" class="text-xs text-gray-400 mt-1 block pointer-events-none">
+                            <span id="subText" class="text-xs text-gray-300 group-hover:text-gray-400 mt-1 block pointer-events-none transition">
                                 XLSX, XLS, or CSV format up to 10MB
                             </span>
 

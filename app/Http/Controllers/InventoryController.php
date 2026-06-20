@@ -43,7 +43,7 @@ class CarenderiaController extends Controller
 
         $files = $query->latest()->paginate(10)->withQueryString();
 
-        return view('pages.carenderia.index', compact('files'));
+        return view('pages.inventory.index', compact('files'));
     }
 
     /**
@@ -71,7 +71,7 @@ class CarenderiaController extends Controller
             $file = $request->file('excel_file');
 
             // Set the module type
-            $module_type = 'carenderia';
+            $module_type = 'inventory';
 
             // Service handles the heavy lifting and returns the tracking record
             $upload = $this->uploadExcelService->make($file, $module_type);

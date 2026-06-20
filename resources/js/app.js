@@ -13,4 +13,20 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Initialize module scripts
     initModuleScripts();
+
+    // let sideBar = document.getElementById('sidebar');
+    // let sideBarToggleBtn = document.getElementById('sidebarToggle');
+    // let sideBarState = sessionStorage.getItem('sidebarState') || 'expanded';
+
+    // // Apply saved sidebar state on page load
+    // if (sideBarState === 'collapsed') {
+    //     document.body.classList.add('sidebar-collapsed');
+    // }
+
+    // // Toggle sidebar
+    // sideBarToggleBtn.addEventListener('click', () => {
+    //     sideBar.classList.toggle('collapsed');
+    //     sideBarState = sideBarState === 'expanded' ? 'collapsed' : 'expanded';
+    //     sessionStorage.setItem('sidebarState', sideBarState);
+    // });
 });

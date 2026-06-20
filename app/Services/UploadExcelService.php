@@ -4,7 +4,7 @@ namespace App\Services;
 
 use Illuminate\Http\Request;
 use App\Imports\ItemImport;
-use App\Models\{CarenderiaItem, LoanItem, GroceryItem, PaymentItem, UploadedFile};
+use App\Models\{Inventory, CarenderiaItem, LoanItem, GroceryItem, PaymentItem, UploadedFile};
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Http\UploadedFile as LaravelFile;
 
@@ -16,7 +16,8 @@ class UploadExcelService
     public function resolveItemClass(string $moduleType): string
     {
         switch (strtolower($moduleType)) {
-            case 'carenderia': return CarenderiaItem::class;
+            case 'inventory':   return Inventory::class;
+            case 'carenderia':  return CarenderiaItem::class;
             case 'loan':        return LoanItem::class;
             case 'grocery':     return GroceryItem::class;
             case 'payments':    return PaymentItem::class;

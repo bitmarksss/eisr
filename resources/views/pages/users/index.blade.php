@@ -52,7 +52,7 @@
                                 <label class="text-xs font-bold text-gray-500 uppercase block mb-1">Full Name</label>
                                 <input type="text" name="name" required placeholder="e.g., Juan Dela Cruz" class="w-full text-sm p-2 border border-gray-300 rounded-lg outline-none focus:border-slate-800" />
                             </div>
-                            <button type="submit" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-semibold py-2 rounded-lg text-xs transition">
+                            <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 rounded-lg text-xs transition">
                                 Save Employee Profile
                             </button>
                         </form>
@@ -84,7 +84,7 @@
                                 <label class="text-xs font-bold text-gray-500 uppercase block mb-1">Confirm Password</label>
                                 <input type="password" name="password_confirmation" required class="w-full text-sm p-2 border border-gray-300 rounded-lg outline-none focus:border-slate-800" />
                             </div>
-                            <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 rounded-lg text-xs transition">
+                            <button type="submit" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-semibold py-2 rounded-lg text-xs transition">
                                 Grant Administrative Access
                             </button>
                         </form>

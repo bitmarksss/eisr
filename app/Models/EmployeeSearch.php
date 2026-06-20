@@ -26,6 +26,6 @@ class EmployeeSearch extends Model
 
     public function upload(): BelongsTo
     {
-        return $this->belongsTo(Upload::class);
+        return $this->belongsTo(UploadedFile::class);
     }
 }

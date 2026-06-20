@@ -10,9 +10,15 @@
     <main class="flex-1 flex flex-col overflow-y-auto">
         
         <!-- Dashboard Top Navbar -->
-        <header class="bg-white border-b border-gray-200 px-8 py-4 flex items-center justify-between sticky top-0 z-10 shadow-xs min-h-16 max-h-16">
-             <!-- Search -->
-            <form action="{{ route('dashboard') }}" method="GET" class="w-full max-w-xl flex gap-2">
+        <header class="bg-white border-b border-gray-200 px-4 py-4 flex items-center justify-between sticky top-0 z-10 shadow-xs min-h-16 max-h-16">
+            
+            <span id="sidebarToggle"
+                class="p-2 hover:bg-gray-100 rounded-lg text-xl transition-all cursor-pointer">
+                <!-- <i class="fa-solid fa-bars text-slate-800"></i> -->
+            </span>
+            
+            <!-- Search -->
+            <form action="{{ route('dashboard') }}" method="GET" class="w-full max-w-xl flex">
                 @csrf
                 <div class="relative w-full flex items-center">
                     <input 
@@ -20,17 +26,17 @@
                         name="search" 
                         value="{{ $search ?? '' }}"
                         placeholder="Search by Employee ID or Name across all modules..." 
-                        class="w-full bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block pl-4 outline-none transition"
+                        class="w-full bg-gray-50 border border-gray-300 text-gray-900 rounded-tl-lg rounded-bl-lg focus:ring-blue-500 focus:border-blue-500 block py-2 pl-4 outline-none transition"
                     />
                     @if($search)
                         <a href="{{ route('dashboard') }}" class="absolute right-3 text-sm text-gray-400 hover:text-gray-600">✕ Clear</a>
                     @endif
                 </div>
-                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-medium px-5 rounded-lg text-sm cursor-pointer transition-all active:translate-0.25">
+                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-medium px-5 rounded-tr-lg rounded-br-lg text-sm cursor-pointer transition-all active:translate-0.25">
                     Search
                 </button>
             </form>
-            <div class="text-sm font-medium text-gray-600">
+            <div class="max-lg:hidden text-sm font-medium text-gray-600">
                 {{ now()->format('F d, Y') }}
             </div>
         </header>
@@ -48,54 +54,9 @@
             <!-- Stat Cards Grid -->
             <section>
                 <h2 class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-4">Module Statistics (Grand Totals)</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-5 gap-6">
                     
-                    <!-- Carenderia Card -->
-                    <div class="module-card transition-all hover:-translate-y-0.5">
-                        <div>
-                            <p class="text-sm font-medium text-gray-500">Carenderia</p>
-                            <p class="text-2xl font-bold text-gray-900 mt-1">₱{{ number_format($stats['carenderia'], 2) }}</p>
-                        </div>
-                        <span class="p-3 bg-gray-100 rounded-lg text-xl">
-                            <i class="fa-solid fa-utensils text-amber-400"></i>
-                        </span>
-                        
-                    </div>
-
-                    <!-- Loans Card -->
-                    <div class="module-card transition-all hover:-translate-y-0.5">
-                        <div>
-                            <p class="text-sm font-medium text-gray-500">Active Loans</p>
-                            <p class="text-2xl font-bold text-gray-900 mt-1">₱{{ number_format($stats['loans'], 2) }}</p>
-                        </div>
-                        <span class="p-3 bg-gray-100 rounded-lg text-xl">
-                            <i class="fa-solid fa-sack-dollar text-green-400"></i>
-                        </span>
-                    </div>
-
-                    <!-- Grocery Card -->
-                    <div class="module-card transition-all hover:-translate-y-0.5">
-                        <div>
-                            <p class="text-sm font-medium text-gray-500">Grocery Orders</p>
-                            <p class="text-2xl font-bold text-gray-900 mt-1">₱{{ number_format($stats['grocery'], 2) }}</p>
-                        </div>
-                        <span class="p-3 bg-gray-100 rounded-lg text-xl">
-                            <i class="fa-solid fa-cart-shopping text-blue-400"></i>
-                        </span>
-                    </div>
-
-                    <!-- Payments Card -->
-                    <div class="module-card transition-all hover:-translate-y-0.5">
-                        <div>
-                            <p class="text-sm font-medium text-gray-500">Total Payments</p>
-                            <p class="text-2xl font-bold text-gray-900 mt-1">₱{{ number_format($stats['payments'], 2) }}</p>
-                        </div>
-                        <span class="p-3 bg-gray-100 rounded-lg text-xl">
-                            <!-- <i class="fa-solid fa-credit-card text-blue-400"></i> -->
-                            <i class="fa-solid fa-hand-holding-dollar text-red-400"></i>
-                        </span>
-                    </div>
-
+                   
                 </div>
             </section>
 
@@ -104,13 +65,15 @@
                 <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
                     <h3 class="font-bold text-gray-800">
                         @if($search)
-                            🔍 Search Results for "{{ $search }}"
+                            <i class="fa-solid fa-magnifying-glass text-slate-800"></i>
+                            Search Results for "{{ $search }}"
                         @else
-                            🕒 Unified Activity Log
+                            <i class="fa-solid fa-clock-rotate-left text-slate-800"></i>
+                            Unified Activity Log
                         @endif
                     </h3>
                     <span class="text-xs bg-gray-200 text-gray-700 px-2.5 py-1 rounded-full font-medium">
-                        {{ $results->count() }} records displayed
+                        N/A records displayed
                     </span>
                 </div>
 

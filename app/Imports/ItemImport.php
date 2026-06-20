@@ -58,6 +58,20 @@ class ItemImport implements ToModel, WithHeadingRow, ShouldQueue, WithChunkReadi
     {
         return 500;
     }
+
+    /**
+     * DataType and Value Validation per Row
+     */
+    public function rules(): array
+    {
+        $antiInjectionRegex = 'regex:/^(?![\=\+\-\@]).*$/';
+
+        return [
+            'empid'  => ['required', 'string', 'max:255', $antiInjectionRegex],
+            'total' => ['required', 'numeric', 'min:0'],
+            'date'   => ['required', 'date_format:m/d/Y'],
+        ];
+    }
     
     /**
      * Register events explicitly using closures instead of static methods

@@ -12,7 +12,7 @@
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-gray-200 pb-5">
                 <div>
                     <h1 class="text-2xl font-bold text-gray-900 tracking-tight">
-                        <i class="fa-solid fa-cart-shopping text-olive-400"></i>
+                        <i class="fa-solid fa-cart-shopping text-blue-400"></i>
                         Grocery Allowances
                     </h1>
                     <p class="text-sm text-gray-500 mt-1">Upload and review employee grocery store transaction limits.</p>
@@ -24,10 +24,12 @@
                     ✅ {{ session('success') }}
                 </div>
             @endif
-            @if(session('error'))
-                <div class="bg-rose-50 border border-rose-200 text-rose-800 px-4 py-3 rounded-xl text-sm font-medium">
-                    ⚠️ {{ session('error') }}
-                </div>
+            @if(session('errors'))
+                @foreach(session('errors') as $error)
+                    <div class="bg-rose-50 border border-rose-200 text-rose-800 px-4 py-3 rounded-xl text-sm font-medium">
+                        ⚠️ {{ $error }}
+                    </div>
+                @endforeach
             @endif
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
@@ -38,16 +40,36 @@
                     
                     <form action="{{ route('grocery.upload') }}" method="POST" enctype="multipart/form-data" class="space-y-4">
                         @csrf
-                        <div class="group border-2 border-dashed border-gray-300 rounded-xl p-6 text-center hover:border-indigo-500 transition cursor-pointer relative bg-gray-50/50">
-                            <input type="file" name="excel_file" required class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
+
+                        <!-- File Dropzone Container -->
+                        <div id="dropzone" class="group border-2 border-dashed border-gray-300 rounded-xl p-6 text-center hover:border-blue-500 transition cursor-pointer relative bg-gray-50/50">
+                            
+                            <!-- File Input -->
+                            <input type="file" id="fileInput" name="excel_file" required class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" />
+                            
+                            <!-- Icon -->
                             <span class="text-3xl block mb-2">
-                                <i class="fa-solid fa-file-excel
-                                text-gray-300 group-hover:text-indigo-500 transition"></i>
+                                <i id="fileIcon" class="fa-solid fa-file-excel text-gray-300 group-hover:text-blue-500 transition"></i>
                             </span>
-                            <span class="text-sm font-medium text-gray-600 block">Click to select or drag document here</span>
-                            <span class="text-xs text-gray-400 mt-1 block">XLSX, XLS, or CSV up to 10MB</span>
+                            
+                            <!-- Dynamic Main Text -->
+                            <span id="mainText" class="text-sm font-medium text-gray-400 group-hover:text-gray-600 block pointer-events-none transition">
+                                Click to select or drag document here
+                            </span>
+                            
+                            <!-- Dynamic Sub Text / Extension -->
+                            <span id="subText" class="text-xs text-gray-300 group-hover:text-gray-400 mt-1 block pointer-events-none transition">
+                                XLSX, XLS, or CSV format up to 10MB
+                            </span>
+
+                            <!-- Remove Button (Hidden by default via 'hidden' class) -->
+                            <div id="removeButtonContainer" class="mt-3 hidden relative z-20">
+                                <button type="button" id="btnRemove" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-rose-600 bg-rose-50 border border-rose-200 rounded-lg hover:bg-rose-100 transition cursor-pointer">
+                                    ✕ Remove File
+                                </button>
+                            </div>
                         </div>
-                        <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 px-4 rounded-xl text-sm transition shadow-sm cursor-pointer">
+                        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 px-4 rounded-xl text-sm transition shadow-sm cursor-pointer">
                             Process Grocery Batch
                         </button>
                     </form>
@@ -58,11 +80,11 @@
                     <form action="{{ route('grocery.index') }}" method="GET" class="p-4 border-b border-gray-100 bg-gray-50/50 grid grid-cols-1 md:grid-cols-12 gap-3 items-end">
                         <div class="md:col-span-4">
                             <label class="text-xs font-bold uppercase text-gray-400 block mb-1">Filename Search</label>
-                            <input type="text" name="search" value="{{ request('search') }}" placeholder="Search files..." class="w-full text-xs p-2 border border-gray-300 rounded-lg outline-none bg-white focus:border-indigo-500" />
+                            <input type="text" name="search" value="{{ request('search') }}" placeholder="Search files..." class="w-full text-xs p-2 border border-gray-300 rounded-lg outline-none bg-white focus:border-blue-500" />
                         </div>
                         <div class="md:col-span-2">
                             <label class="text-xs font-bold uppercase text-gray-400 block mb-1">Status</label>
-                            <select name="status" class="w-full text-xs p-2 border border-gray-300 rounded-lg outline-none bg-white focus:border-indigo-500">
+                            <select name="status" class="w-full text-xs p-2 border border-gray-300 rounded-lg outline-none bg-white focus:border-blue-500">
                                 <option value="">All States</option>
                                 <option value="completed" {{ request('status') === 'completed' ? 'selected' : '' }}>Completed</option>
                                 <option value="processing" {{ request('status') === 'processing' ? 'selected' : '' }}>Processing</option>
@@ -71,11 +93,11 @@
                         </div>
                         <div class="md:col-span-2">
                             <label class="text-xs font-bold uppercase text-gray-400 block mb-1">From</label>
-                            <input type="date" name="date_from" value="{{ request('date_from') }}" class="w-full text-xs p-1.5 border border-gray-300 rounded-lg outline-none bg-white focus:border-indigo-500" />
+                            <input type="date" name="date_from" value="{{ request('date_from') }}" class="w-full text-xs p-1.5 border border-gray-300 rounded-lg outline-none bg-white focus:border-blue-500" />
                         </div>
                         <div class="md:col-span-2">
                             <label class="text-xs font-bold uppercase text-gray-400 block mb-1">To</label>
-                            <input type="date" name="date_to" value="{{ request('date_to') }}" class="w-full text-xs p-1.5 border border-gray-300 rounded-lg outline-none bg-white focus:border-indigo-500" />
+                            <input type="date" name="date_to" value="{{ request('date_to') }}" class="w-full text-xs p-1.5 border border-gray-300 rounded-lg outline-none bg-white focus:border-blue-500" />
                         </div>
                         <div class="md:col-span-2 flex gap-1">
                             <button type="submit" class="w-full bg-slate-800 hover:bg-slate-900 text-white text-xs font-semibold py-2 px-3 rounded-lg transition">Apply</button>
@@ -111,7 +133,7 @@
                                             @if($file->status === 'completed')
                                                 <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">Completed</span>
                                             @elseif($file->status === 'processing')
-                                                <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200">Processing</span>
+                                                <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200">Processing</span>
                                             @else
                                                 <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-rose-50 text-rose-700 border border-rose-200">Failed</span>
                                             @endif

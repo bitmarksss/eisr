@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\{
     DashboardController,
 
-    CarenderiaController,
+    InventoryController,
     LoanController,
     GroceryController,
     PaymentsController,
@@ -26,9 +26,9 @@ use App\Http\Controllers\{
 Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-Route::prefix('carenderia')->group(function () {
-    Route::get('/', [CarenderiaController::class, 'index'])->name('carenderia.index');
-    Route::post('/upload', [CarenderiaController::class, 'upload'])->name('carenderia.upload');
+Route::prefix('inventory')->group(function () {
+    Route::get('/', [InventoryController::class, 'index'])->name('inventory.index');
+    Route::post('/upload', [InventoryController::class, 'upload'])->name('inventory.upload');
 
 });
 
