@@ -13,7 +13,7 @@
                 <div>
                     <h1 class="text-2xl font-bold text-gray-900 tracking-tight">
                         <i class="fa-solid fa-utensils text-amber-400"></i>
-                        Carenderia Subscriptions
+                        Inventory Subscriptions
                     </h1>
                     <p class="text-sm text-gray-500 mt-1">Upload and review employee cafeteria transactions logs.</p>
                 </div>
@@ -38,7 +38,7 @@
                     <h2 class="font-bold text-gray-800 text-lg">Batch Import Excel</h2>
                     <p class="text-xs text-gray-400">File columns layout mapping rule requirement: <strong>(empid, total, date)</strong>.</p>
                     
-                    <form action="{{ route('carenderia.upload') }}" method="POST" enctype="multipart/form-data" class="space-y-4">
+                    <form action="{{ route('inventory.upload') }}" method="POST" enctype="multipart/form-data" class="space-y-4">
                         @csrf
                         
                         <!-- File Dropzone Container -->
@@ -78,7 +78,7 @@
 
                 <section class="lg:col-span-2 bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden flex flex-col">
                     
-                    <form action="{{ route('carenderia.index') }}" method="GET" class="p-4 border-b border-gray-100 bg-gray-50/50 grid grid-cols-1 md:grid-cols-12 gap-3 items-end">
+                    <form action="{{ route('inventory.index') }}" method="GET" class="p-4 border-b border-gray-100 bg-gray-50/50 grid grid-cols-1 md:grid-cols-12 gap-3 items-end">
                         <div class="md:col-span-4">
                             <label class="text-xs font-bold uppercase text-gray-400 block mb-1">Filename Search</label>
                             <input type="text" name="search" value="{{ request('search') }}" placeholder="Search files..." class="w-full text-xs p-2 border border-gray-300 rounded-lg outline-none bg-white focus:border-amber-500" />
@@ -102,7 +102,7 @@
                         </div>
                         <div class="md:col-span-2 flex gap-1">
                             <button type="submit" class="w-full bg-slate-800 hover:bg-slate-900 text-white text-xs font-semibold py-2 px-3 rounded-lg transition cursor-pointer">Apply</button>
-                            <a href="{{ route('carenderia.index') }}" class="bg-gray-200 hover:bg-gray-300 text-gray-700 text-xs font-semibold py-2 px-2 rounded-lg transition text-center flex items-center justify-center">✕</a>
+                            <a href="{{ route('inventory.index') }}" class="bg-gray-200 hover:bg-gray-300 text-gray-700 text-xs font-semibold py-2 px-2 rounded-lg transition text-center flex items-center justify-center">✕</a>
                         </div>
                     </form>
 

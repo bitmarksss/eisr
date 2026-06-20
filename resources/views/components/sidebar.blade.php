@@ -14,7 +14,7 @@
         <a href="{{ route('inventory.index') }}" 
            class="block px-4 py-2.5 rounded transition-all 
            {{ request()->routeIs('payments.*') ? 'bg-amber-600 text-white font-medium' : 'text-slate-300 hover:bg-slate-800' }}">
-            <i class="fa-solid fa-hand-holding-dollar {{ request()->routeIs('payments.*') ? 'text-red-300' : 'text-slate-300' }}"></i>
+            <i class="fa-solid fa-hand-holding-dollar {{ request()->routeIs('inventory.*') ? 'text-red-300' : 'text-slate-300' }}"></i>
             Inventory
         </a>
 

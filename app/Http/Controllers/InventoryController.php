@@ -8,7 +8,7 @@ use App\Services\UploadExcelService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
-class CarenderiaController extends Controller
+class InventoryController extends Controller
 {
     public $uploadExcelService;
     public function __construct(UploadExcelService $uploadExcelService)
@@ -21,7 +21,7 @@ class CarenderiaController extends Controller
      */
     public function index(Request $request)
     {
-        $query = UploadedFile::with('admin')->ofModule('carenderia');
+        $query = UploadedFile::with('uploader')->ofModule('inventory');
 
         // Filter by Hashed/Original Filename Search
         if ($request->filled('search')) {

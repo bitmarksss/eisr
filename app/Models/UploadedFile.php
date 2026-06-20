@@ -20,7 +20,7 @@ class UploadedFile extends Model
 
     // --- Relationships ---
     
-    public function admin(): BelongsTo
+    public function uploader(): BelongsTo
     {
         return $this->belongsTo(User::class, 'uploaded_by');
     }
