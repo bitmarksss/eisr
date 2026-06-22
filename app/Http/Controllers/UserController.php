@@ -15,21 +15,15 @@ class UserController extends Controller
     public function index(Request $request)
     {
         $search = $request->input('search');
-        $tab = $request->input('tab', 'employees'); // default to employees directory
+        $tab = $request->input('tab', 'users'); // default to employees directory
 
-        // Query Employees
-        $employees = Employee::when($search && $tab === 'employees', function ($query) use ($search) {
-            $query->where('employee_code', 'LIKE', "%{$search}%")
-                  ->orWhere('name', 'LIKE', "%{$search}%");
-        })->latest()->paginate(10, ['*'], 'emp_page')->withQueryString();
-
-        // Query System Admins
-        $admins = User::when($search && $tab === 'admins', function ($query) use ($search) {
+        // Query System Users
+        $users = User::when($search && $tab === 'admins', function ($query) use ($search) {
             $query->where('name', 'LIKE', "%{$search}%")
                   ->orWhere('email', 'LIKE', "%{$search}%");
         })->latest()->paginate(10, ['*'], 'adm_page')->withQueryString();
 
-        return view('pages.users.index', compact('employees', 'admins', 'tab', 'search'));
+        return view('pages.users.index', compact('users', 'tab', 'search'));
     }
 
     /**

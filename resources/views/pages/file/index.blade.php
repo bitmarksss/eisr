@@ -12,8 +12,8 @@
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-gray-200 pb-5">
                 <div>
                     <h1 class="text-2xl font-bold text-gray-900 tracking-tight">
-                        <i class="fa-solid fa-box-open text-amber-400"></i>
-                        Inventory Subscriptions
+                        <i class="fa-solid fa-folder-open text-amber-400"></i>
+                        File Uploads
                     </h1>
                     <p class="text-sm text-gray-500 mt-1">Upload and review employee cafeteria transactions logs.</p>
                 </div>

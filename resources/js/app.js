@@ -1,4 +1,8 @@
 import './bootstrap';
+
+import DataTable from 'datatables.net-dt';
+window.DataTable = DataTable;
+
 import { initNotificationSystem } from './components/notification';
 import { initModuleHeaderAnim } from './components/module_header';
 import { initModuleScripts } from './components/module_scripts';

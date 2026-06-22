@@ -10,14 +10,12 @@
     <main class="flex-1 flex flex-col overflow-y-auto">
         
         <!-- Dashboard Top Navbar -->
-        <header class="bg-white border-b border-gray-200 px-4 py-4 flex items-center justify-between sticky top-0 z-10 shadow-xs min-h-16 max-h-16">
+        <!-- <header class="bg-white border-b border-gray-200 px-4 py-4 flex items-center justify-between sticky top-0 z-10 shadow-xs min-h-16 max-h-16">
             
             <span id="sidebarToggle"
                 class="p-2 hover:bg-gray-100 rounded-lg text-xl transition-all cursor-pointer">
-                <!-- <i class="fa-solid fa-bars text-slate-800"></i> -->
             </span>
             
-            <!-- Search -->
             <form action="{{ route('dashboard') }}" method="GET" class="w-full max-w-xl flex">
                 @csrf
                 <div class="relative w-full flex items-center">
@@ -40,7 +38,7 @@
                 {{ now()->format('F d, Y') }}
             </div>
         </header>
-        
+         -->
         <!-- Dashboard Content -->
         <div class="p-8 max-w-7xl w-full mx-auto space-y-8">
             <section>
@@ -81,7 +79,7 @@
                     <table class="w-full text-left border-collapse">
                         <thead>
                             <tr class="border-b border-gray-200 bg-gray-50 text-xs font-semibold uppercase tracking-wider text-gray-500">
-                                <th class="px-6 py-3">Employee Details</th>
+                                <th class="px-6 py-3">Item Details</th>
                                 <th class="px-6 py-3">Module Source</th>
                                 <th class="px-6 py-3">Transaction Date</th>
                                 <th class="px-6 py-3 text-right">Amount</th>

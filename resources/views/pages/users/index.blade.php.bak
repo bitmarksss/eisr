@@ -125,7 +125,7 @@
 
                     <div class="overflow-x-auto flex-1">
                         @if($tab === 'employees')
-                            <table id="users-table" class="w-full text-left border-collapse">
+                            <table class="w-full text-left border-collapse">
                                 <thead>
                                     <tr class="border-b border-gray-200 bg-gray-50/50 text-xs font-semibold uppercase tracking-wider text-gray-500">
                                         <th class="px-6 py-3">Code ID</th>
@@ -192,14 +192,7 @@
         </main>
     </div>
 </div>
+
+</body>
+</html>
 @endsection
-
-@push('scripts')
-<script type="module">
-
-    document.addEventListener('DOMContentLoaded', () => {
-        console.log('test');
-    });
-
-</script>
-@endpush

@@ -6,6 +6,8 @@ use App\Http\Controllers\{
     DashboardController,
 
     InventoryController,
+    FileController,
+
     LoanController,
     GroceryController,
     PaymentsController,
@@ -29,6 +31,12 @@ Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard
 Route::prefix('inventory')->group(function () {
     Route::get('/', [InventoryController::class, 'index'])->name('inventory.index');
     Route::post('/upload', [InventoryController::class, 'upload'])->name('inventory.upload');
+
+});
+
+Route::prefix('file')->group(function () {
+    Route::get('/', [FileController::class, 'index'])->name('file.index');
+    Route::post('/upload', [FileController::class, 'upload'])->name('file.upload');
 
 });
 

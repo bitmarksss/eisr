@@ -13,17 +13,24 @@
 
         <a href="{{ route('inventory.index') }}" 
            class="block px-4 py-2.5 rounded transition-all 
-           {{ request()->routeIs('payments.*') ? 'bg-amber-600 text-white font-medium' : 'text-slate-300 hover:bg-slate-800' }}">
-            <i class="fa-solid fa-hand-holding-dollar {{ request()->routeIs('inventory.*') ? 'text-red-300' : 'text-slate-300' }}"></i>
+           {{ request()->routeIs('inventory.*') ? 'bg-amber-600 text-white font-medium' : 'text-slate-300 hover:bg-slate-800' }}">
+            <i class="fa-solid fa-box-open {{ request()->routeIs('inventory.*') ? 'text-white' : 'text-slate-300' }}"></i>
             Inventory
         </a>
 
         <hr class="border-slate-300 my-4">
+
+        <a href="{{ route('file.index') }}" 
+           class="block px-4 py-2.5 rounded transition-all 
+           {{ request()->routeIs('file.*') ? 'bg-amber-600 text-white font-medium' : 'text-slate-300 hover:bg-slate-800' }}">
+            <i class="fa-solid fa-folder-open {{ request()->routeIs('file.*') ? 'text-white' : 'text-slate-300' }}"></i>
+            File Uploads
+        </a>
                 
         <a href="{{ route('users.index') }}" 
            class="block px-4 py-2.5 rounded transition-all 
            {{ request()->routeIs('users.*') ? 'bg-amber-600 text-white font-medium' : 'text-slate-300 hover:bg-slate-800' }}">
-            <i class="fa-solid fa-user-group {{ request()->routeIs('users.*') ? 'text-violet-300' : 'text-slate-300' }}"></i>
+            <i class="fa-solid fa-user-group {{ request()->routeIs('users.*') ? 'text-white' : 'text-slate-300' }}"></i>
             User Management
         </a>
            
