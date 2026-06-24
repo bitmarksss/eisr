@@ -23,33 +23,15 @@ class UserController extends Controller
                   ->orWhere('email', 'LIKE', "%{$search}%");
         })->latest()->paginate(10, ['*'], 'adm_page')->withQueryString();
 
-        return view('pages.users.index', compact('users', 'tab', 'search'));
-    }
+        $permissions = [];
 
-    /**
-     * Store a newly created employee.
-     */
-    public function storeEmployee(Request $request)
-    {
-        $request->validate([
-            'employee_code' => 'required|string|unique:employees,employee_code',
-            'name'          => 'required|string|max:255',
-        ]);
-
-        Employee::create([
-            'employee_code' => strtoupper($request->employee_code),
-            'name'          => $request->name,
-            'is_active'     => true,
-        ]);
-
-        return redirect()->route('users.index', ['tab' => 'employees'])
-            ->with('success', 'Employee profile registered successfully!');
+        return view('pages.users.index', compact('users', 'tab', 'search', 'permissions'));
     }
 
     /**
      * Store a newly created administrator.
      */
-    public function storeAdmin(Request $request)
+    public function store(Request $request)
     {
         $request->validate([
             'name'     => 'required|string|max:255',

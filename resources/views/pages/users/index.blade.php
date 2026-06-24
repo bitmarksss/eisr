@@ -7,6 +7,17 @@
     @include('components.sidebar')
     
     <div class="flex-1 flex flex-col overflow-y-auto">
+    
+        <!-- TEST -->
+        <button 
+            x-data 
+            @click="$dispatch('open-register-modal')" 
+            class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700"
+        >
+            Add New User
+        </button>
+        <x-register-modal :permissions="$permissions" />
+        <!-- TEST -->
 
         @include('components.topbar')
         <main class="flex-1 flex flex-col overflow-y-auto p-8 max-w-7xl mx-auto w-full space-y-8">
@@ -32,7 +43,7 @@
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
                 
-                <div class="space-y-6">
+                <!-- <div class="space-y-6">
                     
                     <section class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm space-y-4">
                         <h2 class="flex items-center font-bold text-gray-800 text-md"> 
@@ -41,7 +52,7 @@
                         </h2>
                         <p class="text-xs text-gray-400">Creates a reference profile for logging Excel transaction entries.</p>
                         
-                        <form action="{{ route('users.store.employee') }}" method="POST" class="space-y-3">
+                        <form action="{{ route('users.store') }}" method="POST" class="space-y-3">
                             @csrf
                             <div>
                                 <label class="text-xs font-bold text-gray-500 uppercase block mb-1">Employee ID Code</label>
@@ -65,7 +76,7 @@
                         </h2>
                         <p class="text-xs text-gray-400">Grants login and upload execution authorizations to managers.</p>
                         
-                        <form action="{{ route('users.store.admin') }}" method="POST" class="space-y-3">
+                        <form action="{{ route('users.store') }}" method="POST" class="space-y-3">
                             @csrf
                             <div>
                                 <label class="text-xs font-bold text-gray-500 uppercase block mb-1">Admin Name</label>
@@ -89,9 +100,9 @@
                             </button>
                         </form>
                     </section>
-                </div>
+                </div> -->
 
-                <section class="lg:col-span-2 bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden flex flex-col">
+                <section class="lg:col-span-3 bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden flex flex-col">
                     
                     <div class="flex border-b border-gray-100 bg-gray-50/70">
                         <a href="{{ route('users.index', ['tab' => 'employees']) }}" class="flex-1 text-center py-3 font-semibold text-sm transition {{ $tab === 'employees' ? 'bg-white border-b-2 border-indigo-600 text-indigo-600' : 'text-gray-400 hover:text-gray-600' }}">
@@ -124,70 +135,36 @@
                     </div>
 
                     <div class="overflow-x-auto flex-1">
-                        @if($tab === 'employees')
-                            <table id="users-table" class="w-full text-left border-collapse">
-                                <thead>
-                                    <tr class="border-b border-gray-200 bg-gray-50/50 text-xs font-semibold uppercase tracking-wider text-gray-500">
-                                        <th class="px-6 py-3">Code ID</th>
-                                        <th class="px-6 py-3">Full Name</th>
-                                        <th class="px-6 py-3">Monitoring Status</th>
+                        <table id="users-table" class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="border-b border-gray-200 bg-gray-50/50 text-xs font-semibold uppercase tracking-wider text-gray-500">
+                                    <th class="px-6 py-3">Admin Operator Name</th>
+                                    <th class="px-6 py-3">Email Address</th>
+                                    <th class="px-6 py-3">Role</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-100 text-sm overflow-y-auto">
+                                @forelse($users as $user)
+                                    <tr class="hover:bg-gray-50/70 transition">
+                                        <td class="px-6 py-4 font-semibold text-gray-900 text-xs">{{ $user->last_name }} {{ $user->first_name }}</td>
+                                        <td class="px-6 py-4 text-gray-600 text-xs">{{ $user->email }}</td>
+                                        <td class="px-6 py-4">
+                                            <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-slate-50 text-slate-700 border border-slate-100">Full System Admin</span>
+                                        </td>
                                     </tr>
-                                </thead>
-                                <tbody class="divide-y divide-gray-100 text-sm">
-                                    @forelse($employees as $emp)
-                                        <tr class="hover:bg-gray-50/70 transition">
-                                            <td class="px-6 py-4 font-mono font-bold text-gray-600 text-xs">{{ $emp->employee_code }}</td>
-                                            <td class="px-6 py-4 text-gray-900 font-medium">{{ $emp->name ?? 'Unnamed Profile' }}</td>
-                                            <td class="px-6 py-4">
-                                                <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-100">Tracking Active</span>
-                                            </td>
-                                        </tr>
-                                    @empty
-                                        <tr>
-                                            <td colspan="3" class="px-6 py-12 text-center text-gray-400 text-sm">📭 No matching trackable employee records found.</td>
-                                        </tr>
-                                    @endforelse
-                                </tbody>
-                            </table>
-                            
-                            @if($employees->hasPages())
-                                <div class="px-6 py-3 border-t border-gray-100 bg-gray-50/50">{{ $employees->links() }}</div>
-                            @endif
-
-                        @else
-                            <table class="w-full text-left border-collapse">
-                                <thead>
-                                    <tr class="border-b border-gray-200 bg-gray-50/50 text-xs font-semibold uppercase tracking-wider text-gray-500">
-                                        <th class="px-6 py-3">Admin Operator Name</th>
-                                        <th class="px-6 py-3">Email Address</th>
-                                        <th class="px-6 py-3">Privilege Level</th>
+                                @empty
+                                    <tr>
+                                        <td colspan="3" class="px-6 py-12 text-center text-gray-400 text-sm">📭 No administrative operators match the filtering search.</td>
                                     </tr>
-                                </thead>
-                                <tbody class="divide-y divide-gray-100 text-sm overflow-y-auto">
-                                    @forelse($users as $user)
-                                        <tr class="hover:bg-gray-50/70 transition">
-                                            <td class="px-6 py-4 font-semibold text-gray-900">{{ $user->name }}</td>
-                                            <td class="px-6 py-4 text-gray-600 text-xs">{{ $user->email }}</td>
-                                            <td class="px-6 py-4">
-                                                <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-slate-50 text-slate-700 border border-slate-100">Full System Admin</span>
-                                            </td>
-                                        </tr>
-                                    @empty
-                                        <tr>
-                                            <td colspan="3" class="px-6 py-12 text-center text-gray-400 text-sm">📭 No administrative operators match the filtering search.</td>
-                                        </tr>
-                                    @endforelse
-                                </tbody>
-                            </table>
+                                @endforelse
+                            </tbody>
+                        </table>
 
-                            @if($users->hasPages())
-                                <div class="px-6 py-3 border-t border-gray-100 bg-gray-50/50">{{ $users->links() }}</div>
-                            @endif
+                        @if($users->hasPages())
+                            <div class="px-6 py-3 border-t border-gray-100 bg-gray-50/50">{{ $users->links() }}</div>
                         @endif
                     </div>
-
                 </section>
-
             </div>
         </main>
     </div>
@@ -196,10 +173,18 @@
 
 @push('scripts')
 <script type="module">
+document.addEventListener('DOMContentLoaded', () => {
+    const usersTable = new window.DataTable('#users-table');
 
-    document.addEventListener('DOMContentLoaded', () => {
-        console.log('test');
-    });
+    const dtSearchContainer = document.getElementsByClassName('datatable-search');
+    
+    console.log(dtSearchContainer[0]);
+    dtSearchContainer[0]
+        .classList.add('flex', 'gap-2');
+        
+    dtSearchContainer[0]
+        .insertAdjacentHTML('beforeend', `<div>test</div>`);
 
+});
 </script>
 @endpush

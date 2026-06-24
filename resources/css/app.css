@@ -1,6 +1,5 @@
 @import "tailwindcss";
 @import "@fortawesome/fontawesome-free/css/all.css";
-@import 'datatables.net-dt/css/dataTables.dataTables.css';
 
 @import "./components.css";
 @import "./dashboard.css";
@@ -24,4 +23,69 @@
     --bg-light: #F8FAFC;
     --bg-dark: #0F172A;
     --bg-muted: #E2E8F0;
+}
+
+.datatable-table th {
+    @apply
+        text-xs
+}
+
+.datatable-top {
+    display: flex;
+    justify-content: space-between;
+
+    @apply
+        px-4
+        pt-4
+        mb-4
+        text-sm
+}
+
+.datatable-container {
+    @apply
+        border-t
+        border-gray-200
+}
+
+.datatable-dropdown {
+    @apply
+        text-gray-500
+}
+
+.datatable-selector {
+    @apply 
+        border
+        border-gray-300
+        rounded-md
+        p-1
+}
+
+.datatable-input {
+    @apply
+        py-2.5
+        pl-8
+        pr-4
+        border
+        border-gray-300
+        rounded-lg
+}
+.datatable-input:focus:active {
+    border-color: #94A3B8 !important;
+}
+
+.datatable-info {
+    color: #6b7280;
+    text-align: end;
+    @apply
+        px-4
+        py-3
+        text-xs
+}
+
+.datatable-empty {
+    color: #6b7280;
+    text-align: end;
+    @apply
+        px-4
+        text-xs
 }

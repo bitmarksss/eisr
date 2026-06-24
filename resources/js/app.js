@@ -1,6 +1,6 @@
 import './bootstrap';
 
-import DataTable from 'datatables.net-dt';
+import { DataTable } from 'simple-datatables';
 window.DataTable = DataTable;
 
 import { initNotificationSystem } from './components/notification';

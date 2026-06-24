@@ -61,7 +61,6 @@ Route::prefix('payments')->group(function () {
 Route::prefix('users')->group(function () {
     Route::get('/', [UserController::class, 'index'])->name('users.index');
 
-    Route::post('/employee', [UserController::class, 'storeEmployee'])->name('users.store.employee');
-    Route::post('/admin', [UserController::class, 'storeAdmin'])->name('users.store.admin');
+    Route::post('/store', [UserController::class, 'store'])->name('users.store');
 
 });
