@@ -20,14 +20,14 @@ export function openModal(modal) {
     selectedModal = document.getElementById(modal);
     if (!selectedModal) return;
     
-    console.log(modal);
-    console.log(selectedModal);
+    // console.log(modal);
+    // console.log(selectedModal);
 
-    backdrop.classList.add('absolute');
-    backdrop.classList.remove('hidden');
+    // backdrop.classList.add('absolute');
+    // backdrop.classList.remove('hidden');
 
-    backdrop.classList.remove('opacity-0', 'pointer-events-none');
-    backdrop.classList.add('opacity-100');
+    // backdrop.classList.remove('opacity-0', 'pointer-events-none');
+    // backdrop.classList.add('opacity-100');
 
     selectedModal.classList.remove('opacity-0', 'pointer-events-none');
     selectedModal.classList.add('opacity-100');
@@ -40,8 +40,8 @@ export function closeModal() {
 
     document.removeEventListener('keydown', handleEscapeKey);
 
-    backdrop.classList.remove('opacity-100');
-    backdrop.classList.add('opacity-0', 'pointer-events-none');
+    // backdrop.classList.remove('opacity-100');
+    // backdrop.classList.add('opacity-0', 'pointer-events-none');
 
     selectedModal.classList.remove('opacity-100');
     selectedModal.classList.add('opacity-0', 'pointer-events-none');

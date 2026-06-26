@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Inventory;
 use App\Models\UploadedFile;
 use App\Services\UploadExcelService;
 
@@ -21,29 +22,9 @@ class InventoryController extends Controller
      */
     public function index(Request $request)
     {
-        $query = UploadedFile::with('uploader')->ofModule('inventory');
+        $inventory_items = Inventory::get();
 
-        // Filter by Hashed/Original Filename Search
-        if ($request->filled('search')) {
-            $query->search($request->input('search'));
-        }
-
-        // Filter by Status (completed, processing, failed)
-        if ($request->filled('status')) {
-            $query->where('status', $request->input('status'));
-        }
-
-        // Filter by Date Range
-        if ($request->filled('date_from')) {
-            $query->whereDate('created_at', '>=', $request->input('date_from'));
-        }
-        if ($request->filled('date_to')) {
-            $query->whereDate('created_at', '<=', $request->input('date_to'));
-        }
-
-        $files = $query->latest()->paginate(10)->withQueryString();
-
-        return view('pages.inventory.index', compact('files'));
+        return view('pages.inventory.index', compact('inventory_items'));
     }
 
     /**
@@ -82,5 +63,61 @@ class InventoryController extends Controller
             // Any structural bugs/failures gracefully fallback here
             return back()->with('errors', [$e->getMessage()]);
         }
+    }
+
+    public function store(Request $request) 
+    {
+        // 1. Validate fields against incoming modal input names
+        $request->validate([
+            'sku'      => 'required|string|max:255|unique:inventory,sku',
+            'name'     => 'required|string|max:255',
+            'category' => 'required|string|in:Mechanical,Hydraulics,Electrical',
+            'quantity' => 'required|integer|min:0',
+        ]);
+
+        // 2. Persist data via Mass Assignment using your fillable array
+        Inventory::create([
+            'sku'      => $request->sku,
+            'name'     => $request->name,
+            'category' => $request->category,
+            'quantity' => $request->quantity,
+        ]);
+
+        // 3. Redirect back to the index with a clean success message flash
+        return redirect()->route('inventory.index')
+            ->with('success', "Inventory record [{$request->sku}] created successfully!");
+    }
+
+    public function update(Request $request, $id) 
+    {
+        // 1. Locate the item or throw a 404 if it doesn't exist
+        $item = Inventory::findOrFail($id);
+
+        // 2. Validate fields, ensuring the unique SKU rule ignores this specific item's ID
+        $request->validate([
+            'sku'      => 'required|string|max:255|unique:inventory,sku,' . $item->id,
+            'name'     => 'required|string|max:255',
+            'category' => 'required|string|in:Mechanical,Hydraulics,Electrical',
+            'quantity' => 'required|integer|min:0',
+        ]);
+
+        // 3. Update the fields safely
+        $item->update([
+            'sku'      => $request->sku,
+            'name'     => $request->name,
+            'category' => $request->category,
+            'quantity' => $request->quantity,
+        ]);
+
+        return redirect()->route('inventory.index')
+            ->with('success', "Inventory item [{$request->sku}] has been successfully updated!");
+    }
+
+    public function add(Request $request) {
+        
+    }
+
+    public function delete($id) {
+        
     }
 }

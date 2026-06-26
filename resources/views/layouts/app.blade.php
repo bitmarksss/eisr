@@ -8,6 +8,8 @@
 </head>
 <body class="bg-brand-light text-brand-dark font-sans antialiased">
     @include('components.backdrop')
+    @include('components.add-inventory-modal')
+    @include('components.edit-inventory-modal')
 
     <div class="flex flex-row h-screen overflow-hidden">
         <!-- Sidebar Navigation (Deep Forest Green Accent) -->
@@ -35,7 +37,6 @@
 
             <!-- Dashboard Content Slot -->
             <main class="p-8">
-
                 @yield('content')
             </main>
         </div>

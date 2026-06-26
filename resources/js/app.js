@@ -16,6 +16,35 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initialize modal system
     initModalSystem();
     window.openModal = openModal;
+    window.closeModal = closeModal;
+
+    window.openEditInventoryModal = function (id, sku, name, category, quantity) {
+        const modal = document.getElementById('editInventoryModal');
+        const form = document.getElementById('editInventoryForm');
+
+        console.log(id, sku, name);
+        
+        // Inject values dynamically from the row click arguments
+        document.getElementById('edit_modal_sku').value = sku;
+        document.getElementById('edit_modal_item_name').value = name;
+        document.getElementById('edit_modal_category').value = category || '';
+        document.getElementById('edit_modal_quantity').value = quantity;
+        
+        // Set the target endpoint update route dynamically (e.g., /inventory/22)
+        form.action = `/inventory/${id}`;
+        
+        // Dynamically update the form action URL to point to your update route endpoint (e.g., /inventory/5)
+        form.action = `/inventory/${id}`;
+        
+        // Remove Tailwind v4 display guards
+        window.openModal('editInventoryModal');
+        // modal.classList.remove('opacity-0', 'pointer-events-none');
+    }
+
+    window.closeEditInventoryModal = function() {
+        const modal = document.getElementById('editInventoryModal');
+        modal.classList.add('opacity-0', 'pointer-events-none');
+    }
 
 
 

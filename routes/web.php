@@ -37,6 +37,8 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
 
     Route::prefix('inventory')->group(function () {
         Route::get('/', [InventoryController::class, 'index'])->name('inventory.index');
+        Route::post('/store', [InventoryController::class, 'store'])->name('inventory.store');
+        Route::put('/{id}', [InventoryController::class, 'update'])->name('inventory.update');
         Route::post('/upload', [InventoryController::class, 'upload'])->name('inventory.upload');
 
     });
