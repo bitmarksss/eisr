@@ -6,6 +6,10 @@
     @include('components.sidebar')
 @endsection
 
+@section('modal')
+    @include('components.add-inventory-modal')
+@endsection
+
 @section('content')
 <!-- Metric Cards Overview -->
 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">

@@ -7,6 +7,8 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="bg-brand-light text-brand-dark font-sans antialiased">
+    @include('components.backdrop')
+
     <div class="flex flex-row h-screen overflow-hidden">
         <!-- Sidebar Navigation (Deep Forest Green Accent) -->
         @yield('sidebar')
@@ -18,8 +20,9 @@
                 <h1 class="text-xl font-bold text-brand-navy">@yield('page-title', 'Dashboard')</h1>
                 <div class="flex items-center space-x-4">
                     <!-- Dynamic Quick Action Accent Button Based on Role -->
-                    @if(auth()->user()?->role == 1)
-                        <button class="bg-brand-gold hover:bg-brand-goldHover text-white font-semibold px-4 py-2 rounded-lg shadow transition text-sm">
+                    @if(auth()->user()?->role_id == 1)
+                        <button class="bg-brand-gold hover:bg-brand-goldHover text-white font-semibold px-4 py-2 rounded-lg shadow transition text-sm cursor-pointer active:translate-y-0.5"
+                        onclick="window.openModal('addInventoryModal')">
                             + Add New Stock Item
                         </button>
                     @else
@@ -32,6 +35,7 @@
 
             <!-- Dashboard Content Slot -->
             <main class="p-8">
+
                 @yield('content')
             </main>
         </div>

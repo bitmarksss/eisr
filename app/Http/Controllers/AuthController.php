@@ -36,7 +36,7 @@ class AuthController extends Controller
         if(auth()->attempt($credentials)) {
             $request->session()->regenerate();
 
-            $user = Auth::user();
+            $user = Auth::user()->load('role');
 
             return redirect()->route('dashboard')->with('toast-success', 'Welcome to Gatepass System '. $user->first_name);
         }

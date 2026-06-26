@@ -18,7 +18,7 @@ class SuperAdminSeeder extends Seeder
             'last_name' => 'Admin',
             'first_name' => 'Super',
             'middle_name' => '',
-            'role' => 1,
+            'role_id' => 1,
             'email' => 'superadmin@example.com',
             'username' => 'superadmin',
             'password' => Hash::make('superadmin'), // Always hash the password!

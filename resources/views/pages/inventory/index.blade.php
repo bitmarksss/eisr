@@ -1,171 +1,157 @@
 @extends('layouts.app')
 
-@section('content')
+@section('page-title', 'Inventory Items')
 
-<div class="flex h-screen overflow-hidden">
+@section('sidebar')
     @include('components.sidebar')
-    
-    <div class="flex-1 flex flex-col overflow-y-auto">
-        @include('components.topbar')
-        
-        <main class="flex-1 flex flex-col overflow-y-auto p-8 max-w-7xl mx-auto w-full space-y-8">
-            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-gray-200 pb-5">
-                <div>
-                    <h1 class="text-2xl font-bold text-gray-900 tracking-tight">
-                        <i class="fa-solid fa-box-open text-amber-400"></i>
-                        Inventory Subscriptions
-                    </h1>
-                    <p class="text-sm text-gray-500 mt-1">Upload and review employee cafeteria transactions logs.</p>
-                </div>
-            </div>
-
-            @if(session('success'))
-                <div class="bg-emerald-50 border border-emerald-200 text-emerald-800 px-4 py-3 rounded-xl text-sm font-medium">
-                    ✅ {{ session('success') }}
-                </div>
-            @endif
-            @if(session('errors'))
-                @foreach(session('errors') as $error)
-                    <div class="bg-rose-50 border border-rose-200 text-rose-800 px-4 py-3 rounded-xl text-sm font-medium">
-                        ⚠️ {{ $error }}
-                    </div>
-                @endforeach
-            @endif
-
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-                
-                <section class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm space-y-4">
-                    <h2 class="font-bold text-gray-800 text-lg">Batch Import Excel</h2>
-                    <p class="text-xs text-gray-400">File columns layout mapping rule requirement: <strong>(empid, total, date)</strong>.</p>
-                    
-                    <form action="{{ route('inventory.upload') }}" method="POST" enctype="multipart/form-data" class="space-y-4">
-                        @csrf
-                        
-                        <!-- File Dropzone Container -->
-                        <div id="dropzone" class="group border-2 border-dashed border-gray-300 rounded-xl p-6 text-center hover:border-amber-500 transition cursor-pointer relative bg-gray-50/50">
-                            
-                            <!-- File Input -->
-                            <input type="file" id="fileInput" name="excel_file" required class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" />
-                            
-                            <!-- Icon -->
-                            <span class="text-3xl block mb-2">
-                                <i id="fileIcon" class="fa-solid fa-file-excel text-gray-300 group-hover:text-amber-500 transition"></i>
-                            </span>
-                            
-                            <!-- Dynamic Main Text -->
-                            <span id="mainText" class="text-sm font-medium text-gray-400 group-hover:text-gray-600 block pointer-events-none transition">
-                                Click to select or drag document here
-                            </span>
-                            
-                            <!-- Dynamic Sub Text / Extension -->
-                            <span id="subText" class="text-xs text-gray-300 group-hover:text-gray-400 mt-1 block pointer-events-none transition">
-                                XLSX, XLS, or CSV format up to 10MB
-                            </span>
-
-                            <!-- Remove Button (Hidden by default via 'hidden' class) -->
-                            <div id="removeButtonContainer" class="mt-3 hidden relative z-20">
-                                <button type="button" id="btnRemove" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-rose-600 bg-rose-50 border border-rose-200 rounded-lg hover:bg-rose-100 transition cursor-pointer">
-                                    ✕ Remove File
-                                </button>
-                            </div>
-                        </div>
-
-                        <button type="submit" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-semibold py-2.5 px-4 rounded-xl text-sm transition shadow-sm cursor-pointer">
-                            Process Batch Upload
-                        </button>
-                    </form>
-                </section>
-
-                <section class="lg:col-span-2 bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden flex flex-col">
-                    
-                    <form action="{{ route('inventory.index') }}" method="GET" class="p-4 border-b border-gray-100 bg-gray-50/50 grid grid-cols-1 md:grid-cols-12 gap-3 items-end">
-                        <div class="md:col-span-4">
-                            <label class="text-xs font-bold uppercase text-gray-400 block mb-1">Filename Search</label>
-                            <input type="text" name="search" value="{{ request('search') }}" placeholder="Search files..." class="w-full text-xs p-2 border border-gray-300 rounded-lg outline-none bg-white focus:border-amber-500" />
-                        </div>
-                        <div class="md:col-span-2">
-                            <label class="text-xs font-bold uppercase text-gray-400 block mb-1">Status</label>
-                            <select name="status" class="w-full text-xs p-2 border border-gray-300 rounded-lg outline-none bg-white focus:border-amber-500">
-                                <option value="">All States</option>
-                                <option value="completed" {{ request('status') === 'completed' ? 'selected' : '' }}>Completed</option>
-                                <option value="processing" {{ request('status') === 'processing' ? 'selected' : '' }}>Processing</option>
-                                <option value="failed" {{ request('status') === 'failed' ? 'selected' : '' }}>Failed</option>
-                            </select>
-                        </div>
-                        <div class="md:col-span-2">
-                            <label class="text-xs font-bold uppercase text-gray-400 block mb-1">From</label>
-                            <input type="date" name="date_from" value="{{ request('date_from') }}" class="w-full text-xs p-1.5 border border-gray-300 rounded-lg outline-none bg-white focus:border-amber-500" />
-                        </div>
-                        <div class="md:col-span-2">
-                            <label class="text-xs font-bold uppercase text-gray-400 block mb-1">To</label>
-                            <input type="date" name="date_to" value="{{ request('date_to') }}" class="w-full text-xs p-1.5 border border-gray-300 rounded-lg outline-none bg-white focus:border-amber-500" />
-                        </div>
-                        <div class="md:col-span-2 flex gap-1">
-                            <button type="submit" class="w-full bg-slate-800 hover:bg-slate-900 text-white text-xs font-semibold py-2 px-3 rounded-lg transition cursor-pointer">Apply</button>
-                            <a href="{{ route('inventory.index') }}" class="bg-gray-200 hover:bg-gray-300 text-gray-700 text-xs font-semibold py-2 px-2 rounded-lg transition text-center flex items-center justify-center">✕</a>
-                        </div>
-                    </form>
-
-                    <div class="overflow-x-auto flex-1">
-                        <table class="w-full text-left border-collapse">
-                            <thead>
-                                <tr class="border-b border-gray-200 bg-gray-50 text-xs font-semibold uppercase tracking-wider text-gray-500">
-                                    <th class="px-6 py-3">File Information</th>
-                                    <th class="px-6 py-3">Metrics</th>
-                                    <th class="px-6 py-3">Status</th>
-                                    <th class="px-6 py-3">Date Uploaded</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-gray-100 text-sm">
-                                @forelse($files as $file)
-                                    <tr class="hover:bg-gray-50/70 transition">
-                                        <td class="px-6 py-4">
-                                            <div class="font-semibold text-gray-900 truncate max-w-xs" title="{{ $file->original_filename }}">
-                                                {{ $file->original_filename }}
-                                            </div>
-                                            <div class="text-xs text-gray-400 font-mono mt-0.5">
-                                                By: {{ $file->admin->name ?? 'System Admin' }}
-                                            </div>
-                                        </td>
-                                        <td class="px-6 py-4">
-                                            <span class="text-gray-900 font-medium">{{ $file->row_count }} items</span>
-                                        </td>
-                                        <td class="px-6 py-4">
-                                            @if($file->status === 'completed')
-                                                <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">Completed</span>
-                                            @elseif($file->status === 'processing')
-                                                <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200">Processing</span>
-                                            @else
-                                                <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-rose-50 text-rose-700 border border-rose-200">Failed</span>
-                                            @endif
-                                        </td>
-                                        <td class="px-6 py-4 text-gray-500 text-xs">
-                                            {{ $file->created_at->format('M d, Y h:i A') }}
-                                        </td>
-                                    </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="4" class="px-6 py-12 text-center text-gray-400 text-sm">
-                                            📭 No uploaded files found matching the layout criteria.
-                                        </td>
-                                    </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
-
-                    @if($files->hasPages())
-                        <div class="px-6 py-3 border-t border-gray-100 bg-gray-50/50">
-                            {{ $files->links() }}
-                        </div>
-                    @endif
-                </section>
-
-            </div>
-        </main>
-    </div>
-</div>
 @endsection
 
-@push('scripts')
-@endpush
+@section('content')
+<div class="space-y-6">
+
+    @if(session('success'))
+        <div class="bg-green-100 border border-brand-green/30 text-brand-green p-4 rounded-xl text-sm font-semibold flex items-center shadow-xs">
+            <span class="mr-2">✓</span> {{ session('success') }}
+        </div>
+    @endif
+
+    @if(request('action') === 'adjust' && request('sku'))
+        <div class="bg-white rounded-xl border border-brand-gold/30 shadow-md overflow-hidden max-w-2xl">
+            <div class="px-6 py-4 bg-brand-green text-white flex justify-between items-center">
+                <h3 class="font-bold tracking-wide">Adjust Stock Level — SKU: {{ request('sku') }}</h3>
+                <a href="{{ route('inventory.index') }}" class="text-white/70 hover:text-white font-bold text-lg">✕</a>
+            </div>
+            
+            <form action="#" method="POST" class="p-6 space-y-4">
+                @csrf
+                <input type="hidden" name="sku" value="{{ request('sku') }}">
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label for="adjustment_type" class="block text-xs font-bold text-brand-dark uppercase tracking-wider mb-1">Adjustment Action</label>
+                        <select id="adjustment_type" name="type" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2.5 text-sm focus:border-brand-gold focus:outline-none">
+                            <option value="add">Add Stock (+) </option>
+                            <option value="remove">Remove / Pull Stock (-)</option>
+                            <option value="audit">Set Absolute Count (=)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="quantity" class="block text-xs font-bold text-brand-dark uppercase tracking-wider mb-1">Quantity</label>
+                        <input type="number" id="quantity" name="quantity" min="1" required placeholder="0"
+                            class="w-full bg-gray-50 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:border-brand-gold focus:outline-none">
+                    </div>
+                </div>
+
+                <div>
+                    <label for="reason" class="block text-xs font-bold text-brand-dark uppercase tracking-wider mb-1">Log Modification Reason</label>
+                    <input type="text" id="reason" name="reason" required placeholder="e.g., Damaged item replacement, monthly audit variance, incoming supplier batch"
+                        class="w-full bg-gray-50 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:border-brand-gold focus:outline-none">
+                </div>
+
+                <div class="pt-4 flex justify-end space-x-3 border-t border-gray-100">
+                    <a href="{{ route('inventory.index') }}" class="px-4 py-2 text-sm font-semibold text-gray-500 hover:text-gray-700 transition">Cancel</a>
+                    <button type="submit" class="px-5 py-2 rounded-lg bg-brand-gold hover:bg-brand-gold-hover text-white text-sm font-bold shadow-xs transition cursor-pointer">
+                        Apply Adjustments
+                    </button>
+                </div>
+            </form>
+        </div>
+    @endif
+
+    <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        
+        <form method="GET" action="{{ route('inventory.index') }}" class="flex flex-wrap items-center gap-3 flex-1 w-full">
+            <div class="relative min-w-[280px] flex-1 max-w-md">
+                <input type="text" name="search" value="{{ request('search') }}" placeholder="Search inventory by title, SKU, or rack location..." 
+                    class="w-full bg-gray-50 border border-gray-300 text-brand-dark text-sm rounded-lg pl-3 pr-10 py-2 focus:border-brand-gold focus:outline-none focus:ring-2 focus:ring-brand-gold/20 transition">
+            </div>
+
+            <select name="status_filter" onchange="this.form.submit()" 
+                class="bg-gray-50 border border-gray-300 text-brand-dark text-sm rounded-lg p-2 focus:outline-none focus:border-brand-gold">
+                <option value="">All Stock Levels</option>
+                <option value="in_stock" {{ request('status_filter') == 'in_stock' ? 'selected' : '' }}>In Stock</option>
+                <option value="low_stock" {{ request('status_filter') == 'low_stock' ? 'selected' : '' }}>Low Stock</option>
+                <option value="out_of_stock" {{ request('status_filter') == 'out_of_stock' ? 'selected' : '' }}>Out of Stock</option>
+            </select>
+        </form>
+
+        @if(auth()->user()?->is_admin)
+            <a href="#" class="bg-brand-gold hover:bg-brand-gold-hover text-white font-bold px-5 py-2.5 rounded-lg shadow-sm text-sm transition text-center whitespace-nowrap">
+                + Catalog New Item
+            </a>
+        @else
+            <a href="#" class="bg-brand-navy hover:bg-brand-dark text-white font-bold px-5 py-2.5 rounded-lg shadow-sm text-sm transition text-center whitespace-nowrap">
+                Request Stock Disbursement
+            </a>
+        @endif
+    </div>
+
+    <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-gray-50 text-xs font-bold text-brand-navy uppercase tracking-wider border-b border-gray-200">
+                        <th class="px-6 py-4">Product Details / SKU</th>
+                        <th class="px-6 py-4">Warehouse Grid Location</th>
+                        <th class="px-6 py-4">Available Quantity</th>
+                        <th class="px-6 py-4">System Threshold Flag</th>
+                        <th class="px-6 py-4 text-right">Operational Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100 text-sm text-gray-700">
+                    
+                    <tr class="hover:bg-gray-50/50 transition">
+                        <td class="px-6 py-4">
+                            <div class="font-bold text-brand-dark text-base">Industrial Carbide Drillbits (Pack of 10)</div>
+                            <span class="font-mono text-xs text-gray-400 bg-gray-100 px-1.5 py-0.5 rounded">PMC-DRL-552</span>
+                        </td>
+                        <td class="px-6 py-4 font-medium text-gray-600">Aisle 4, Shelf C-3</td>
+                        <td class="px-6 py-4 font-semibold text-brand-dark">340 Units</td>
+                        <td class="px-6 py-4">
+                            <span class="px-2.5 py-1 bg-green-50 text-brand-green border border-brand-green/20 font-bold text-xs rounded-full">In Stock</span>
+                        </td>
+                        <td class="px-6 py-4 text-right space-x-3 whitespace-nowrap">
+                            <a href="{{ route('inventory.index', ['action' => 'adjust', 'sku' => 'PMC-DRL-552']) }}" 
+                               class="text-brand-gold hover:underline text-xs font-bold">Quick Update</a>
+                        </td>
+                    </tr>
+
+                    <tr class="hover:bg-gray-50/50 transition">
+                        <td class="px-6 py-4">
+                            <div class="font-bold text-brand-dark text-base">High-Pressure Hydraulic Sealant</div>
+                            <span class="font-mono text-xs text-gray-400 bg-gray-100 px-1.5 py-0.5 rounded">PMC-HYD-990</span>
+                        </td>
+                        <td class="px-6 py-4 font-medium text-gray-600">Aisle 2, Shelf A-1</td>
+                        <td class="px-6 py-4 font-bold text-brand-gold">8 Units</td>
+                        <td class="px-6 py-4">
+                            <span class="px-2.5 py-1 bg-amber-50 text-brand-gold border border-brand-gold/20 font-bold text-xs rounded-full">Low Stock</span>
+                        </td>
+                        <td class="px-6 py-4 text-right space-x-3 whitespace-nowrap">
+                            <a href="{{ route('inventory.index', ['action' => 'adjust', 'sku' => 'PMC-HYD-990']) }}" 
+                               class="text-brand-gold hover:underline text-xs font-bold">Reorder / Adjust</a>
+                        </td>
+                    </tr>
+
+                    <tr class="hover:bg-gray-50/50 transition bg-red-50/20">
+                        <td class="px-6 py-4">
+                            <div class="font-bold text-brand-dark text-base">Titanium Alloy Structural Couplings</div>
+                            <span class="font-mono text-xs text-gray-400 bg-gray-100 px-1.5 py-0.5 rounded">PMC-TIT-012</span>
+                        </td>
+                        <td class="px-6 py-4 font-medium text-gray-600">Aisle 7, Shelf F-9</td>
+                        <td class="px-6 py-4 font-bold text-red-600">0 Units</td>
+                        <td class="px-6 py-4">
+                            <span class="px-2.5 py-1 bg-red-100 text-red-700 border border-red-200 font-bold text-xs rounded-full">Out of Stock</span>
+                        </td>
+                        <td class="px-6 py-4 text-right space-x-3 whitespace-nowrap">
+                            <a href="{{ route('inventory.index', ['action' => 'adjust', 'sku' => 'PMC-TIT-012']) }}" 
+                               class="text-brand-gold hover:underline text-xs font-bold">Emergency Restock</a>
+                        </td>
+                    </tr>
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+@endsection
