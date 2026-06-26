@@ -3,48 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    
-    <title>EDIS</title>
-
-    @vite('resources/css/app.css')
-    @livewireStyles
-    @stack('page-css')
+    <title>EDIS | @yield('page-title', 'PMC Inventory Management')</title>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
+<body class="bg-brand-light text-brand-dark font-sans antialiased">
+    <div class="flex flex-row h-screen overflow-hidden">
+        <!-- Sidebar Navigation (Deep Forest Green Accent) -->
+        @yield('sidebar')
 
-<!-- <body class="background-color relative"> -->
-<body class="bg-gray-100 font-sans text-gray-800 antialiased">
+        <!-- Main Content Area -->
+        <div class="flex-1 flex flex-col overflow-y-auto">
+            <!-- Top Navbar -->
+            <header class="bg-white border-b border-gray-200 h-16 flex items-center justify-between px-8 py-6 z-10">
+                <h1 class="text-xl font-bold text-brand-navy">@yield('page-title', 'Dashboard')</h1>
+                <div class="flex items-center space-x-4">
+                    <!-- Dynamic Quick Action Accent Button Based on Role -->
+                    @if(auth()->user()?->role == 1)
+                        <button class="bg-brand-gold hover:bg-brand-goldHover text-white font-semibold px-4 py-2 rounded-lg shadow transition text-sm">
+                            + Add New Stock Item
+                        </button>
+                    @else
+                        <button class="bg-brand-navy hover:bg-brand-dark text-white font-semibold px-4 py-2 rounded-lg shadow transition text-sm">
+                            Request Stock Pull
+                        </button>
+                    @endif
+                </div>
+            </header>
 
-    <!-- Notifications -->
-    <div class="notification-container" id="notification-container">   
-        @if(session('notification'))
-            @foreach(session('notification.messages') as $message)
-                <x-notification>
-                    <x-slot name="header">{{ session('notification.title') }}</x-slot>
-                    <x-slot name="body">{{ $message[0] }}</x-slot>
-                    <x-slot name="footer">Just Now</x-slot>
-                </x-notification>
-            @endforeach
-        @endif
+            <!-- Dashboard Content Slot -->
+            <main class="p-8">
+                @yield('content')
+            </main>
+        </div>
     </div>
-
-    <!-- Future Sidebar -->
-    @yield('sidebar')
-
-    <!-- Main Content Section -->
-    <div class="content">
-        @yield('content')
-    </div>
-
-    <script>
-        window.__CSRF_TOKEN__ = document.querySelector('meta[name="csrf-token"]').content;
-    </script>
-
-    @vite('resources/js/app.js')
-    
-    @livewireScripts
-
     @stack('scripts')
-    @yield('modal-scripts')
 </body>
 </html>

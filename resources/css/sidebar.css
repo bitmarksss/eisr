@@ -1,0 +1,40 @@
+.sidebar-label {
+    @apply
+        px-4 
+        text-xs 
+        font-semibold 
+        uppercase 
+        tracking-wider
+        text-brand-gold
+}
+
+.sidebar-link {
+    @apply
+        flex 
+        items-center
+        px-4 
+        py-2.5 
+        gap-2
+        rounded-lg 
+        text-gray-300
+        text-sm
+        font-medium 
+        transition
+}
+
+.sidebar-link:hover {
+    @apply
+        bg-white/5
+        text-white
+}
+
+.sidebar-link:active {
+    @apply
+        bg-white/10
+}
+
+.sidebar-link.selected {
+    @apply
+        bg-white/10 
+        text-white 
+}

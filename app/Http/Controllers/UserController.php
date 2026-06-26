@@ -2,30 +2,40 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
-use App\Models\Employee;
+use App\Models\{
+    Role, 
+    User
+};
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
-    /**
-     * Display both Employees and Administrators lists.
-     */
     public function index(Request $request)
     {
         $search = $request->input('search');
-        $tab = $request->input('tab', 'users'); // default to employees directory
+        $perPage = $request->input('perPage', 10);
 
-        // Query System Users
-        $users = User::when($search && $tab === 'admins', function ($query) use ($search) {
-            $query->where('name', 'LIKE', "%{$search}%")
-                  ->orWhere('email', 'LIKE', "%{$search}%");
-        })->latest()->paginate(10, ['*'], 'adm_page')->withQueryString();
+        $query = User::query();
 
-        $permissions = [];
+        // Apply search constraints if present
+        if ($search) {
+            $query->where(function($q) use ($search) {
+                $q->where('first_name', 'like', "%{$search}%")
+                ->orWhere('last_name', 'like', "%{$search}%")
+                ->orWhere('middle_name', 'like', "%{$search}%")
+                ->orWhere('email', 'like', "%{$search}%");
+            });
+        }
 
-        return view('pages.users.index', compact('users', 'tab', 'search', 'permissions'));
+        // Fetch results with current row limits
+        $users = $query->paginate($perPage);
+
+        // Get roles for 
+        $roles = Role::get();
+
+        // Return variables so Blade can retain form states
+        return view('pages.users.index', compact('users', 'roles', 'search', 'perPage'));
     }
 
     /**

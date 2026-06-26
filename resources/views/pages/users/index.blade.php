@@ -1,190 +1,205 @@
 @extends('layouts.app')
 
-@section('content')
-<div class="flex h-screen overflow-hidden">
-    
-    <!-- Sidebar Navigation -->
+@section('page-title', 'User Management')
+
+@section('sidebar')
     @include('components.sidebar')
-    
-    <div class="flex-1 flex flex-col overflow-y-auto">
-    
-        <!-- TEST -->
-        <button 
-            x-data 
-            @click="$dispatch('open-register-modal')" 
-            class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700"
-        >
-            Add New User
-        </button>
-        <x-register-modal :permissions="$permissions" />
-        <!-- TEST -->
+@endsection
 
-        @include('components.topbar')
-        <main class="flex-1 flex flex-col overflow-y-auto p-8 max-w-7xl mx-auto w-full space-y-8">
-            
-            <div class="module-header border-b border-gray-200 pb-5">
-                <h1 class="text-2xl font-bold text-gray-900 tracking-tight"> 
-                    <i class="fa-solid fa-user-group text-violet-500"></i>
-                    Users Directory
-                </h1>
-                <p class="text-sm text-gray-500 mt-1">Manage system platform administrators and monitor registered trackable company profiles.</p>
+@section('content')
+<div class="space-y-6">
+
+    @if(session('success'))
+        <div class="bg-green-100 border border-brand-green/30 text-brand-green p-4 rounded-xl text-sm font-semibold flex items-center shadow-xs">
+            <span class="mr-2">✓</span> {{ session('success') }}
+        </div>
+    @endif
+
+    @if(session('error'))
+        <div class="bg-amber-100 border border-brand-gold/30 text-amber-900 p-4 rounded-xl text-sm font-semibold flex items-center shadow-xs">
+            <span class="mr-2">⚠</span> {{ session('error') }}
+        </div>
+    @endif
+
+    <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        
+        <form method="GET" action="{{ route('users.index') }}" class="flex flex-1 items-center space-x-3 w-full sm:w-auto">
+            <div class="flex items-center space-x-2">
+                <label for="perPage" class="text-xs font-semibold text-gray-500 whitespace-nowrap">Show</label>
+                <select name="perPage" id="perPage" onchange="this.form.submit()" 
+                    class="bg-gray-50 border border-gray-300 text-brand-dark text-sm rounded-lg p-1.5 focus:border-brand-gold focus:outline-none">
+                    <option value="10" {{ $perPage == 10 ? 'selected' : '' }}>10</option>
+                    <option value="25" {{ $perPage == 25 ? 'selected' : '' }}>25</option>
+                    <option value="50" {{ $perPage == 50 ? 'selected' : '' }}>50</option>
+                    <option value="100" {{ $perPage == 100 ? 'selected' : '' }}>100</option>
+                </select>
             </div>
-
-            @if(session('success'))
-                <div class="bg-emerald-50 border border-emerald-200 text-emerald-800 px-4 py-3 rounded-xl text-sm font-medium">
-                    ✅ {{ session('success') }}
+            <div class="flex ">
+                <div class="relative w-full max-w-md">
+                    <input type="text" name="search" value="{{ $search }}" placeholder="Search by name, email..." 
+                        class="w-full bg-gray-50 border border-gray-300 text-brand-dark text-sm rounded-tl-lg rounded-bl-lg pl-3 pr-10 py-2 focus:border-brand-gold focus:outline-none focus:ring-2 focus:ring-brand-gold/20 transition">
+                    @if($search)
+                        <a href="{{ route('users.index') }}" class="absolute right-3 top-2.5 text-gray-400 hover:text-gray-600 text-sm">✕</a>
+                    @endif
                 </div>
-            @endif
-            @if($errors->any())
-                <div class="bg-rose-50 border border-rose-200 text-rose-800 px-4 py-3 rounded-xl text-sm font-medium">
-                    ⚠️ Registration Error: Please confirm all form fields match parameters correctly.
-                </div>
-            @endif
-
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-                
-                <!-- <div class="space-y-6">
-                    
-                    <section class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm space-y-4">
-                        <h2 class="flex items-center font-bold text-gray-800 text-md"> 
-                            <i class="fa-solid fa-plus text-indigo-600"></i>
-                            Register New Employee
-                        </h2>
-                        <p class="text-xs text-gray-400">Creates a reference profile for logging Excel transaction entries.</p>
-                        
-                        <form action="{{ route('users.store') }}" method="POST" class="space-y-3">
-                            @csrf
-                            <div>
-                                <label class="text-xs font-bold text-gray-500 uppercase block mb-1">Employee ID Code</label>
-                                <input type="text" name="employee_code" required placeholder="e.g., EMP-005" class="w-full text-sm p-2 border border-gray-300 rounded-lg outline-none focus:border-slate-800" />
-                                @error('employee_code') <p class="text-xs text-rose-600 mt-1">{{ $message }}</p> @enderror
-                            </div>
-                            <div>
-                                <label class="text-xs font-bold text-gray-500 uppercase block mb-1">Full Name</label>
-                                <input type="text" name="name" required placeholder="e.g., Juan Dela Cruz" class="w-full text-sm p-2 border border-gray-300 rounded-lg outline-none focus:border-slate-800" />
-                            </div>
-                            <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 rounded-lg text-xs transition">
-                                Save Employee Profile
-                            </button>
-                        </form>
-                    </section>
-
-                    <section class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm space-y-4">
-                        <h2 class="font-bold text-gray-800 text-md">
-                            <i class="fa-solid fa-user-lock text-slate-900"></i>
-                            Create Platform Admin
-                        </h2>
-                        <p class="text-xs text-gray-400">Grants login and upload execution authorizations to managers.</p>
-                        
-                        <form action="{{ route('users.store') }}" method="POST" class="space-y-3">
-                            @csrf
-                            <div>
-                                <label class="text-xs font-bold text-gray-500 uppercase block mb-1">Admin Name</label>
-                                <input type="text" name="name" required placeholder="e.g., Sarah Smith" class="w-full text-sm p-2 border border-gray-300 rounded-lg outline-none focus:border-slate-800" />
-                            </div>
-                            <div>
-                                <label class="text-xs font-bold text-gray-500 uppercase block mb-1">Email Address</label>
-                                <input type="email" name="email" required placeholder="sarah@company.com" class="w-full text-sm p-2 border border-gray-300 rounded-lg outline-none focus:border-slate-800" />
-                                @error('email') <p class="text-xs text-rose-600 mt-1">{{ $message }}</p> @enderror
-                            </div>
-                            <div>
-                                <label class="text-xs font-bold text-gray-500 uppercase block mb-1">Password</label>
-                                <input type="password" name="password" required class="w-full text-sm p-2 border border-gray-300 rounded-lg outline-none focus:border-slate-800" />
-                            </div>
-                            <div>
-                                <label class="text-xs font-bold text-gray-500 uppercase block mb-1">Confirm Password</label>
-                                <input type="password" name="password_confirmation" required class="w-full text-sm p-2 border border-gray-300 rounded-lg outline-none focus:border-slate-800" />
-                            </div>
-                            <button type="submit" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-semibold py-2 rounded-lg text-xs transition">
-                                Grant Administrative Access
-                            </button>
-                        </form>
-                    </section>
-                </div> -->
-
-                <section class="lg:col-span-3 bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden flex flex-col">
-                    
-                    <div class="flex border-b border-gray-100 bg-gray-50/70">
-                        <a href="{{ route('users.index', ['tab' => 'employees']) }}" class="flex-1 text-center py-3 font-semibold text-sm transition {{ $tab === 'employees' ? 'bg-white border-b-2 border-indigo-600 text-indigo-600' : 'text-gray-400 hover:text-gray-600' }}">
-                           <i class="fa-solid fa-user-group text-violet-400"></i>
-                            Registered Users ({{ $users->total() }})
-                        </a>
-                        {{-- <a href="{{ route('users.index', ['tab' => 'admins']) }}" class="flex-1 text-center py-3 font-semibold text-sm transition {{ $tab === 'admins' ? 'bg-white border-b-2 border-slate-800 text-slate-900' : 'text-gray-400 hover:text-gray-600' }}"> 
-                            <i class="fa-solid fa-user-lock text-slate-900"></i>
-                            System Operators/Admins ({{ $users->total() }})
-                        </a> --}}
-                    </div>
-
-                    <div class="p-4 border-b border-gray-100 bg-white">
-                        <form action="{{ route('users.index') }}" method="GET" class="flex gap-2">
-                            <input type="hidden" name="tab" value="{{ $tab }}" />
-                            <input 
-                                type="text" 
-                                name="search" 
-                                value="{{ $search ?? '' }}" 
-                                placeholder="Search {{ $tab === 'employees' ? 'by Employee Code or Name...' : 'by Admin Name or Email...' }}" 
-                                class="w-full text-xs p-2.5 border border-gray-300 rounded-lg outline-none focus:border-slate-400"
-                            />
-                            <button type="submit" class="bg-slate-800 hover:bg-slate-900 text-white text-xs font-semibold px-4 rounded-lg transition">
-                                Filter
-                            </button>
-                            @if($search)
-                                <a href="{{ route('users.index', ['tab' => $tab]) }}" class="bg-gray-100 text-gray-500 hover:bg-gray-200 text-xs font-semibold px-3 rounded-lg flex items-center justify-center transition">✕</a>
-                            @endif
-                        </form>
-                    </div>
-
-                    <div class="overflow-x-auto flex-1">
-                        <table id="users-table" class="w-full text-left border-collapse">
-                            <thead>
-                                <tr class="border-b border-gray-200 bg-gray-50/50 text-xs font-semibold uppercase tracking-wider text-gray-500">
-                                    <th class="px-6 py-3">Admin Operator Name</th>
-                                    <th class="px-6 py-3">Email Address</th>
-                                    <th class="px-6 py-3">Role</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-gray-100 text-sm overflow-y-auto">
-                                @forelse($users as $user)
-                                    <tr class="hover:bg-gray-50/70 transition">
-                                        <td class="px-6 py-4 font-semibold text-gray-900 text-xs">{{ $user->last_name }} {{ $user->first_name }}</td>
-                                        <td class="px-6 py-4 text-gray-600 text-xs">{{ $user->email }}</td>
-                                        <td class="px-6 py-4">
-                                            <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-slate-50 text-slate-700 border border-slate-100">Full System Admin</span>
-                                        </td>
-                                    </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="3" class="px-6 py-12 text-center text-gray-400 text-sm">📭 No administrative operators match the filtering search.</td>
-                                    </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-
-                        @if($users->hasPages())
-                            <div class="px-6 py-3 border-t border-gray-100 bg-gray-50/50">{{ $users->links() }}</div>
-                        @endif
-                    </div>
-                </section>
+                <button type="submit" class="px-2.5 cursor-pointer active:translate-y-0.5 transition
+                bg-brand-gold hover:bg-brand-gold-hover border border-brand-gold border-l-0 rounded-tr-lg rounded-br-lg">
+                    <i class="fa-solid fa-magnifying-glass text-white"></i>
+                </button>
             </div>
-        </main>
+        </form>
+
+        <a href="{{ route('users.index', ['action' => 'create']) }}" 
+            class="bg-brand-gold hover:bg-brand-gold-hover text-white font-bold px-5 py-2.5 rounded-lg shadow-sm text-sm transition text-center flex items-center justify-center space-x-2">
+            <span>+</span> <span>Add Administrator</span>
+        </a>
     </div>
+
+    @if(request('action') === 'create' || $errors->any() || session('error'))
+    <div class="bg-white rounded-xl border border-brand-gold/30 shadow-md overflow-hidden max-w-2xl">
+        <div class="px-6 py-4 bg-brand-green text-white flex justify-between items-center">
+            <h3 class="font-bold tracking-wide">Register New System User</h3>
+            <a href="{{ route('users.index') }}" class="text-white/70 hover:text-white font-bold text-lg">✕</a>
+        </div>
+
+        <form action="{{ route('users.store') }}" method="POST" class="p-6 space-y-4">
+            @csrf
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                    <label for="last-name" class="block text-xs font-bold text-brand-dark uppercase tracking-wider mb-1">
+                        Last Name
+                        <span class="text-red-500">*</span>
+                    </label>
+                    <input type="text" id="last-name" name="last_name" value="{{ old('last_name') }}" required
+                        class="w-full bg-gray-50 border @error('last_name') border-red-500 @else border-gray-300 @enderror rounded-lg px-3 py-2 text-sm focus:border-brand-gold focus:outline-none transition">
+                    @error('last_name') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                </div>
+                
+                <div>
+                    <label for="first-name" class="block text-xs font-bold text-brand-dark uppercase tracking-wider mb-1">
+                        First Name
+                        <span class="text-red-500">*</span>
+                    </label>
+                    <input type="text" id="first-name" name="first_name" value="{{ old('first_name') }}" required
+                        class="w-full bg-gray-50 border @error('first_name') border-red-500 @else border-gray-300 @enderror rounded-lg px-3 py-2 text-sm focus:border-brand-gold focus:outline-none transition">
+                    @error('first_name') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                </div>
+                
+                <div>
+                    <label for="middle-name" class="block text-xs font-bold text-brand-dark uppercase tracking-wider mb-1">Middle Name</label>
+                    <input type="text" id="middle-name" name="middle_name" value="{{ old('middle_name') }}"
+                        class="w-full bg-gray-50 border @error('middle_name') border-red-500 @else border-gray-300 @enderror rounded-lg px-3 py-2 text-sm focus:border-brand-gold focus:outline-none transition">
+                    @error('middle_name') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label for="username" class="block text-xs font-bold text-brand-dark uppercase tracking-wider mb-1">
+                        Username
+                        <span class="text-red-500">*</span>
+                    </label>
+                    <input type="text" id="username" name="username" value="{{ old('username') }}"
+                        class="w-full bg-gray-50 border @error('username') border-red-500 @else border-gray-300 @enderror rounded-lg px-3 py-2 text-sm focus:border-brand-gold focus:outline-none transition">
+                    @error('username') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                </div>
+
+                <div>
+                    <label for="email" class="block text-xs font-bold text-brand-dark uppercase tracking-wider mb-1">
+                        Email Address
+                        <span class="text-red-500">*</span>
+                    </label>
+                    <input type="email" id="email" name="email" value="{{ old('email') }}" required placeholder="e.g. example@email.com"
+                        class="w-full bg-gray-50 border @error('email') border-red-500 @else border-gray-300 @enderror rounded-lg px-3 py-2 text-sm focus:border-brand-gold focus:outline-none transition">
+                    @error('email') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label for="password" class="block text-xs font-bold text-brand-dark uppercase tracking-wider mb-1">
+                        Password
+                        <span class="text-red-500">*</span>
+                    </label>
+                    <input type="password" id="password" name="password" required placeholder="Min 8 characters"
+                        class="w-full bg-gray-50 border @error('password') border-red-500 @else border-gray-300 @enderror rounded-lg px-3 py-2 text-sm focus:border-brand-gold focus:outline-none transition">
+                    @error('password') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                </div>
+                <div>
+                    <label for="password_confirmation" class="block text-xs font-bold text-brand-dark uppercase tracking-wider mb-1">
+                        Confirm Password
+                        <span class="text-red-500">*</span>
+                    </label>
+                    <input type="password" id="password_confirmation" name="password_confirmation" required
+                        class="w-full bg-gray-50 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:border-brand-gold focus:outline-none transition">
+                </div>
+            </div>
+
+            <div class="pt-4 flex justify-end space-x-3 border-t border-gray-100">
+                <a href="{{ route('users.index') }}" class="px-4 py-2 text-sm font-semibold text-gray-500 hover:text-gray-700 transition">
+                    Cancel
+                </a>
+                <button type="submit"
+                    class="px-5 py-2 rounded-lg bg-brand-gold hover:bg-brand-gold-hover text-white text-sm font-bold shadow-xs transition cursor-pointer">
+                    Save User
+                </button>
+            </div>
+        </form>
+    </div>
+    @endif
+
+    <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+        <table class="w-full text-left border-collapse">
+            <thead>
+                <tr class="bg-gray-50 text-xs font-bold text-brand-navy uppercase tracking-wider border-b border-gray-200">
+                    <th class="px-6 py-4">User Details</th>
+                    <th class="px-6 py-4">Email Address</th>
+                    <th class="px-6 py-4">Role System Designation</th>
+                    <th class="px-6 py-4 text-right">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100 text-sm text-gray-700">
+                @forelse($users as $user)
+                    <tr class="hover:bg-gray-50/50 transition">
+                        <td class="px-6 py-4">
+                            <div class="font-semibold text-brand-dark">
+                                {{ $user->name ?? ($user->first_name . ' ' . $user->last_name) }}
+                            </div>
+                            @if($user->middle_name)
+                                <span class="text-xs text-gray-400">Middle: {{ $user->middle_name }}</span>
+                            @endif
+                        </td>
+                        <td class="px-6 py-4 font-mono text-gray-600 text-xs">{{ $user->email }}</td>
+                        <td class="px-6 py-4">
+                            <span class="px-2.5 py-1 bg-green-50 text-brand-green border border-brand-green/20 font-bold text-xs rounded-full">
+                                System Administrator
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 text-right space-x-3">
+                            <button class="text-brand-navy hover:underline text-xs font-semibold cursor-pointer">Permissions</button>
+                            <button class="text-gray-400 hover:text-red-600 text-xs transition cursor-pointer">Remove</button>
+                        </td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="4" class="px-6 py-12 text-center text-gray-400 font-medium">
+                            No matching user registries identified in system records.
+                        </td>
+                    </tr>
+                @endforelse
+            </tbody>
+        </table>
+
+        @if($users->hasPages())
+            <div class="p-4 bg-gray-50 border-t border-gray-100">
+                {{ $users->appends(request()->query())->links() }}
+            </div>
+        @endif
+    </div>
+
 </div>
 @endsection
 
 @push('scripts')
-<script type="module">
-document.addEventListener('DOMContentLoaded', () => {
-    const usersTable = new window.DataTable('#users-table');
-
-    const dtSearchContainer = document.getElementsByClassName('datatable-search');
-    
-    console.log(dtSearchContainer[0]);
-    dtSearchContainer[0]
-        .classList.add('flex', 'gap-2');
-        
-    dtSearchContainer[0]
-        .insertAdjacentHTML('beforeend', `<div>test</div>`);
-
-});
-</script>
 @endpush

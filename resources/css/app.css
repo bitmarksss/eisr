@@ -3,11 +3,30 @@
 
 @import "./components.css";
 @import "./dashboard.css";
+@import "./sidebar.css";
 
 @source "../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php";
 @source "../../storage/framework/views/*.php";
 @source "../**/*.blade.php";
 @source "../**/*.js";
+
+@font-face {
+    font-family: 'Outfit';
+    src: url('../fonts/Outfit-VariableFont_wght.ttf') format('truetype-variations');
+    font-weight: 100 900; /* This enables all weights from 100 to 900 */
+    font-style: normal;
+    font-display: swap;
+}
+
+@theme {
+  /* Injecting your logo's exact colors */
+  --color-brand-gold: #E59623;
+  --color-brand-gold-hover: #CB811B;
+  --color-brand-green: #043916;
+  --color-brand-navy: #1E2B4B;
+  --color-brand-dark: #0F172A;
+  --color-brand-light: #F8FAFC;
+}
 
 :root {
     --text: #0F172A;
@@ -23,6 +42,10 @@
     --bg-light: #F8FAFC;
     --bg-dark: #0F172A;
     --bg-muted: #E2E8F0;
+}
+
+* {
+    font-family: 'Outfit', sans-serif;
 }
 
 .datatable-table th {
@@ -60,26 +83,41 @@
         p-1
 }
 
+.datatable-selector:focus {
+    border-color: #94A3B8 !important;
+    outline: none;
+}
+
+.datatable-search {
+    @apply
+        w-[25%]
+}
+
 .datatable-input {
     @apply
-        py-2.5
-        pl-8
-        pr-4
+        /* py-1.5 */
+        /* pl-8 */
+        p-2.5
         border
         border-gray-300
-        rounded-lg
+        rounded-tl-lg
+        rounded-bl-lg
+        text-xs
+        w-full
 }
-.datatable-input:focus:active {
+.datatable-input:focus {
     border-color: #94A3B8 !important;
+    outline: none;
 }
 
 .datatable-info {
-    color: #6b7280;
+    display: none !important;
+    /* color: #6b7280;
     text-align: end;
     @apply
         px-4
         py-3
-        text-xs
+        text-xs */
 }
 
 .datatable-empty {

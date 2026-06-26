@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // initModuleHeaderAnim();
     
     // Initialize module scripts
-    initModuleScripts();
+    // initModuleScripts();
 
     // let sideBar = document.getElementById('sidebar');
     // let sideBarToggleBtn = document.getElementById('sidebarToggle');

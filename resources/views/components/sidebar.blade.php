@@ -1,42 +1,54 @@
-<aside id="sidebar" class="w-64 bg-slate-900 text-white flex flex-col">
-    <div class="p-5 text-2xl font-bold text-center tracking-wider bg-slate-950">
-        EDIS
+<div class="w-64 bg-brand-green text-white flex flex-col justify-between shadow-xl">
+    <div>
+        <!-- Brand Header / Logo Area -->
+        <div class="p-6 bg-brand-dark/20 flex items-center space-x-3 border-b border-white/10">
+            <!-- Placeholder for your logow.png -->
+            <span class="font-bold text-lg tracking-wider text-brand-gold">PMC SYSTEM</span>
+        </div>
+
+        <!-- Navigation Links -->
+        <nav class="mt-6 px-4 space-y-2">
+            <p class="sidebar-label">Menu</p>
+            <a href="{{ route('dashboard') }}" 
+                class="sidebar-link {{ request()->routeIs('dashboard') ? 'selected' : '' }}">
+                <i class="fa-solid fa-chart-bar"></i>
+                Dashboard
+            </a>
+            <a href="#" class="sidebar-link {{ request()->routeIs('inventory.*') ? 'selected' : '' }}">
+                <i class="fa-solid fa-box-open"></i>
+                Inventory Stock
+            </a>
+            
+            <!-- ADMIN ONLY SECTION -->
+            {{-- @if(auth()->user() && auth()->user()->is_admin) --}}
+            <div class="pt-4 mt-4 border-t border-white/10">
+                <p class="sidebar-label">Admin Controls</p>
+                <a href="{{ route('users.index') }}" class="sidebar-link {{ request()->routeIs('users.*') ? 'selected' : '' }}">
+                    <i class="fa-solid fa-user-gear"></i>
+                    User Management
+                </a>
+                <a href="#" class="sidebar-link {{ request()->routeIs('logs.*') ? 'selected' : '' }}">
+                    <i class="fa-solid fa-clock-rotate-left"></i>
+                    System Logs
+                </a>
+            </div>
+            {{--@endif--}}
+        </nav>
     </div>
-    <nav class="mt-6 px-4 flex-1 space-y-2">
-        
-        <a href="{{ route('dashboard') }}" 
-           class="block px-4 py-2.5 rounded transition-all 
-           {{ request()->routeIs('dashboard') ? 'bg-amber-600 text-white font-medium' : 'text-slate-300 hover:bg-slate-800' }}">
-            <i class="fa-solid fa-chart-column {{ request()->routeIs('dashboard') ? 'text-white' : 'text-slate-300' }}"></i>
-            Dashboard
-        </a>
 
-        <a href="{{ route('inventory.index') }}" 
-           class="block px-4 py-2.5 rounded transition-all 
-           {{ request()->routeIs('inventory.*') ? 'bg-amber-600 text-white font-medium' : 'text-slate-300 hover:bg-slate-800' }}">
-            <i class="fa-solid fa-box-open {{ request()->routeIs('inventory.*') ? 'text-white' : 'text-slate-300' }}"></i>
-            Inventory
-        </a>
-
-        <hr class="border-slate-300 my-4">
-
-        <a href="{{ route('file.index') }}" 
-           class="block px-4 py-2.5 rounded transition-all 
-           {{ request()->routeIs('file.*') ? 'bg-amber-600 text-white font-medium' : 'text-slate-300 hover:bg-slate-800' }}">
-            <i class="fa-solid fa-folder-open {{ request()->routeIs('file.*') ? 'text-white' : 'text-slate-300' }}"></i>
-            File Uploads
-        </a>
-                
-        <a href="{{ route('users.index') }}" 
-           class="block px-4 py-2.5 rounded transition-all 
-           {{ request()->routeIs('users.*') ? 'bg-amber-600 text-white font-medium' : 'text-slate-300 hover:bg-slate-800' }}">
-            <i class="fa-solid fa-user-group {{ request()->routeIs('users.*') ? 'text-white' : 'text-slate-300' }}"></i>
-            User Management
-        </a>
-           
-    </nav>
-
-    <h6 class="text-center p-4 text-sm italic text-gray-400">
-        {{ now()->format('F d, Y') }}
-    </h6>
-</aside>
+    <!-- User Status & Logout -->
+    <div class="p-4 bg-brand-dark/30 border-t border-white/10 flex items-center justify-between">
+        <div>
+            <p class="text-sm font-semibold truncate">{{ auth()->user()->name ?? 'Guest User' }}</p>
+            <span class="text-xs {{ auth()->user()?->is_admin ? 'text-brand-gold' : 'text-gray-300' }} font-medium">
+                {{ auth()->user()?->is_admin ? 'Administrator' : 'Staff / Viewer' }}
+            </span>
+        </div>
+        <form method="GET" action="/logout">
+            @csrf
+            <button class="text-gray-400 hover:text-brand-gold transition p-1">
+                ✕
+            </button>
+        </form>
+    </div>
+</div>

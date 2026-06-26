@@ -70,24 +70,24 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        const modal = document.getElementById('register-modal');
-        const closeBtn = document.getElementById('close-modal-btn');
-        const overlay = document.getElementById('modal-overlay');
+        // const modal = document.getElementById('register-modal');
+        // const closeBtn = document.getElementById('close-modal-btn');
+        // const overlay = document.getElementById('modal-overlay');
 
-        function openModal() {
-            modal.classList.remove('hidden');
-        }
+        // function openModal() {
+        //     modal.classList.remove('hidden');
+        // }
 
-        function closeModal() {
-            modal.classList.add('hidden');
-        }
+        // function closeModal() {
+        //     modal.classList.add('hidden');
+        // }
 
-        // Close on cancel button or overlay click
-        closeBtn.addEventListener('click', closeModal);
-        overlay.addEventListener('click', closeModal);
+        // // Close on cancel button or overlay click
+        // closeBtn.addEventListener('click', closeModal);
+        // overlay.addEventListener('click', closeModal);
 
-        // Listen for global custom window events (mimicking the old Alpine behavior)
-        window.addEventListener('open-register-modal', openModal);
-        window.addEventListener('close-register-modal', closeModal);
+        // // Listen for global custom window events (mimicking the old Alpine behavior)
+        // window.addEventListener('open-register-modal', openModal);
+        // window.addEventListener('close-register-modal', closeModal);
     });
 </script>
