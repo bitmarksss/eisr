@@ -15,9 +15,11 @@ export function initModalSystem() {
 }
 
 export function openModal(modal) {
-    if (!backdrop) return;
+    // if (!backdrop) return;
 
     selectedModal = document.getElementById(modal);
+    console.log(modal);
+    console.log(selectedModal);
     if (!selectedModal) return;
     
     // console.log(modal);
@@ -36,7 +38,7 @@ export function openModal(modal) {
 }
 
 export function closeModal() {
-    if (!backdrop || !selectedModal) return;
+    if (!selectedModal) return;
 
     document.removeEventListener('keydown', handleEscapeKey);
 

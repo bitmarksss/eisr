@@ -38,31 +38,70 @@ class UserController extends Controller
         return view('pages.users.index', compact('users', 'roles', 'search', 'perPage'));
     }
 
-    /**
-     * Store a newly created administrator.
-     */
     public function store(Request $request)
     {
+        // 1. Enforce strict validation constraints matching the registration inputs
         $request->validate([
-            'name'     => 'required|string|max:255',
-            'email'    => 'required|email|unique:users,email',
-            'password' => 'required|string|min:8|confirmed',
+            'first_name'  => 'required|string|max:255',
+            'middle_name' => 'nullable|string|max:255',
+            'last_name'   => 'required|string|max:255',
+            'username'    => 'required|string|max:255|unique:users,username',
+            'email'       => 'required|string|email|max:255|unique:users,email',
+            'role_id'     => 'required|integer|exists:roles,id', // Validates that the role actually exists
+            'password'    => 'required|string|min:8|confirmed',  // Matches against password_confirmation
         ]);
 
-        $checkUser = User::where('email', $request->email)->first();
-        if ($checkUser) {
-            return redirect()->route('users.index', ['tab' => 'admins'])
-                ->with('error', 'Email already exists. Please use a different email address.')
-                ->withInput();
+        // 2. Persist the database record with an encrypted password string
+        User::create([
+            'first_name'  => $request->first_name,
+            'middle_name' => $request->middle_name,
+            'last_name'   => $request->last_name,
+            'username'    => $request->username,
+            'email'       => $request->email,
+            'role_id'     => $request->role_id,
+            'password'    => Hash::make($request->password), // Safely cryptographically hash password
+        ]);
+
+        return back()->with('success', "Account for {$request->first_name} has been successfully registered!");
+    }
+
+    /**
+     * Update an existing user's profile in storage.
+     */
+    public function update(Request $request, $id)
+    {
+        // 1. Fetch user or trigger an automatic 404 response
+        $user = User::findOrFail($id);
+
+        // 2. Validate changing information (making sure unique checks ignore the current user's ID)
+        $request->validate([
+            'first_name'  => 'required|string|max:255',
+            'middle_name' => 'nullable|string|max:255',
+            'last_name'   => 'required|string|max:255',
+            'username'    => 'required|string|max:255|unique:users,username,' . $user->id,
+            'email'       => 'required|string|email|max:255|unique:users,email,' . $user->id,
+            'role_id'     => 'required|integer|exists:roles,id',
+            'password'    => 'nullable|string|min:8|confirmed', // Optional! Only updates if they type a new one
+        ]);
+
+        // 3. Prepare dataset array for clean mass updates
+        $updateData = [
+            'first_name'  => $request->first_name,
+            'middle_name' => $request->middle_name,
+            'last_name'   => $request->last_name,
+            'username'    => $request->username,
+            'email'       => $request->email,
+            'role_id'     => $request->role_id,
+        ];
+
+        // 4. Conditional Check: Only apply password change if the field was populated
+        if ($request->filled('password')) {
+            $updateData['password'] = Hash::make($request->password);
         }
 
-        User::create([
-            'name'     => $request->name,
-            'email'    => $request->email,
-            'password' => Hash::make($request->password),
-        ]);
+        // 5. Commit properties straight to the database
+        $user->update($updateData);
 
-        return redirect()->route('users.index', ['tab' => 'admins'])
-            ->with('success', 'System Administrator created successfully!');
+        return back()->with('success', "Profile updates for {$user->username} applied cleanly!");
     }
 }

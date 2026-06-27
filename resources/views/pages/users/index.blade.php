@@ -6,6 +6,11 @@
     @include('components.sidebar')
 @endsection
 
+@section('modals')
+    @include('components.add-user-modal')
+    @include('components.edit-user-modal')
+@endsection
+
 @section('content')
 <div class="space-y-6">
 
@@ -49,10 +54,13 @@
             </div>
         </form>
 
-        <a href="{{ route('users.index', ['action' => 'create']) }}" 
-            class="bg-brand-gold hover:bg-brand-gold-hover text-white font-bold px-5 py-2.5 rounded-lg shadow-sm text-sm transition text-center flex items-center justify-center space-x-2">
-            <span>+</span> <span>Add Administrator</span>
+        <!-- <a href="{{ route('users.index', ['action' => 'create']) }}"  -->
         </a>
+
+        <button onclick="window.openModal('addUserModal')" 
+            class="bg-brand-gold hover:bg-brand-gold-hover text-white font-bold px-5 py-2.5 rounded-lg shadow-sm text-sm transition text-center flex items-center justify-center space-x-2 cursor-pointer active:translate-y-0.5">
+            <span>+</span> <span>Add User</span>
+        </button>
     </div>
 
     @if(request('action') === 'create' || $errors->any() || session('error'))
@@ -177,7 +185,8 @@
                             </span>
                         </td>
                         <td class="px-6 py-4 text-right space-x-3">
-                            <button class="text-brand-navy hover:underline text-xs font-semibold cursor-pointer">Permissions</button>
+                            <button onclick="window.openEditUserModal('{{ $user->id }}', '{{ $user->first_name }}', '{{ $user->middle_name }}', '{{ $user->last_name }}', '{{ $user->username }}', '{{ $user->email }}', '{{ $user->role_id }}', )"
+                            class="text-brand-navy hover:underline text-xs font-semibold cursor-pointer">Edit</button>
                             <button class="text-gray-400 hover:text-red-600 text-xs transition cursor-pointer">Remove</button>
                         </td>
                     </tr>

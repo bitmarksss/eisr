@@ -47,6 +47,31 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
 
+    window.openEditUserModal = function(id, firstName, middleName, lastName, username, email, roleId) {
+        const modal = document.getElementById('editUserModal');
+        const form = document.getElementById('editUserForm');
+        
+        if (modal && form) {
+            // Feed text and field datasets directly into input components
+            document.getElementById('edit_first_name').value = firstName;
+            document.getElementById('edit_middle_name').value = middleName || '';
+            document.getElementById('edit_last_name').value = lastName;
+            document.getElementById('edit_username').value = username;
+            document.getElementById('edit_email').value = email;
+            document.getElementById('edit_role_id').value = roleId;
+            
+            // Wipe optional password tracking fields clear on initialization
+            document.getElementById('edit_password').value = '';
+            document.getElementById('edit_password_confirmation').value = '';
+
+            // Point action route safely to user endpoint string
+            form.action = `/users/${id}`;
+            
+            // Display Modal
+            window.openModal('editUserModal');
+            // modal.classList.remove('opacity-0', 'pointer-events-none');
+        }
+    }
 
     // Initialize module scripts
     // initModuleScripts();
@@ -67,36 +92,3 @@ document.addEventListener('DOMContentLoaded', () => {
     //     sessionStorage.setItem('sidebarState', sideBarState);
     // });
 });
-
-// /**
-//  * Global triggers to safely expose the modal framework view container
-//  */
-// window.openModal = function openModal() {
-//     const modal = document.getElementById('inventoryAdjustmentModal');
-//     if (modal) {
-//         // Remove the hidden class to display the flex container layout instantly
-//         modal.classList.remove('hidden');
-//         // Prevent background main page window scroll interactions while active
-//         document.body.classList.add('overflow-hidden');
-//     }
-// }
-
-// /**
-//  * Clean hide utilities to suppress the overlay block
-//  */
-// window.closeModal = function closeModal() {
-//     const modal = document.getElementById('inventoryAdjustmentModal');
-//     if (modal) {
-//         // Enforce structural visibility blocking flag
-//         modal.classList.add('hidden');
-//         // Release background page tracking locking mechanisms
-//         document.body.classList.remove('overflow-hidden');
-//     }
-// }
-
-// // Optional: Escape Key Listener to dismiss the modal naturally
-// document.addEventListener('keydown', function(event) {
-//     if (event.key === 'Escape') {
-//         closeModal();
-//     }
-// });

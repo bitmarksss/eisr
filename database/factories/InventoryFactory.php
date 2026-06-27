@@ -21,7 +21,7 @@ class InventoryFactory extends Factory
             'sku' => fake()->unique()->lexify('EXP-???-') . fake()->numerify('####'), 
             'name' => ucwords(fake()->words(2, true)),
             'category' => fake()->randomElement(['Bulk Explosives', 'Initiators', 'Boosters', 'Detonators']), 
-            'quantity' => fake()->numberBetween(0, 1000), 
+            'quantity' => fake()->numberBetween(0, 300), 
         ];
     }
 }

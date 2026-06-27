@@ -6,6 +6,11 @@
     @include('components.sidebar')
 @endsection
 
+@section('modals')
+    @include('components.backdrop')
+    @include('components.edit-inventory-modal')
+@endsection
+
 @section('content')
 <div class="space-y-6">
 
@@ -28,11 +33,12 @@
 
             <select name="category_filter" onchange="this.form.submit()" 
                 class="bg-gray-50 border border-gray-300 text-brand-dark text-sm rounded-lg p-2 focus:outline-none focus:border-brand-gold">
-                <option value="">All Categories</option>
-                <!-- Dynamic categories loop can go here -->
-                <option value="Mechanical" {{ request('category_filter') == 'Mechanical' ? 'selected' : '' }}>Mechanical</option>
-                <option value="Hydraulics" {{ request('category_filter') == 'Hydraulics' ? 'selected' : '' }}>Hydraulics</option>
-                <option value="Electrical" {{ request('category_filter') == 'Electrical' ? 'selected' : '' }}>Electrical</option>
+                <option value="" {{ request('category_filter') == '' ? 'selected' : '' }}>
+                    All Categories
+                </option>
+                @foreach($categories as $category)
+                    <option value="{{$category->category}}" {{ request('category_filter') == $category->category ? 'selected' : '' }}>{{ $category->category }}</option>
+                @endforeach
             </select>
         </form>
 

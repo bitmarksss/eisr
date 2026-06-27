@@ -7,9 +7,10 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="bg-brand-light text-brand-dark font-sans antialiased">
-    @include('components.backdrop')
+
+    <!-- Modals -->
     @include('components.add-inventory-modal')
-    @include('components.edit-inventory-modal')
+    @yield('modals')
 
     <div class="flex flex-row h-screen overflow-hidden">
         <!-- Sidebar Navigation (Deep Forest Green Accent) -->

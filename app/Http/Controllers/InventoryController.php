@@ -22,9 +22,23 @@ class InventoryController extends Controller
      */
     public function index(Request $request)
     {
-        $inventory_items = Inventory::get();
+        // Start building the query without executing it yet
+        $inventory_items = Inventory::query()
+            ->when($request->filled('category_filter'), function ($query) use ($request) {
+                // Assuming 'category_id' is the column name in your database
+                $query->where('category', $request->category_filter);
+            })
+            ->when($request->filled('search'), function ($query) use ($request) {
+                // Assuming you want to search by item name or description
+                $query->where('name', 'like', '%' . $request->search . '%');
+            })
+            ->get(); // Finally, execute the query and get the results
 
-        return view('pages.inventory.index', compact('inventory_items'));
+        $categories = Inventory::select('category')
+            ->distinct()
+            ->get();
+            
+        return view('pages.inventory.index', compact('inventory_items' ,'categories'));
     }
 
     /**

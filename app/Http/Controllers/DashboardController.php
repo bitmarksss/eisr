@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Role;
+use App\Models\{Inventory, Role, User};
 use Illuminate\Http\Request;
 
 class DashboardController extends Controller
@@ -39,6 +39,11 @@ class DashboardController extends Controller
 
         // $stats['balance'] = $stats['payments'] - ($stats['loans'] + $stats['carenderia'] + $stats['grocery']);
 
-        return view('pages.dashboard', compact('stats', 'results', 'search'));
+        $inventory = Inventory::get();
+
+        $item_count = $inventory->count();
+        $low_stock_count = Inventory::where('quantity', '<', 100)->get()->count();
+
+        return view('pages.dashboard', compact('stats', 'results', 'search', 'inventory', 'item_count', 'low_stock_count'));
     }
 }

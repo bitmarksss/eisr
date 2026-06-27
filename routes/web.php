@@ -71,7 +71,7 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
         Route::get('/', [UserController::class, 'index'])->name('users.index');
 
         Route::post('/store', [UserController::class, 'store'])->name('users.store');
-
+        Route::put('/{id}', [UserController::class, 'update'])->name('users.update');
     });
 
 });
