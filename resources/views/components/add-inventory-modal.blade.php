@@ -14,35 +14,48 @@
         </div>
 
         <!-- Master Store Submission Form Layout -->
-        <form action="{{ route('inventory.store') }}" method="POST" class="p-6 space-y-4">
+        <form action="{{ route('surface.inventory.store') }}" method="POST" class="p-6 space-y-4">
             @csrf
             
             <!-- 1. Name Field (Updated to name="name") -->
             <div>
-                <label for="modal_item_name" class="block text-xs font-bold text-brand-dark uppercase tracking-wider mb-1">Item Title / Descriptor</label>
-                <input type="text" id="modal_item_name" name="name" value="{{ old('name') }}" required placeholder="e.g., Heavy Duty Machine Bolts"
-                    class="w-full bg-gray-50 border @error('name') border-red-500 @else border-gray-300 @enderror rounded-lg px-3 py-2 text-sm focus:border-brand-gold focus:outline-none transition focus:ring-2 focus:ring-brand-gold/20">
-                @error('name') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                <label for="item_name" class="block text-xs font-bold text-brand-dark uppercase tracking-wider mb-1">Item Title / Descriptor</label>
+                <input type="text" id="item_name" name="name" value="{{ old('item_name') }}" required placeholder="e.g., Heavy Duty Machine Bolts"
+                    class="w-full bg-gray-50 border @error('item_name') border-red-500 @else border-gray-300 @enderror rounded-lg px-3 py-2 text-sm focus:border-brand-gold focus:outline-none transition focus:ring-2 focus:ring-brand-gold/20">
+                @error('item_name') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
             </div>
 
-            <!-- 2. SKU Field (Mapped to name="sku") -->
+            <!-- 2. Supplier field -->
             <div>
-                <label for="modal_sku" class="block text-xs font-bold text-brand-dark uppercase tracking-wider mb-1">SKU Barcode Reference</label>
-                <input type="text" id="modal_sku" name="sku" value="{{ old('sku') }}" required placeholder="e.g., PMC-MCH-552"
-                    class="w-full bg-gray-50 border @error('sku') border-red-500 @else border-gray-300 @enderror rounded-lg px-3 py-2 text-sm focus:border-brand-gold focus:outline-none transition">
-                @error('sku') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                <label for="supplier-id" class="block text-xs font-bold text-brand-dark uppercase tracking-wider mb-1">Supplier</label>
+                <select id="supplier-id" name="supplier_id" required
+                    class="w-full bg-gray-50 border @error('supplier_id') border-red-500 @else border-gray-300 @enderror rounded-lg p-2 text-sm focus:border-brand-gold focus:outline-none transition">
+                    <option value="" disabled selected>Select Supplier</option>
+                    @foreach($suppliers as $supplier)
+                        <option value="{{ $supplier->id }}" {{ old('supplier_id') == $supplier->id ? 'selected' : '' }}>{{ $supplier->name }}</option>
+                    @endforeach
+                </select>
+                @error('supplier_id') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+            </div>
+
+            <!-- 3. item_code Field (Mapped to name="item_code") -->
+            <div>
+                <label for="modal_item_code" class="block text-xs font-bold text-brand-dark uppercase tracking-wider mb-1">Item Code Barcode Reference</label>
+                <input type="text" id="modal_item_code" name="item_code" value="{{ old('item_code') }}" required placeholder="e.g., PMC-MCH-552"
+                    class="w-full bg-gray-50 border @error('item_code') border-red-500 @else border-gray-300 @enderror rounded-lg px-3 py-2 text-sm focus:border-brand-gold focus:outline-none transition">
+                @error('item_code') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <!-- 3. Category Field (New Field Mapped to name="category") -->
                 <div>
-                    <label for="modal_category" class="block text-xs font-bold text-brand-dark uppercase tracking-wider mb-1">Category Group</label>
+                    <label for="modal_category" class="block text-xs font-bold text-brand-dark uppercase tracking-wider mb-1">Category</label>
                     <select id="modal_category" name="category" required
                         class="w-full bg-gray-50 border @error('category') border-red-500 @else border-gray-300 @enderror rounded-lg p-2 text-sm focus:border-brand-gold focus:outline-none transition">
                         <option value="" disabled selected>Select Category</option>
-                        <option value="Mechanical" {{ old('category') == 'Mechanical' ? 'selected' : '' }}>Mechanical</option>
-                        <option value="Hydraulics" {{ old('category') == 'Hydraulics' ? 'selected' : '' }}>Hydraulics</option>
-                        <option value="Electrical" {{ old('category') == 'Electrical' ? 'selected' : '' }}>Electrical</option>
+                        @foreach($categories as $category)
+                            <option value="{{ $category->id }}" {{ old('category') == $category->id ? 'selected' : '' }}>{{ $category->kind }}</option>
+                        @endforeach
                     </select>
                     @error('category') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                 </div>
@@ -50,9 +63,16 @@
                 <!-- 4. Quantity Field (Mapped to name="quantity") -->
                 <div>
                     <label for="modal_quantity" class="block text-xs font-bold text-brand-dark uppercase tracking-wider mb-1">Initial Unit Count</label>
-                    <input type="number" id="modal_quantity" name="quantity" value="{{ old('quantity', 0) }}" min="0" required placeholder="0"
-                        class="w-full bg-gray-50 border @error('quantity') border-red-500 @else border-gray-300 @enderror rounded-lg px-3 py-2 text-sm focus:border-brand-gold focus:outline-none transition">
-                    @error('quantity') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                    <div class="flex">
+                        <input type="number" id="modal_quantity" name="quantity" value="{{ old('quantity', '') }}" min="0" placeholder="0"
+                            class="w-full bg-gray-50 border @error('quantity') border-red-500 @else border-gray-300 @enderror rounded-tl-lg rounded-bl-lg px-3 py-2 text-sm focus:border-brand-gold focus:outline-none transition">
+                        @error('quantity') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                    <select class="bg-gray-50 border border-l-transparent border-gray-300 rounded-tr-lg rounded-br-lg px-3 py-2 text-sm focus:border-brand-gold focus:outline-none transition">
+                        @foreach($uoms as $key => $unit)
+                            <option value="{{ $unit->id }}" {{ old('uom') == $unit->id ? 'selected' : '' }}>{{ $unit->unit }}</option>
+                        @endforeach
+                    </select>
+                    </div>
                 </div>
             </div>
 
@@ -62,7 +82,7 @@
                     Cancel Process
                 </button>
                 <button type="submit" class="px-5 py-2 rounded-lg bg-brand-gold hover:bg-brand-gold-hover text-white text-sm font-bold shadow-xs transition cursor-pointer">
-                    Save Asset Record
+                    Save Inventory Item
                 </button>
             </div>
         </form>

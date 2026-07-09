@@ -56,7 +56,7 @@
 
             <!-- Role Mapping Selection -->
             <div>
-                <label for="edit_role_id" class="block text-xs font-bold text-brand-dark uppercase tracking-wider mb-1">System Permissions Role</label>
+                <label for="edit_role_id" class="block text-xs font-bold text-brand-dark uppercase tracking-wider mb-1">System Role</label>
                 <select id="edit_role_id" name="role_id" required
                     class="w-full bg-gray-50 border @error('role_id') border-red-500 @else border-gray-300 @enderror rounded-lg p-2.5 text-sm focus:border-brand-gold focus:outline-none transition">
                     <option value="1">Administrator</option>

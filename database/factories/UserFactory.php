@@ -24,6 +24,18 @@ class UserFactory extends Factory
             'last_name' => fake()->lastName(),
             'first_name' => fake()->firstName(),
             'middle_name' => fake()->optional()->lastName(), // Randomly generates a name or null
+            'position' => fake()->randomElement([
+                'Manager',
+                'Supervisor',
+                'Engineer',
+                'Technician',
+                'Operator',
+                'Warehouse Clerk',
+                'Purchasing Officer',
+                'Safety Officer',
+                'Accountant',
+                'Administrative Assistant',
+            ]),
             'role_id' => Role::inRandomOrder()->first()?->id ?? 1, // Grabs an existing role ID, defaults to 1
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),

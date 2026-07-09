@@ -18,8 +18,6 @@ export function openModal(modal) {
     // if (!backdrop) return;
 
     selectedModal = document.getElementById(modal);
-    console.log(modal);
-    console.log(selectedModal);
     if (!selectedModal) return;
     
     // console.log(modal);

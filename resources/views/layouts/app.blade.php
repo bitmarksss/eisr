@@ -9,31 +9,21 @@
 <body class="bg-brand-light text-brand-dark font-sans antialiased">
 
     <!-- Modals -->
-    @include('components.add-inventory-modal')
     @yield('modals')
 
-    <div class="flex flex-row h-screen overflow-hidden">
+    <div class="flex flex-row h-screen overflow-hidden outline-none">
         <!-- Sidebar Navigation (Deep Forest Green Accent) -->
         @yield('sidebar')
 
         <!-- Main Content Area -->
         <div class="flex-1 flex flex-col overflow-y-auto">
             <!-- Top Navbar -->
-            <header class="bg-white border-b border-gray-200 h-16 flex items-center justify-between px-8 py-6 z-10">
-                <h1 class="text-xl font-bold text-brand-navy">@yield('page-title', 'Dashboard')</h1>
-                <div class="flex items-center space-x-4">
-                    <!-- Dynamic Quick Action Accent Button Based on Role -->
-                    @if(auth()->user()?->role_id == 1)
-                        <button class="bg-brand-gold hover:bg-brand-goldHover text-white font-semibold px-4 py-2 rounded-lg shadow transition text-sm cursor-pointer active:translate-y-0.5"
-                        onclick="window.openModal('addInventoryModal')">
-                            + Add New Stock Item
-                        </button>
-                    @else
-                        <button class="bg-brand-navy hover:bg-brand-dark text-white font-semibold px-4 py-2 rounded-lg shadow transition text-sm">
-                            Request Stock Pull
-                        </button>
-                    @endif
-                </div>
+            <!-- <header class="bg-white border-b border-gray-200 h-16 flex items-center justify-between px-8 py-6 z-10"> -->
+            <header class="bg-brand-green border-b border-gray-200 h-16 flex items-center justify-start py-6 px-4 z-10 space-x-3">
+                <button id="sidebar-toggle" class="active:-translate-x-0.5 border border-white/20 hover:bg-brand-light/10 active:bg-brand-light/10 text-white p-2 rounded-lg cursor-pointer transition">
+                    <i class="fa-solid fa-bars fa-lg"></i>
+                </button>
+                <h1 class="text-xl font-bold text-white">@yield('page-title', 'Dashboard')</h1>
             </header>
 
             <!-- Dashboard Content Slot -->

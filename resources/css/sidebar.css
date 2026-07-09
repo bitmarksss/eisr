@@ -1,11 +1,15 @@
 .sidebar-label {
     @apply
         px-4 
+        pb-1
         text-xs 
-        font-semibold 
+        font-bold 
         uppercase 
         tracking-wider
-        text-brand-gold
+        text-brand-navy/80
+        /* border-0 
+        border-b 
+        border-brand-navy/50 */
 }
 
 .sidebar-link {
@@ -16,7 +20,7 @@
         py-2.5 
         gap-2
         rounded-lg 
-        text-gray-300
+        text-gray-400
         text-sm
         font-medium 
         transition
@@ -24,17 +28,20 @@
 
 .sidebar-link:hover {
     @apply
-        bg-white/5
-        text-white
+        bg-gray-200
+        text-brand-navy
+
 }
 
 .sidebar-link:active {
     @apply
-        bg-white/10
+        bg-gray-300
+        translate-y-0.5
 }
 
 .sidebar-link.selected {
     @apply
-        bg-white/10 
-        text-white 
+        bg-gray-200
+        text-brand-navy
+
 }

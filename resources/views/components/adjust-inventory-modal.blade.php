@@ -19,12 +19,12 @@
             @csrf
             @method('PUT') <!-- Spoofs a PUT method required by Laravel resource updates -->
             
-            <!-- 1. SKU Field (Mapped to name="sku") -->
+            <!-- 1. item_code Field (Mapped to name="item_code") -->
             <div>
-                <label for="edit_modal_sku" class="block text-xs font-bold text-brand-dark uppercase tracking-wider mb-1">SKU Barcode Reference</label>
-                <input type="text" id="edit_modal_sku" name="sku" required placeholder="e.g., PMC-MCH-552"
-                    class="w-full bg-gray-50 border @error('sku') border-red-500 @else border-gray-300 @enderror rounded-lg px-3 py-2 text-sm focus:border-brand-gold focus:outline-none transition">
-                @error('sku') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                <label for="edit_modal_item_code" class="block text-xs font-bold text-brand-dark uppercase tracking-wider mb-1">item_code Barcode Reference</label>
+                <input type="text" id="edit_modal_item_code" name="item_code" required placeholder="e.g., PMC-MCH-552"
+                    class="w-full bg-gray-50 border @error('item_code') border-red-500 @else border-gray-300 @enderror rounded-lg px-3 py-2 text-sm focus:border-brand-gold focus:outline-none transition">
+                @error('item_code') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
             </div>
 
             <!-- 2. Name Field (Mapped to name="name") -->

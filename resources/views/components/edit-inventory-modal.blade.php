@@ -26,34 +26,54 @@
                 @error('name') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
             </div>
 
-            <!-- 2. SKU Field (Mapped to name="sku") -->
+            <!-- 2. Supplier field -->
             <div>
-                <label for="edit_modal_sku" class="block text-xs font-bold text-brand-dark uppercase tracking-wider mb-1">SKU Barcode Reference</label>
-                <input type="text" id="edit_modal_sku" name="sku" required placeholder="e.g., PMC-MCH-552"
-                    class="w-full bg-gray-50 border @error('sku') border-red-500 @else border-gray-300 @enderror rounded-lg px-3 py-2 text-sm focus:border-brand-gold focus:outline-none transition">
-                @error('sku') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                <label for="edit-supplier-id" class="block text-xs font-bold text-brand-dark uppercase tracking-wider mb-1">Supplier</label>
+                <select id="edit-supplier-id" name="supplier_id" required
+                    class="w-full bg-gray-50 border @error('supplier_id') border-red-500 @else border-gray-300 @enderror rounded-lg p-2 text-sm focus:border-brand-gold focus:outline-none transition">
+                    <option value="" disabled selected>Select Supplier</option>
+                    @foreach($suppliers as $supplier)
+                        <option value="{{ $supplier->id }}" {{ old('supplier_id') == $supplier->id ? 'selected' : '' }}>{{ $supplier->name }}</option>
+                    @endforeach
+                </select>
+                @error('supplier_id') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+            </div>
+
+            <!-- 2. item_code Field (Mapped to name="item_code") -->
+            <div>
+                <label for="edit_modal_item_code" class="block text-xs font-bold text-brand-dark uppercase tracking-wider mb-1">Item Code Reference</label>
+                <input type="text" id="edit_modal_item_code" name="item_code" required placeholder="e.g., PMC-MCH-552"
+                    class="w-full bg-gray-50 border @error('item_code') border-red-500 @else border-gray-300 @enderror rounded-lg px-3 py-2 text-sm focus:border-brand-gold focus:outline-none transition">
+                @error('item_code') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <!-- 3. Category Field (Mapped to name="category") -->
+                <!-- 3. Category Field (New Field Mapped to name="category") -->
                 <div>
-                    <label for="edit_modal_category" class="block text-xs font-bold text-brand-dark uppercase tracking-wider mb-1">Category Group</label>
-                    <select id="edit_modal_category" name="category" required
+                    <label for="modal_category" class="block text-xs font-bold text-brand-dark uppercase tracking-wider mb-1">Category</label>
+                    <select id="modal_category" name="category" required
                         class="w-full bg-gray-50 border @error('category') border-red-500 @else border-gray-300 @enderror rounded-lg p-2 text-sm focus:border-brand-gold focus:outline-none transition">
-                        <option value="" disabled>Select Category</option>
-                        <option value="Mechanical">Mechanical</option>
-                        <option value="Hydraulics">Hydraulics</option>
-                        <option value="Electrical">Electrical</option>
+                        <option value="" disabled selected>Select Category</option>
+                        @foreach($categories as $category)
+                            <option value="{{ $category->id }}" {{ old('category') == $category->id ? 'selected' : '' }}>{{ $category->kind }}</option>
+                        @endforeach
                     </select>
                     @error('category') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                 </div>
 
                 <!-- 4. Quantity Field (Mapped to name="quantity") -->
                 <div>
-                    <label for="edit_modal_quantity" class="block text-xs font-bold text-brand-dark uppercase tracking-wider mb-1">Available Quantity Count</label>
-                    <input type="number" id="edit_modal_quantity" name="quantity" min="0" required placeholder="0"
-                        class="w-full bg-gray-50 border @error('quantity') border-red-500 @else border-gray-300 @enderror rounded-lg px-3 py-2 text-sm focus:border-brand-gold focus:outline-none transition">
-                    @error('quantity') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                    <label for="edit-modal-quantity" class="block text-xs font-bold text-brand-dark uppercase tracking-wider mb-1">Initial Unit Count</label>
+                    <div class="flex">
+                        <input type="number" id="edit-modal-quantity" name="quantity" value="{{ old('quantity', '') }}" min="0" placeholder="0"
+                            class="w-full bg-gray-50 border @error('quantity') border-red-500 @else border-gray-300 @enderror rounded-tl-lg rounded-bl-lg px-3 py-2 text-sm focus:border-brand-gold focus:outline-none transition">
+                        @error('quantity') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                    <select class="bg-gray-50 border border-l-transparent border-gray-300 rounded-tr-lg rounded-br-lg px-3 py-2 text-sm focus:border-brand-gold focus:outline-none transition">
+                        @foreach($uoms as $key => $unit)
+                            <option value="{{ $unit->id }}" {{ old('uom') == $unit->id ? 'selected' : '' }}>{{ $unit->unit }}</option>
+                        @endforeach
+                    </select>
+                    </div>
                 </div>
             </div>
 

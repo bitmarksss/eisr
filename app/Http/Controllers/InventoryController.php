@@ -2,12 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Inventory;
-use App\Models\UploadedFile;
+use App\Models\{
+    Inventory, 
+    InventoryKind, 
+    Supplier, 
+    UploadedFile, 
+    UnitOfMeasurement
+};
 use App\Services\UploadExcelService;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 
 class InventoryController extends Controller
 {
@@ -22,11 +28,17 @@ class InventoryController extends Controller
      */
     public function index(Request $request)
     {
+        $location = $request->query('location', 'surface'); // Default to 'surface' if not provided
+
         // Start building the query without executing it yet
         $inventory_items = Inventory::query()
+            ->where('location', $location)
+            ->with('kind')
             ->when($request->filled('category_filter'), function ($query) use ($request) {
                 // Assuming 'category_id' is the column name in your database
-                $query->where('category', $request->category_filter);
+                $query->whereHas('kind', function ($q) use ($request) {
+                    $q->where('id', $request->category_filter);
+                });
             })
             ->when($request->filled('search'), function ($query) use ($request) {
                 // Assuming you want to search by item name or description
@@ -34,11 +46,88 @@ class InventoryController extends Controller
             })
             ->get(); // Finally, execute the query and get the results
 
-        $categories = Inventory::select('category')
-            ->distinct()
-            ->get();
+        $categories = InventoryKind::get();
+        $suppliers = Supplier::get();
+        $uoms = UnitOfMeasurement::get();
             
-        return view('pages.inventory.index', compact('inventory_items' ,'categories'));
+        return view('pages.inventory.index', compact('inventory_items' ,'categories', 'suppliers', 'uoms', 'location'));
+    }
+
+    public function store(Request $request) 
+    {
+        $data = $request->all();
+        $categories = InventoryKind::pluck('id')->toArray();
+        
+        // 1. Validate fields against incoming modal input names
+        $validated_data = Validator::make($data, [
+            'item_code'     => 'required|string|max:255|unique:inventory,item_code',
+            'supplier_id'   => 'required|exists:suppliers,id',
+            'name'     => 'required|string|max:255',
+            'category' => [
+                'required', 
+                'integer', 
+                Rule::in($categories),
+            ],
+            'quantity' => 'required|integer|min:0',
+        ]);
+
+        if($validated_data->fails()) {
+            return back()
+                ->with('notification', [
+                    'status'   => 'error',
+                    'title'    => 'Validation Error',
+                    'messages' => $validated_data->errors()->messages(),
+                ])
+                ->with('errors', $validated_data->errors()->all())
+                ->withInput();
+        }
+
+        dd('validated data', $validated_data);
+
+        // 2. Persist data via Mass Assignment using your fillable array
+        Inventory::create([
+            'item_code'      => $request->item_code,
+            'name'     => $request->name,
+            'category' => $request->category,
+            'quantity' => $request->quantity,
+        ]);
+
+        // 3. Redirect back to the index with a clean success message flash
+        return redirect()->route('inventory.index')
+            ->with('success', "Inventory record [{$request->item_code}] created successfully!");
+    }
+
+    public function update(Request $request, $id) 
+    {
+        // 1. Locate the item or throw a 404 if it doesn't exist
+        $item = Inventory::findOrFail($id);
+
+        // 2. Validate fields, ensuring the unique item_code rule ignores this specific item's ID
+        $request->validate([
+            'item_code'      => 'required|string|max:255|unique:inventory,item_code,' . $item->id,
+            'name'     => 'required|string|max:255',
+            'category' => 'required|string|in:Mechanical,Hydraulics,Electrical',
+            'quantity' => 'required|integer|min:0',
+        ]);
+
+        // 3. Update the fields safely
+        $item->update([
+            'item_code'      => $request->item_code,
+            'name'     => $request->name,
+            'category' => $request->category,
+            'quantity' => $request->quantity,
+        ]);
+
+        return redirect()->route('inventory.index')
+            ->with('success', "Inventory item [{$request->item_code}] has been successfully updated!");
+    }
+
+    public function add(Request $request) {
+        
+    }
+
+    public function delete($id) {
+        
     }
 
     /**
@@ -79,59 +168,44 @@ class InventoryController extends Controller
         }
     }
 
-    public function store(Request $request) 
+    public function update_record(Request $request, $item_id) 
     {
-        // 1. Validate fields against incoming modal input names
-        $request->validate([
-            'sku'      => 'required|string|max:255|unique:inventory,sku',
-            'name'     => 'required|string|max:255',
-            'category' => 'required|string|in:Mechanical,Hydraulics,Electrical',
-            'quantity' => 'required|integer|min:0',
-        ]);
-
-        // 2. Persist data via Mass Assignment using your fillable array
-        Inventory::create([
-            'sku'      => $request->sku,
-            'name'     => $request->name,
-            'category' => $request->category,
-            'quantity' => $request->quantity,
-        ]);
-
-        // 3. Redirect back to the index with a clean success message flash
-        return redirect()->route('inventory.index')
-            ->with('success', "Inventory record [{$request->sku}] created successfully!");
+        // If you prefer a distinct page view instead of a modal:
+        $item = Inventory::with('kind')->findOrFail($item_id);
+        
+        // Pass along whatever data your layout expects (like $location, $categories, etc.)
+        return view('inventory.update-record', compact('item'));
     }
 
-    public function update(Request $request, $id) 
+    // Submit your tabular records here
+    public function record(Request $request) 
     {
-        // 1. Locate the item or throw a 404 if it doesn't exist
-        $item = Inventory::findOrFail($id);
-
-        // 2. Validate fields, ensuring the unique SKU rule ignores this specific item's ID
         $request->validate([
-            'sku'      => 'required|string|max:255|unique:inventory,sku,' . $item->id,
-            'name'     => 'required|string|max:255',
-            'category' => 'required|string|in:Mechanical,Hydraulics,Electrical',
-            'quantity' => 'required|integer|min:0',
+            'item_id' => 'required|exists:inventory_items,id',
+            'kind'    => 'required|string|max:255',
+            'logs'    => 'required|array|min:1',
+            'logs.*.date'      => 'required|date',
+            'logs.*.beginning' => 'required|numeric|min:0',
+            'logs.*.incoming'  => 'required|numeric|min:0',
+            'logs.*.outgoing'  => 'required|numeric|min:0',
+            'logs.*.ending'    => 'required|numeric|min:0',
+            'logs.*.uom'       => 'required|string|max:10',
         ]);
 
-        // 3. Update the fields safely
+        $item = Inventory::findOrFail($request->item_id);
+
+        // Loop through rows sent by your dynamic table form
+        foreach ($request->logs as $log) {
+            // Example: Save logs to an inventory_stock_cards table if tracked over time
+            // $item->stockCards()->create($log);
+        }
+
+        // Capture the final 'ending' stock value from the last row to update main inventory quantity
+        $lastLog = end($request->logs);
         $item->update([
-            'sku'      => $request->sku,
-            'name'     => $request->name,
-            'category' => $request->category,
-            'quantity' => $request->quantity,
+            'quantity' => $lastLog['ending']
         ]);
 
-        return redirect()->route('inventory.index')
-            ->with('success', "Inventory item [{$request->sku}] has been successfully updated!");
-    }
-
-    public function add(Request $request) {
-        
-    }
-
-    public function delete($id) {
-        
+        return redirect()->back()->with('success', 'Explosives Stock Card log entries recorded successfully!');
     }
 }

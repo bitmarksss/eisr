@@ -18,9 +18,12 @@ class InventoryFactory extends Factory
     {
         return [
             // Generates uppercase alphanumeric formats like "EXP-DET-8423"
-            'sku' => fake()->unique()->lexify('EXP-???-') . fake()->numerify('####'), 
+            'item_code' => fake()->unique()->lexify('EXP-???-') . fake()->numerify('####'), 
+            'supplier_id' => fake()->numberBetween(1, 10),
+            'location' => fake()->randomElement(['surface', 'underground']),
             'name' => ucwords(fake()->words(2, true)),
-            'category' => fake()->randomElement(['Bulk Explosives', 'Initiators', 'Boosters', 'Detonators']), 
+            'kind_id' => fake()->numberBetween(1, 5),
+            'uom' => fake()->randomElement([1, 2, 3, 4]),
             'quantity' => fake()->numberBetween(0, 300), 
         ];
     }

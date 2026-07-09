@@ -18,6 +18,7 @@ class SuperAdminSeeder extends Seeder
             'last_name' => 'Admin',
             'first_name' => 'Super',
             'middle_name' => '',
+            'position' => 'Super Administrator',
             'role_id' => 1,
             'email' => 'superadmin@example.com',
             'username' => 'superadmin',

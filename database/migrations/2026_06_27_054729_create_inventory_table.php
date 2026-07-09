@@ -13,10 +13,13 @@ return new class extends Migration
     {
         Schema::create('inventory', function (Blueprint $table) {
             $table->id();
-            $table->string('sku')->unique(); // Added unique SKU column
+            $table->string('item_code')->unique(); // Added unique item code column
+            $table->foreignId('supplier_id')->constrained('suppliers'); // Suppliers table
             $table->string('name');
-            $table->string('category');
+            $table->string('location'); // Added location column
+            $table->foreignId('kind_id')->constrained('inventory_kinds'); // Inventory kinds table
             $table->integer('quantity')->default(0);
+            $table->foreignId('uom')->constrained('uoms'); // Unit of measurements table
             $table->timestamps();
         });
     }

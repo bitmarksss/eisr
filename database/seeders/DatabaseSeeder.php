@@ -14,10 +14,14 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             RoleSeeder::class,
+            UnitOfMeasurementSeeder::class,
             SuperAdminSeeder::class,
             PermissionSeeder::class,
-            UserFactorySeeder::class,
-            InventorySeeder::class,
+            UserFactorySeeder::class, // Test
+            SupplierSeeder::class, // Test
+            InventoryKindSeeder::class,
+            InventorySeeder::class, // Test
+            StockRequestSeeder::class, // Test
         ]);
     }
 }

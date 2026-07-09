@@ -13,23 +13,48 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initialize notification system
     initNotificationSystem();
 
+
+    // Sidebar toggle functionality
+    const sidebar = document.getElementById('sidebar');
+    const toggleBtn = document.getElementById('sidebar-toggle');
+
+    if (sidebar && toggleBtn) {
+        toggleBtn.addEventListener('click', () => {
+            // Toggles negative margin to slide the sidebar out of the layout view
+            sidebar.classList.toggle('-ml-64');
+            toggleBtn.classList.toggle('active:-translate-x-0.5');
+            toggleBtn.classList.toggle('active:translate-x-0.5');
+        });
+    }
+
+
     // Initialize modal system
     initModalSystem();
     window.openModal = openModal;
     window.closeModal = closeModal;
-
-    window.openEditInventoryModal = function (id, sku, name, category, quantity) {
+    window.openEditInventoryModal = function (id, item_code, name, category, quantity) {
         const modal = document.getElementById('editInventoryModal');
         const form = document.getElementById('editInventoryForm');
 
-        console.log(id, sku, name);
+        console.log(id, item_code, name, category);
         
         // Inject values dynamically from the row click arguments
-        document.getElementById('edit_modal_sku').value = sku;
+        document.getElementById('edit_modal_item_code').value = item_code;
         document.getElementById('edit_modal_item_name').value = name;
-        document.getElementById('edit_modal_category').value = category || '';
-        document.getElementById('edit_modal_quantity').value = quantity;
-        
+        // const supplierEl = document.getElementById('edit-supplier-id');
+        // if (supplierEl && supplierEl.options) {
+        //     const targetOption = Array.from(supplierEl.options).find(option => option.textContent.trim() === category);
+            
+        //     if (targetOption) {
+        //         supplierEl.value = targetOption.value;
+        //     } else {
+        //         console.warn(`Supplier option matching "${category}" not found.`);
+        //     }
+        // } else {
+        //     console.error("Element #edit-supplier-id not found in the DOM.");
+        // }
+        document.getElementById('edit-modal-quantity').value = quantity;
+
         // Set the target endpoint update route dynamically (e.g., /inventory/22)
         form.action = `/inventory/${id}`;
         
@@ -45,7 +70,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const modal = document.getElementById('editInventoryModal');
         modal.classList.add('opacity-0', 'pointer-events-none');
     }
-
 
     window.openEditUserModal = function(id, firstName, middleName, lastName, username, email, roleId) {
         const modal = document.getElementById('editUserModal');
@@ -73,22 +97,25 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Initialize module scripts
-    // initModuleScripts();
+    window.updateAndRecordModal = function updateAndRecordModal(id, type, kind, quantity, status) {
+        window.openModal('updateAndRecordModal');
+    }
 
-    // let sideBar = document.getElementById('sidebar');
-    // let sideBarToggleBtn = document.getElementById('sidebarToggle');
-    // let sideBarState = sessionStorage.getItem('sidebarState') || 'expanded';
+    window.openEditStockRequestModal = function openEditStockRequestModal(id, type, kind, quantity, status) {
+        // Dynamically target correct prefix updates
+        const contextPrefix = "{{ $location }}"; 
+        const form = document.getElementById('editStockRequestForm');
+        form.action = `/${contextPrefix}/stock-request/${id}`;
 
-    // // Apply saved sidebar state on page load
-    // if (sideBarState === 'collapsed') {
-    //     document.body.classList.add('sidebar-collapsed');
-    // }
+        // Fill elements values
+        document.getElementById('edit_type').value = type;
+        document.getElementById('edit_kind').value = kind;
+        document.getElementById('edit_status').value = status;
 
-    // // Toggle sidebar
-    // sideBarToggleBtn.addEventListener('click', () => {
-    //     sideBar.classList.toggle('collapsed');
-    //     sideBarState = sideBarState === 'expanded' ? 'collapsed' : 'expanded';
-    //     sessionStorage.setItem('sidebarState', sideBarState);
-    // });
+        // Toggle Modal visibility class triggers
+        const modal = document.getElementById('editStockRequestModal');
+        modal.classList.remove('opacity-0', 'pointer-events-none');
+
+        window.openModal('editStockRequestModal');
+    }
 });
