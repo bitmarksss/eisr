@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\{
-    Inventory, 
+    InventoryItem, 
     InventoryKind, 
     Supplier, 
     UploadedFile, 
@@ -28,11 +28,14 @@ class InventoryController extends Controller
      */
     public function index(Request $request)
     {
-        $location = $request->query('location', 'surface'); // Default to 'surface' if not provided
+        $location = $request->query('location', ''); // Default to 'empty' if not provided
 
         // Start building the query without executing it yet
-        $inventory_items = Inventory::query()
-            ->where('location', $location)
+        $inventory_items = InventoryItem::query()
+            ->when(($request->filled('location') && $location != 'list'), function ($query) use ($location) {
+                $query->where('location', $location);
+            })
+            // ->where('location', $location)
             ->with('kind')
             ->when($request->filled('category_filter'), function ($query) use ($request) {
                 // Assuming 'category_id' is the column name in your database
@@ -85,7 +88,7 @@ class InventoryController extends Controller
         dd('validated data', $validated_data);
 
         // 2. Persist data via Mass Assignment using your fillable array
-        Inventory::create([
+        InventoryItem::create([
             'item_code'      => $request->item_code,
             'name'     => $request->name,
             'category' => $request->category,
@@ -100,7 +103,7 @@ class InventoryController extends Controller
     public function update(Request $request, $id) 
     {
         // 1. Locate the item or throw a 404 if it doesn't exist
-        $item = Inventory::findOrFail($id);
+        $item = InventoryItem::findOrFail($id);
 
         // 2. Validate fields, ensuring the unique item_code rule ignores this specific item's ID
         $request->validate([
@@ -171,7 +174,7 @@ class InventoryController extends Controller
     public function update_record(Request $request, $item_id) 
     {
         // If you prefer a distinct page view instead of a modal:
-        $item = Inventory::with('kind')->findOrFail($item_id);
+        $item = InventoryItem::with('kind')->findOrFail($item_id);
         
         // Pass along whatever data your layout expects (like $location, $categories, etc.)
         return view('inventory.update-record', compact('item'));
@@ -192,7 +195,7 @@ class InventoryController extends Controller
             'logs.*.uom'       => 'required|string|max:10',
         ]);
 
-        $item = Inventory::findOrFail($request->item_id);
+        $item = InventoryItem::findOrFail($request->item_id);
 
         // Loop through rows sent by your dynamic table form
         foreach ($request->logs as $log) {

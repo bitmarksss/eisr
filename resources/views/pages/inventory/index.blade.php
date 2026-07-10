@@ -59,26 +59,24 @@
             
             <div class="flex items-center space-x-4">
                 <!-- Dynamic Quick Action Accent Button Based on Role -->
-                @if(auth()->user()?->role_id == 1)
-                    <button class="bg-brand-gold border-0  hover:bg-brand-goldHover text-white font-semibold px-4 py-2 rounded-lg shadow transition text-sm cursor-pointer active:translate-y-0.5"
+                @if(auth()->user()?->role_id == 1 &&
+                    request()->routeIs('inventory.*'))
+                    <button class="bg-brand-gold border-0  hover:bg-brand-gold-hover text-white font-semibold px-4 py-2 rounded-lg shadow transition text-sm cursor-pointer active:translate-y-0.5"
                     onclick="window.openModal('addInventoryModal')">
                         + Add New Item
                     </button>
                 @else
-                    <button class="bg-brand-navy hover:bg-brand-dark text-white font-semibold px-4 py-2 rounded-lg shadow transition text-sm">
+                    <!-- <button class="bg-brand-navy hover:bg-brand-dark text-white font-semibold px-4 py-2 rounded-lg shadow transition text-sm">
                         Request Stock Pull
-                    </button>
+                    </button> -->
                 @endif
+
+                <button class="bg-brand-gold border-0  hover:bg-brand-gold-hover text-white font-semibold px-4 py-2 rounded-lg shadow transition text-sm cursor-pointer active:translate-y-0.5"
+                onclick="window.openModal('addInventoryModal')">
+                    + Add New Item
+                </button>
             </div>
         </div>
-
-        <!-- Access Guard Button Triggering our plain JS Modal -->
-        @if(auth()->user()?->is_admin)
-            <button onclick="openModal()" 
-                class="bg-brand-gold hover:bg-brand-gold-hover text-white font-bold px-5 py-2.5 rounded-lg shadow-sm text-sm transition text-center whitespace-nowrap cursor-pointer">
-                + Catalog New Item
-            </button>
-        @endif
     </div>
 
     <!-- Inventory Model Table Structure -->

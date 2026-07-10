@@ -2,16 +2,16 @@
 
 namespace Database\Factories;
 
-use App\Models\StockRequest;
+use App\Models\Stock;
 use App\Models\UnitOfMeasurement;
 use App\Models\User;
 use App\Models\Uom;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Arr;
 
-class StockRequestFactory extends Factory
+class StockFactory extends Factory
 {
-    protected $model = StockRequest::class;
+    protected $model = Stock::class;
 
     public function definition(): array
     {

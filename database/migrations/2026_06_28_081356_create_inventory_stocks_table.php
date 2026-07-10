@@ -11,15 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('inventory', function (Blueprint $table) {
+        Schema::create('inventory_stocks', function (Blueprint $table) {
             $table->id();
-            $table->string('item_code')->unique(); // Added unique item code column
-            $table->foreignId('supplier_id')->constrained('suppliers'); // Suppliers table
-            $table->string('name');
+            $table->foreignId('item_id')->constrained('inventory_items'); // Inventory table
             $table->string('location'); // Added location column
-            $table->foreignId('kind_id')->constrained('inventory_kinds'); // Inventory kinds table
             $table->integer('quantity')->default(0);
-            $table->foreignId('uom')->constrained('uoms'); // Unit of measurements table
+
             $table->timestamps();
         });
     }
@@ -29,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('inventory');
+        Schema::dropIfExists('inventory_stocks');
     }
 };

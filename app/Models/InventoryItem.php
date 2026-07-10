@@ -6,17 +6,18 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\{ BelongsTo, HasMany };
 use Illuminate\Database\Eloquent\Model;
 
-class Inventory extends Model
+class InventoryItem extends Model
 {
     use HasFactory;
 
-    protected $table = 'inventory';
+    protected $table = 'inventory_items';
 
     protected $fillable = [
         'item_code',
         'name',
         'category',
-        'quantity'
+        'quantity',
+        'uom'
     ];
 
     public function supplier(): BelongsTo

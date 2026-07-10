@@ -7,7 +7,7 @@ use App\Http\Controllers\{
 
     DashboardController,
     InventoryController,
-    StockRequestController,
+    StockController,
     FileController,
 
     LoanController,
@@ -36,6 +36,14 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
+    // INVENTORY
+    Route::prefix('inventory')->name('inventory.')->group(function () {
+        Route::get('/', [InventoryController::class, 'index'])->name('index');
+        Route::post('/store', [InventoryController::class, 'store'])->name('store');
+        Route::put('/{id}', [InventoryController::class, 'update'])->name('update');
+        Route::post('/upload', [InventoryController::class, 'upload'])->name('upload');
+    });
+
     // SURFACE
     Route::prefix('surface')->name('surface.')->group(function () {
         Route::prefix('inventory')->name('inventory.')->group(function () {
@@ -45,11 +53,13 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
             Route::post('/upload', [InventoryController::class, 'upload'])->name('upload');
         });
 
-        Route::prefix('stock-request')->name('stock-request.')->group(function () {
-            Route::get('/', [StockRequestController::class, 'index'])->name('index');
-            Route::post('/store', [StockRequestController::class, 'store'])->name('store');
-            Route::put('/{id}', [StockRequestController::class, 'update'])->name('update');
-            Route::post('/upload', [StockRequestController::class, 'upload'])->name('upload');
+        Route::prefix('stock')->name('stock.')->group(function () {
+            Route::get('/', [StockController::class, 'index'])->name('index');
+            Route::post('/store', [StockController::class, 'store'])->name('store');
+            Route::put('/{id}', [StockController::class, 'update'])->name('update');
+            Route::post('/upload', [StockController::class, 'upload'])->name('upload');
+
+            Route::get('/request', [StockController::class, 'request'])->name('index');
         });
     });
 
@@ -65,11 +75,11 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
             Route::post('/record', [InventoryController::class, 'record'])->name('record');
         });
         
-        Route::prefix('stock-request')->name('stock-request.')->group(function () {
-            Route::get('/', [StockRequestController::class, 'index'])->name('index');
-            Route::post('/store', [StockRequestController::class, 'store'])->name('store');
-            Route::put('/{id}', [StockRequestController::class, 'update'])->name('update');
-            Route::post('/upload', [StockRequestController::class, 'upload'])->name('upload');
+        Route::prefix('stock')->name('stock.')->group(function () {
+            Route::get('/', [StockController::class, 'index'])->name('index');
+            Route::post('/store', [StockController::class, 'store'])->name('store');
+            Route::put('/{id}', [StockController::class, 'update'])->name('update');
+            Route::post('/upload', [StockController::class, 'upload'])->name('upload');
         });
     });
 

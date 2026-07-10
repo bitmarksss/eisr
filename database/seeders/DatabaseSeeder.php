@@ -20,8 +20,9 @@ class DatabaseSeeder extends Seeder
             UserFactorySeeder::class, // Test
             SupplierSeeder::class, // Test
             InventoryKindSeeder::class,
-            InventorySeeder::class, // Test
-            StockRequestSeeder::class, // Test
+            InventoryItemSeeder::class, // Test
+            InventoryStockSeeder::class, // Test
+            StockSeeder::class, // Test
         ]);
     }
 }

@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\{
-    Inventory, 
+    InventoryItem, 
     InventoryKind, 
-    StockRequest,
+    Stock,
     Supplier, 
     UploadedFile, 
     UnitOfMeasurement
@@ -13,7 +13,7 @@ use App\Models\{
 
 use Illuminate\Http\Request;
 
-class StockRequestController extends Controller
+class StockController extends Controller
 {
     /**
      * Display a listing of the stock requests.
@@ -23,7 +23,7 @@ class StockRequestController extends Controller
         // Capture the prefix context ('surface' or 'underground')
         $location = $request->segment(1) === 'underground' ? 'underground' : 'surface';
 
-        $stock_requests = StockRequest::query()
+        $stock_requests = Stock::query()
             // Ensure you filter down by your location context if your table tracks it, 
             // or remove this line if stock requests are global across areas.
             // ->where('location', $location) 

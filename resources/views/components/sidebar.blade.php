@@ -23,6 +23,20 @@
         <br>
 
 
+        <!-- INVENTORY -->
+        <p class="sidebar-label
+            {{ request()->routeIs('inventory.*') ? 'border-0 border-b border-brand-navy/50' : '' }}">
+            Inventory
+        </p>
+        <!-- Items-->
+        <a href="{{ route('inventory.index')}}" 
+            class="sidebar-link {{ request()->routeIs('inventory.*') ? 'selected' : '' }}">
+            <i class="fa-solid fa-box-open"></i>
+            Items List
+        </a>
+        <br>
+
+
         <!-- MINE SURFACE -->
         <p class="sidebar-label
             {{ request()->routeIs('surface.*') ? 'border-0 border-b border-brand-navy/50' : '' }}">
@@ -35,10 +49,10 @@
             Inventory Stock
         </a>
         <!-- Stock Request -->
-        <a href="{{ route('surface.stock-request.index', ['location' => 'surface']) }}" 
-            class="sidebar-link {{ request()->routeIs('surface.stock-request.*') ? 'selected' : '' }}">
+        <a href="{{ route('surface.stock.index', ['location' => 'surface']) }}" 
+            class="sidebar-link {{ request()->routeIs('surface.stock.*') ? 'selected' : '' }}">
             <i class="fa-solid fa-file-lines"></i>
-            Stock Requests
+            Stock Management
         </a>
         <br>
         
@@ -55,10 +69,30 @@
             Inventory Stock
         </a>
         <!-- Stock Request -->
-        <a href="{{ route('underground.stock-request.index', ['location' => 'underground']) }}" 
-            class="sidebar-link {{ request()->routeIs('underground.stock-request.*') ? 'selected' : '' }}">
+        <a href="{{ route('underground.stock.index', ['location' => 'underground']) }}" 
+            class="sidebar-link {{ request()->routeIs('underground.stock.*') ? 'selected' : '' }}">
             <i class="fa-solid fa-file-lines"></i>
             Stock Requests
+        </a>
+        <br>
+        
+
+        <!-- REPORTS -->
+        <p class="sidebar-label
+            {{ request()->routeIs('reports.*') ? 'border-0 border-b border-brand-navy/50' : '' }}">
+            REPORTS
+        </p>
+        <!-- Inventory -->
+        <a href="{{ route('underground.inventory.index', ['location' => 'underground']) }}" 
+            class="sidebar-link {{ request()->routeIs('underground.inventory.*') ? 'selected' : '' }}">
+            <i class="fa-solid fa-box-open"></i>
+            Daily Reports
+        </a>
+        <!-- Stock Request -->
+        <a href="{{ route('underground.stock.index', ['location' => 'underground']) }}" 
+            class="sidebar-link {{ request()->routeIs('underground.stock.*') ? 'selected' : '' }}">
+            <i class="fa-solid fa-file-lines"></i>
+            Weekly Reports
         </a>
         <br>
 
@@ -82,7 +116,7 @@
     </nav>
 
     <!-- User Status & Logout -->
-    <div class="p-4 bg-brand-green  border-t border-white/10 flex items-center justify-between justify-self-end">
+    <div class="p-4 bg-brand-green border-t border-white/10 flex items-center justify-between justify-self-end">
         <div>
             <p class="text-sm text-brand-light font-semibold truncate">{{ auth()->user() ? auth()->user()->first_name . ' ' . auth()->user()->last_name : 'Guest User' }}</p>
             <span class="text-xs {{ auth()->user()?->role ? 'text-brand-gold' : 'text-brand-light' }} font-medium">

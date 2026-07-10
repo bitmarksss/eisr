@@ -49,17 +49,15 @@
             </form>
             
             <div class="flex items-center space-x-4">
-                @if(auth()->user()?->role_id == 1 || auth()->user()?->is_admin)
-                    <button class="bg-brand-gold border-0 hover:bg-brand-goldHover text-white font-semibold px-4 py-2 rounded-lg shadow transition text-sm cursor-pointer active:translate-y-0.5"
-                    onclick="window.openModal('addStockRequestModal')">
-                        + New Stock Request
-                    </button>
-                @else
-                    <button class="bg-brand-navy hover:bg-brand-dark text-white font-semibold px-4 py-2 rounded-lg shadow transition text-sm"
-                    onclick="window.openModal('addStockRequestModal')">
-                        Request Stock Pull
-                    </button>
-                @endif
+                <button class="bg-brand-gold border-0 hover:bg-brand-gold-hover text-white font-semibold px-4 py-2 rounded-lg shadow transition text-sm cursor-pointer active:translate-y-0.5"
+                onclick="window.openModal('addStockRequestModal')">
+                    Record Stock on Hand
+                </button>
+                
+                <button class="bg-brand-gold border-0 hover:bg-brand-gold-hover text-white font-semibold px-4 py-2 rounded-lg shadow transition text-sm cursor-pointer active:translate-y-0.5"
+                onclick="window.openModal('addStockRequestModal')">
+                    Record Incoming Surface Magazine Stocks
+                </button>
             </div>
         </div>
     </div>
