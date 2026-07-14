@@ -97,7 +97,19 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    window.stockCardModal = function stockCardModal(id, type, kind, quantity, status) {
+        const modal = document.getElementById('stockCardModal');
+
+        window.openModal('stockCardModal');
+    }
+
     window.updateAndRecordModal = function updateAndRecordModal(id, type, kind, quantity, status) {
+        const modal = document.getElementById('updateAndRecordModal');
+        const kindInput = modal.querySelector('#modal-item-kind');
+        console.log('kindInput');
+        console.log(kindInput);
+        kindInput.value = kind;
+
         window.openModal('updateAndRecordModal');
     }
 
@@ -105,7 +117,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Dynamically target correct prefix updates
         const contextPrefix = "{{ $location }}"; 
         const form = document.getElementById('editStockRequestForm');
-        form.action = `/${contextPrefix}/stock-request/${id}`;
+        form.action = `/${contextPrefix}/stock/${id}`;
 
         // Fill elements values
         document.getElementById('edit_type').value = type;

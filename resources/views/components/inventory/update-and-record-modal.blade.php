@@ -24,7 +24,7 @@
                 </div>
                 <div class="flex items-center space-x-3">
                     <span class="text-xs font-bold uppercase tracking-wider text-gray-500">Kind:</span>
-                    <input type="text" name="kind" id="modal_item_kind" readonly
+                    <input type="text" name="kind" id="modal-item-kind" readonly
                         class="bg-transparent border-b border-dashed border-gray-400 font-bold text-brand-navy focus:outline-none text-sm px-1 py-0.5">
                 </div>
             </div>
@@ -42,7 +42,7 @@
                             <th rowspan="2" class="border border-gray-200 p-2 text-brand-navy">UoM</th>
                             <th colspan="2" class="border border-gray-200 p-1.5 bg-gray-100 text-[10px] text-brand-navy">Checked By</th>
                             <th colspan="3" class="border border-gray-200 p-1.5 bg-gray-100 text-[10px] text-brand-navy">Witnessed By</th>
-                            <th rowspan="2" class="border border-gray-200 p-2 text-center text-brand-navy"></th>
+                            <th rowspan="2" class="border border-gray-200 p-2 text-center text-brand-navy">Actions</th>
                         </tr>
                         <tr class="bg-gray-50 text-[9px] font-normal text-gray-500">
                             <th class="border border-gray-200 p-1">Mag. Warehouseman</th>
@@ -53,7 +53,61 @@
                         </tr>
                     </thead>
                     <tbody id="stockFormRows" class="bg-white divide-y divide-gray-200">
-                        <!-- Instantiated by JavaScript -->
+                        <tr class="text-center">
+                            <!-- Date -->
+                            <td class="border border-gray-200 p-1">
+                                <input type="date" class="w-full p-1 border border-gray-300 rounded focus:outline-none focus:border-brand-navy text-xs" />
+                            </td>
+                            <!-- Beginning -->
+                            <td class="border border-gray-200 p-1">
+                                <input type="number" placeholder="0" class="w-full p-1 border border-gray-300 rounded focus:outline-none focus:border-brand-navy text-xs" />
+                            </td>
+                            <!-- Incoming -->
+                            <td class="border border-gray-200 p-1">
+                                <input type="number" placeholder="0" class="w-full p-1 border border-gray-300 rounded focus:outline-none focus:border-brand-navy text-xs" />
+                            </td>
+                            <!-- Outgoing -->
+                            <td class="border border-gray-200 p-1">
+                                <input type="number" placeholder="0" class="w-full p-1 border border-gray-300 rounded focus:outline-none focus:border-brand-navy text-xs" />
+                            </td>
+                            <!-- Ending -->
+                            <td class="border border-gray-200 p-1">
+                                <input type="number" placeholder="0" class="w-full p-1 border border-gray-300 rounded focus:outline-none focus:border-brand-navy text-xs" />
+                            </td>
+                            <!-- UoM -->
+                            <td class="border border-gray-200 p-1">
+                                <select class="w-full p-1 border border-gray-300 rounded focus:outline-none focus:border-brand-navy text-xs">
+                                    @foreach($uoms as $uom)
+                                        <option value="{{$uom}}">{{ $uom->unit }}</option>
+                                    @endforeach
+                                </select>
+                                <!-- <input type="text" placeholder="pcs" class="w-full p-1 border border-gray-300 rounded focus:outline-none focus:border-brand-navy text-xs" /> -->
+                            </td>
+                            <!-- Checked By: Mag. Warehouseman -->
+                            <td class="border border-gray-200 p-1">
+                                <input type="text" placeholder="Name/Sig" class="w-full p-1 border border-gray-300 rounded focus:outline-none focus:border-brand-navy text-xs" />
+                            </td>
+                            <!-- Checked By: Foreman Blaster -->
+                            <td class="border border-gray-200 p-1">
+                                <input type="text" placeholder="Name/Sig" class="w-full p-1 border border-gray-300 rounded focus:outline-none focus:border-brand-navy text-xs" />
+                            </td>
+                            <!-- Witnessed By: Security On Duty -->
+                            <td class="border border-gray-200 p-1">
+                                <input type="text" placeholder="Name/Sig" class="w-full p-1 border border-gray-300 rounded focus:outline-none focus:border-brand-navy text-xs" />
+                            </td>
+                            <!-- Witnessed By: PNP Rep. -->
+                            <td class="border border-gray-200 p-1">
+                                <input type="text" placeholder="Name/Sig" class="w-full p-1 border border-gray-300 rounded focus:outline-none focus:border-brand-navy text-xs" />
+                            </td>
+                            <!-- Witnessed By: Army Rep. -->
+                            <td class="border border-gray-200 p-1">
+                                <input type="text" placeholder="Name/Sig" class="w-full p-1 border border-gray-300 rounded focus:outline-none focus:border-brand-navy text-xs" />
+                            </td>
+                            <!-- Actions column (e.g. Add/Delete row button) -->
+                            <td class="border border-gray-200 p-1 text-center">
+                                <button type="button" class="px-2 py-1 bg-brand-navy text-white rounded text-[10px] hover:bg-opacity-90">Add</button>
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
             </div>

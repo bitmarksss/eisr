@@ -29,4 +29,9 @@ class InventoryItem extends Model
     {
         return $this->belongsTo(InventoryKind::class);
     }
+
+    public function stock(): HasMany
+    {
+        return $this->hasMany(InventoryStock::class);
+    }
 }

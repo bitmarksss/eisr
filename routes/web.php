@@ -59,7 +59,8 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
             Route::put('/{id}', [StockController::class, 'update'])->name('update');
             Route::post('/upload', [StockController::class, 'upload'])->name('upload');
 
-            Route::get('/request', [StockController::class, 'request'])->name('index');
+            // Route::get('/request', [StockController::class, 'request'])->name('index');
+            Route::get('/issuance', [StockController::class, 'issuance'])->name('issuance');
         });
     });
 
@@ -80,6 +81,9 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
             Route::post('/store', [StockController::class, 'store'])->name('store');
             Route::put('/{id}', [StockController::class, 'update'])->name('update');
             Route::post('/upload', [StockController::class, 'upload'])->name('upload');
+
+            Route::get('/withdrawal', [StockController::class, 'withdrawal'])->name('withdrawal');
+            Route::get('/issuance', [StockController::class, 'issuance'])->name('issuance');
         });
     });
 

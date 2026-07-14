@@ -8,8 +8,8 @@
 
 @section('modals')
     @include('components.backdrop')
-    @include('components.stock-request.add-modal')
-    @include('components.stock-request.edit-modal')
+    @include('components.stock.add-modal')
+    @include('components.stock.edit-modal')
 @endsection
 
 @section('content')
@@ -27,7 +27,7 @@
         
         <div class="flex flex-wrap items-center justify-between w-full">
             <!-- Search and Filters -->
-            <form method="GET" action="{{ route($location . '.stock-request.index') }}" class="flex flex-wrap items-center gap-3 flex-1 w-full">
+            <form method="GET" action="{{ route($location . '.stock.index') }}" class="flex flex-wrap items-center gap-3 flex-1 w-full">
                 <div class="flex w-90">
                     <div class="relative min-w-70 flex-1 max-w-md">
                         <input type="text" name="search" value="{{ request('search') }}" placeholder="Search by type, kind, or user..." 

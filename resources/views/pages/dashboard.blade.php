@@ -23,10 +23,87 @@
     </div>
 </div>
 
+<!-- Reports Component -->
+<div class="grid grid-cols-2 gap-4 mb-8">
+    
+    <!-- Daily Report -->
+    <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+        <div class="px-6 py-4 bg-gray-50 border-b border-gray-200 flex justify-between items-center">
+            <h3 class="font-bold text-brand-navy">Daily Consumption Report Condensed</h3>
+
+            <div class="flex gap-2">
+                <a href="#" class="text-sm font-bold text-brand-gold">
+                    Go to reports 
+                    <i class="fa-solid fa-arrow-right"></i>
+                </a>
+                <!-- <input type="text" placeholder="Search item code..." class="px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand-gold"> -->
+            </div>
+        </div>
+        
+        <table class="w-full text-left border-collapse">
+            <thead>
+                <tr class="bg-gray-100 text-xs font-semibold text-gray-600 uppercase tracking-wider border-b border-gray-200">
+                    <th class="px-6 py-3">Placeholder</th>
+                    <th class="px-6 py-3">Placeholder</th>
+                    <th class="px-6 py-3">Placeholder</th>
+                    <th class="px-6 py-3">Placeholder</th>
+                    <th class="px-6 py-3 text-right"></th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100 text-sm text-gray-700">
+                <tr class="hover:bg-gray-50/70 transition">
+                    <td class="px-6 py-4">Placeholder</td>
+                    <td class="px-6 py-4">Placeholder</td>
+                    <td class="px-6 py-4">Placeholder</td>
+                    <td class="px-6 py-4">Placeholder</td>
+                    <td class="px-6 py-4">Placeholder</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    
+    
+    <!-- Weekly Report -->
+    <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+        <div class="px-6 py-4 bg-gray-50 border-b border-gray-200 flex justify-between items-center">
+            <h3 class="font-bold text-brand-navy">Weekly Consumption Report Condensed</h3>
+
+            <div class="flex gap-2">
+                <a href="#" class="text-sm font-bold text-brand-gold">
+                    Go to reports 
+                    <i class="fa-solid fa-arrow-right"></i>
+                </a>
+                <!-- <input type="text" placeholder="Search item code..." class="px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand-gold"> -->
+            </div>
+        </div>
+        
+        <table class="w-full text-left border-collapse">
+            <thead>
+                <tr class="bg-gray-100 text-xs font-semibold text-gray-600 uppercase tracking-wider border-b border-gray-200">
+                    <th class="px-6 py-3">Placeholder</th>
+                    <th class="px-6 py-3">Placeholder</th>
+                    <th class="px-6 py-3">Placeholder</th>
+                    <th class="px-6 py-3">Placeholder</th>
+                    <th class="px-6 py-3 text-right"></th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100 text-sm text-gray-700">
+                <tr class="hover:bg-gray-50/70 transition">
+                    <td class="px-6 py-4">Placeholder</td>
+                    <td class="px-6 py-4">Placeholder</td>
+                    <td class="px-6 py-4">Placeholder</td>
+                    <td class="px-6 py-4">Placeholder</td>
+                    <td class="px-6 py-4">Placeholder</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
 <!-- Stock Management Table Component -->
 <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
     <div class="px-6 py-4 bg-gray-50 border-b border-gray-200 flex justify-between items-center">
-        <h3 class="font-bold text-brand-navy">Current Warehouse Inventory</h3>
+        <h3 class="font-bold text-brand-navy">Current Total Inventory Items</h3>
         <input type="text" placeholder="Search item code..." class="px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand-gold">
     </div>
     

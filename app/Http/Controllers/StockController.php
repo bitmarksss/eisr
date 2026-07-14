@@ -12,6 +12,8 @@ use App\Models\{
 };
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 
 class StockController extends Controller
 {
@@ -45,7 +47,7 @@ class StockController extends Controller
         $suppliers = Supplier::get();
         $uoms = UnitOfMeasurement::get(); // Maps to $uoms collection variable
             
-        return view('pages.stock-request.index', compact('stock_requests', 'kinds', 'suppliers', 'uoms', 'location'));
+        return view('pages.stock.index', compact('stock_requests', 'kinds', 'suppliers', 'uoms', 'location'));
     }
 
     /**
@@ -94,5 +96,47 @@ class StockController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+
+    public function withdrawal() {
+
+        return view('pages.stock.withdrawal');
+    }
+
+    public function issuance(Request $request) {
+        $location = $request->query('location', null); // Default to 'empty' if not provided
+
+        if (!$location) {
+            return view('pages.maintenance.error');
+        }
+
+        // Start building the query without executing it yet
+        $inventory_items = InventoryItem::query()
+            ->when(($request->filled('location') && $location != 'list'), function ($query) use ($location) {
+                $query->whereHas('stock', function($sub_query) use ($location) {
+                    $sub_query->where('location', $location);
+                });
+            })
+            // ->where('location', $location)
+            ->when($request->filled('category_filter'), function ($query) use ($request) {
+                // Assuming 'category_id' is the column name in your database
+                $query->whereHas('kind', function ($q) use ($request) {
+                    $q->where('id', $request->category_filter);
+                });
+            })
+            ->when($request->filled('search'), function ($query) use ($request) {
+                // Assuming you want to search by item name or description
+                $query->where('name', 'like', '%' . $request->search . '%');
+            })
+            ->with('kind')
+            ->get();
+        
+        $categories = InventoryKind::get();
+        $suppliers = Supplier::get();
+        $uoms = UnitOfMeasurement::get();
+
+        dd($inventory_items);
+
+        return view('pages.stock.issuance', compact('inventory_items' ,'categories', 'suppliers', 'uoms', 'location'));
     }
 }

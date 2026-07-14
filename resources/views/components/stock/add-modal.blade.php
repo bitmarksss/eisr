@@ -13,7 +13,7 @@
         </div>
 
         <!-- Submission Form Layout -->
-        <form action="{{ route($location . '.stock-request.store') }}" method="POST" class="p-6 space-y-4">
+        <form action="{{ route($location . '.stock.store') }}" method="POST" class="p-6 space-y-4">
             @csrf
             
             <!-- 1. Inventory Item Name (Type) -->

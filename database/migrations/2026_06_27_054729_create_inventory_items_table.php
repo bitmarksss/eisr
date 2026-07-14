@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('name');
             // $table->string('location'); // Added location column
             $table->foreignId('kind_id')->constrained('inventory_kinds'); // Inventory kinds table
-            // $table->integer('quantity')->default(0);
+            $table->decimal('cost', 15, 2);
             $table->foreignId('uom')->constrained('uoms'); // Unit of measurements table
             $table->timestamps();
         });

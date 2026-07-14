@@ -50,9 +50,15 @@
         </a>
         <!-- Stock Request -->
         <a href="{{ route('surface.stock.index', ['location' => 'surface']) }}" 
-            class="sidebar-link {{ request()->routeIs('surface.stock.*') ? 'selected' : '' }}">
+            class="sidebar-link {{ request()->routeIs('surface.stock.index') ? 'selected' : '' }}">
             <i class="fa-solid fa-file-lines"></i>
             Stock Management
+        </a>
+        <!-- Issuance -->
+        <a href="{{ route('surface.stock.issuance', ['location' => 'surface']) }}" 
+            class="sidebar-link {{ request()->routeIs('surface.stock.issuance') ? 'selected' : '' }}">
+            <i class="fa-solid fa-people-carry-box"></i>
+            Stock Issuance
         </a>
         <br>
         
@@ -68,11 +74,17 @@
             <i class="fa-solid fa-box-open"></i>
             Inventory Stock
         </a>
-        <!-- Stock Request -->
-        <a href="{{ route('underground.stock.index', ['location' => 'underground']) }}" 
-            class="sidebar-link {{ request()->routeIs('underground.stock.*') ? 'selected' : '' }}">
-            <i class="fa-solid fa-file-lines"></i>
-            Stock Requests
+        <!-- Wthdrawal -->
+        <a href="{{ route('underground.stock.withdrawal') }}" 
+            class="sidebar-link {{ request()->routeIs('underground.stock.withdrawal') ? 'selected' : '' }}">
+            <i class="fa-solid fa-hand-holding"></i>
+            Stock Withdrawal
+        </a>
+        <!-- Issuance -->
+        <a href="{{ route('underground.stock.issuance') }}" 
+            class="sidebar-link {{ request()->routeIs('underground.stock.issuance') ? 'selected' : '' }}">
+            <i class="fa-solid fa-people-carry-box"></i>
+            Stock Issuance
         </a>
         <br>
         
@@ -83,15 +95,13 @@
             REPORTS
         </p>
         <!-- Inventory -->
-        <a href="{{ route('underground.inventory.index', ['location' => 'underground']) }}" 
-            class="sidebar-link {{ request()->routeIs('underground.inventory.*') ? 'selected' : '' }}">
-            <i class="fa-solid fa-box-open"></i>
+        <a href="" class="sidebar-link">
+            <i class="fa-solid fa-scroll"></i>
             Daily Reports
         </a>
         <!-- Stock Request -->
-        <a href="{{ route('underground.stock.index', ['location' => 'underground']) }}" 
-            class="sidebar-link {{ request()->routeIs('underground.stock.*') ? 'selected' : '' }}">
-            <i class="fa-solid fa-file-lines"></i>
+        <a href="" class="sidebar-link">
+            <i class="fa-solid fa-scroll"></i>
             Weekly Reports
         </a>
         <br>
@@ -101,7 +111,7 @@
         <div class="pt-4 mt-4 space-y-2">
             <p class="sidebar-label
                 {{ request()->is('admin/*') ? 'border-0 border-b border-brand-navy/50' : '' }}">
-                 Admin Controls
+                Admin Controls
             </p>
             <a href="{{ route('users.index') }}" class="sidebar-link {{ request()->routeIs('users.*') ? 'selected' : '' }}">
                 <i class="fa-solid fa-user-gear"></i>

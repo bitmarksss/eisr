@@ -22,8 +22,15 @@
   /* Injecting your logo's exact colors */
   --color-brand-gold: #E59623;
   --color-brand-gold-hover: #CB811B;
+
+  /* Use when receiving */
   --color-brand-green: #043916;
+  --color-brand-green-hover: #021809;
+   
+  /* Use when issuing */
   --color-brand-navy: #1E2B4B;
+  --color-brand-navy-hover: #141D33;
+
   --color-brand-dark: #0F172A;
   --color-brand-light: #F8FAFC;
 }

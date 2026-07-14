@@ -32,11 +32,12 @@ class InventoryController extends Controller
 
         // Start building the query without executing it yet
         $inventory_items = InventoryItem::query()
-            ->when(($request->filled('location') && $location != 'list'), function ($query) use ($location) {
-                $query->where('location', $location);
-            })
+            // ->when(($request->filled('location') && $location != 'list'), function ($query) use ($location) {
+            //     $query->whereHas('stock', function($sub_query) use ($location) {
+            //         $sub_query->where('location', $location);
+            //     });
+            // })
             // ->where('location', $location)
-            ->with('kind')
             ->when($request->filled('category_filter'), function ($query) use ($request) {
                 // Assuming 'category_id' is the column name in your database
                 $query->whereHas('kind', function ($q) use ($request) {
@@ -47,12 +48,13 @@ class InventoryController extends Controller
                 // Assuming you want to search by item name or description
                 $query->where('name', 'like', '%' . $request->search . '%');
             })
+            ->with('kind')
             ->get(); // Finally, execute the query and get the results
 
         $categories = InventoryKind::get();
         $suppliers = Supplier::get();
         $uoms = UnitOfMeasurement::get();
-            
+
         return view('pages.inventory.index', compact('inventory_items' ,'categories', 'suppliers', 'uoms', 'location'));
     }
 
@@ -210,5 +212,15 @@ class InventoryController extends Controller
         ]);
 
         return redirect()->back()->with('success', 'Explosives Stock Card log entries recorded successfully!');
+    }
+
+    public function withdrawal() {
+
+        return view('inventory.withdrawal');
+    }
+
+    public function issuance() {
+
+        return view('inventory.withdrawal');
     }
 }

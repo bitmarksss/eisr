@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\{ BelongsTo, HasMany };
 
 class InventoryStock extends Model
 {
@@ -16,7 +16,7 @@ class InventoryStock extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'inventory_id',
+        'item_id',
         'location',
         'quantity',
     ];
@@ -26,6 +26,6 @@ class InventoryStock extends Model
      */
     public function inventory(): BelongsTo
     {
-        return $this->belongsTo(InventoryItem::class, 'inventory_id');
+        return $this->belongsTo(InventoryItem::class, 'item_id');
     }
 }
