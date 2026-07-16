@@ -28,28 +28,31 @@ class InventoryController extends Controller
      */
     public function index(Request $request)
     {
-        $location = $request->query('location', ''); // Default to 'empty' if not provided
+        $location = $request->query('location', null); // Default to 'empty' if not provided
 
         // Start building the query without executing it yet
         $inventory_items = InventoryItem::query()
-            // ->when(($request->filled('location') && $location != 'list'), function ($query) use ($location) {
-            //     $query->whereHas('stock', function($sub_query) use ($location) {
-            //         $sub_query->where('location', $location);
-            //     });
-            // })
-            // ->where('location', $location)
+
+            // If location is selected for filtering
+            ->when(($request->filled('location') && $location != 'list'), function ($query) use ($location) {
+                $query->whereHas('stock', function($q) use ($location) {
+                    $q->where('location', $location);
+                });
+            })
+
+            // If category is selected for filtering
             ->when($request->filled('category_filter'), function ($query) use ($request) {
-                // Assuming 'category_id' is the column name in your database
                 $query->whereHas('kind', function ($q) use ($request) {
                     $q->where('id', $request->category_filter);
                 });
             })
+
+            // Assuming you want to search by item name or description
             ->when($request->filled('search'), function ($query) use ($request) {
-                // Assuming you want to search by item name or description
                 $query->where('name', 'like', '%' . $request->search . '%');
             })
             ->with('kind')
-            ->get(); // Finally, execute the query and get the results
+            ->get();
 
         $categories = InventoryKind::get();
         $suppliers = Supplier::get();
@@ -65,7 +68,7 @@ class InventoryController extends Controller
         
         // 1. Validate fields against incoming modal input names
         $validated_data = Validator::make($data, [
-            'item_code'     => 'required|string|max:255|unique:inventory,item_code',
+            // 'item_code'     => 'required|string|max:255|unique:inventory,item_code',
             'supplier_id'   => 'required|exists:suppliers,id',
             'name'     => 'required|string|max:255',
             'category' => [
@@ -73,6 +76,7 @@ class InventoryController extends Controller
                 'integer', 
                 Rule::in($categories),
             ],
+            'cost'     => 'required|numeric|decimal:2',
             'quantity' => 'required|integer|min:0',
         ]);
 
@@ -91,10 +95,11 @@ class InventoryController extends Controller
 
         // 2. Persist data via Mass Assignment using your fillable array
         InventoryItem::create([
-            'item_code'      => $request->item_code,
-            'name'     => $request->name,
-            'category' => $request->category,
-            'quantity' => $request->quantity,
+            // 'item_code' => $request->item_code,
+            'name'      => $request->name,
+            'category'  => $request->category,
+            'cost'      => $request->cost,
+            'quantity'  => $request->quantity,
         ]);
 
         // 3. Redirect back to the index with a clean success message flash
@@ -109,18 +114,20 @@ class InventoryController extends Controller
 
         // 2. Validate fields, ensuring the unique item_code rule ignores this specific item's ID
         $request->validate([
-            'item_code'      => 'required|string|max:255|unique:inventory,item_code,' . $item->id,
+            // 'item_code'=> 'required|string|max:255|unique:inventory,item_code,' . $item->id,
             'name'     => 'required|string|max:255',
-            'category' => 'required|string|in:Mechanical,Hydraulics,Electrical',
+            'category' => 'required|string',
+            'cost'     => 'required|numeric|decimal:2',
             'quantity' => 'required|integer|min:0',
         ]);
 
         // 3. Update the fields safely
         $item->update([
-            'item_code'      => $request->item_code,
-            'name'     => $request->name,
-            'category' => $request->category,
-            'quantity' => $request->quantity,
+            // 'item_code' => $request->item_code,
+            'name'      => $request->name,
+            'category'  => $request->category,
+            'cost'      => $request->cost,
+            'quantity'  => $request->quantity,
         ]);
 
         return redirect()->route('inventory.index')
@@ -212,6 +219,44 @@ class InventoryController extends Controller
         ]);
 
         return redirect()->back()->with('success', 'Explosives Stock Card log entries recorded successfully!');
+    }
+
+    // FOR SURFACE AND UNDERGROUND
+    public function warehouse_index(Request $request)
+    {
+        $location = $request->query('location', null); // Default to 'empty' if not provided
+
+        // Start building the query without executing it yet
+        $inventory_items = InventoryItem::query()
+
+            // If location is selected for filtering
+            ->with('stock')
+            ->when(($request->filled('location') && $location != 'list'), function ($query) use ($location) {
+                $query->whereHas('stock', function($q) use ($location) {
+                    $q->where('location', $location);
+                });
+            })
+
+            // If category is selected for filtering
+            ->when($request->filled('category_filter'), function ($query) use ($request) {
+                $query->whereHas('kind', function ($q) use ($request) {
+                    $q->where('id', $request->category_filter);
+                });
+            })
+
+            // Assuming you want to search by item name or description
+            ->when($request->filled('search'), function ($query) use ($request) {
+                $query->where('name', 'like', '%' . $request->search . '%');
+            })
+            ->with('kind')
+            ->get();
+
+        $kinds = InventoryKind::pluck('kind');
+        $categories = InventoryKind::get();
+        $suppliers = Supplier::get();
+        $uoms = UnitOfMeasurement::get();
+
+        return view('pages.stock.index', compact('inventory_items' ,'kinds', 'categories', 'suppliers', 'uoms', 'location'));
     }
 
     public function withdrawal() {

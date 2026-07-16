@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\{
     InventoryItem, 
     InventoryKind, 
+    InventoryStock, 
     Stock,
     Supplier, 
     UploadedFile, 
@@ -23,16 +24,33 @@ class StockController extends Controller
     public function index(Request $request)
     {
         // Capture the prefix context ('surface' or 'underground')
-        $location = $request->segment(1) === 'underground' ? 'underground' : 'surface';
+        $location = $request->query('location', null); // Default to 'empty' if not provided
 
-        $stock_requests = Stock::query()
-            // Ensure you filter down by your location context if your table tracks it, 
-            // or remove this line if stock requests are global across areas.
-            // ->where('location', $location) 
-            ->with(['uom', 'user'])
+        $stocks = InventoryStock::query()
+
+            // From inventory
+            ->select('inventory_stocks.*') 
+            // Subquery to grab the item name from the inventories table
+            ->addSelect(['item_name' => function ($query) {
+                $query->select('name') // assuming the column is 'name'
+                    ->from('inventory_items')
+                    ->whereColumn('inventory_items.id', 'inventory_stocks.item_id')
+                    ->limit(1);
+            }])
+
+            // If location is selected for filtering
+            ->when(($request->filled('location') && $location != 'list'), function ($query) use ($location) {
+                $query->where('location', $location);
+            })
+
             ->when($request->filled('kind_filter'), function ($query) use ($request) {
                 $query->where('kind', $request->kind_filter);
             })
+
+            ->when($request->filled('kind_filter'), function ($query) use ($request) {
+                $query->where('kind', $request->kind_filter);
+            })
+
             ->when($request->filled('search'), function ($query) use ($request) {
                 $query->where(function ($q) use ($request) {
                     $q->where('type', 'like', '%' . $request->search . '%')
@@ -40,14 +58,18 @@ class StockController extends Controller
                     ->orWhere('remarks', 'like', '%' . $request->search . '%');
                 });
             })
-            ->paginate(15); // Swapped to pagination to support .hasPages grid calls cleanly
+
+            // ->with(['inventory.unit'])
+
+            ->paginate(15);
+            // ->get();
 
         // Gather collections for modal select drop-downs
         $kinds = InventoryKind::pluck('kind');
         $suppliers = Supplier::get();
         $uoms = UnitOfMeasurement::get(); // Maps to $uoms collection variable
             
-        return view('pages.stock.index', compact('stock_requests', 'kinds', 'suppliers', 'uoms', 'location'));
+        return view('pages.stock.management', compact('stocks', 'kinds', 'suppliers', 'uoms', 'location'));
     }
 
     /**
@@ -109,33 +131,33 @@ class StockController extends Controller
         if (!$location) {
             return view('pages.maintenance.error');
         }
-
         // Start building the query without executing it yet
         $inventory_items = InventoryItem::query()
+
             ->when(($request->filled('location') && $location != 'list'), function ($query) use ($location) {
-                $query->whereHas('stock', function($sub_query) use ($location) {
-                    $sub_query->where('location', $location);
+                $query->whereHas('stock', function($q) use ($location) {
+                    $q->where('location', $location);
                 });
             })
-            // ->where('location', $location)
+            
             ->when($request->filled('category_filter'), function ($query) use ($request) {
                 // Assuming 'category_id' is the column name in your database
                 $query->whereHas('kind', function ($q) use ($request) {
                     $q->where('id', $request->category_filter);
                 });
             })
+
             ->when($request->filled('search'), function ($query) use ($request) {
                 // Assuming you want to search by item name or description
                 $query->where('name', 'like', '%' . $request->search . '%');
             })
+
             ->with('kind')
             ->get();
         
         $categories = InventoryKind::get();
         $suppliers = Supplier::get();
         $uoms = UnitOfMeasurement::get();
-
-        dd($inventory_items);
 
         return view('pages.stock.issuance', compact('inventory_items' ,'categories', 'suppliers', 'uoms', 'location'));
     }

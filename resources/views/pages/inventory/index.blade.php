@@ -93,12 +93,13 @@
             <table class="w-full text-left border-collapse">
                 <thead>
                     <tr class="bg-gray-50 text-xs font-bold text-brand-navy uppercase tracking-wider border-b border-gray-200">
-                        <th class="px-6 py-4">Item Code</th>
+                        <!-- <th class="px-6 py-4">Item Code</th> -->
                         <th class="px-6 py-4">Item Name</th>
-                        <th class="px-6 py-4">Category</th>
-                        <th class="px-6 py-4">Cost/unit</th>
-                        <th class="px-6 py-4">Available Quantity</th>
-                        <th class="px-6 py-4">Status Flag</th>
+                        <th class="px-6 py-4">Supplier</th>
+                        <th class="px-6 py-4">Kind</th>
+                        <th class="px-6 py-4">Cost</th>
+                        <!-- <th class="px-6 py-4">Available Quantity</th> -->
+                        <!-- <th class="px-6 py-4">Status Flag</th> -->
                         @if(auth()->user()?->role->role == 'admin')
                             <th class="px-6 py-4 text-right">Actions</th>
                         @endif
@@ -109,15 +110,20 @@
                     @forelse($inventory_items as $item)
                         <tr class="hover:bg-gray-50/50 transition">
                             <!-- item_code Column -->
-                            <td class="px-6 py-4 font-mono text-xs font-semibold text-brand-navy">
+                            <!-- <td class="px-6 py-4 font-mono text-xs font-semibold text-brand-navy">
                                 <span class="bg-brand-navy/5 text-brand-navy px-2 py-1 rounded">
                                     {{ $item->item_code }}
                                 </span>
-                            </td>
+                            </td> -->
 
                             <!-- Name Column -->
                             <td class="px-6 py-4 font-semibold text-brand-dark">
                                 {{ $item->name }}
+                            </td>
+
+                            <!-- Supplier Column -->
+                            <td class="px-6 py-4 font-semibold text-brand-dark">
+                                {{ $item->supplier->name }}
                             </td>
 
                             <!-- Category Column -->
@@ -135,14 +141,14 @@
                             </td>
 
                             <!-- Quantity Column -->
-                            <td class="px-6 py-4 font-bold">
+                            <!-- <td class="px-6 py-4 font-bold">
                                 <span class="{{ $item->quantity <= 10 ? 'text-brand-gold' : ($item->quantity == 0 ? 'text-red-600' : 'text-brand-dark') }}">
                                     {{ number_format($item->quantity) }} Units
                                 </span>
-                            </td>
+                            </td> -->
 
                             <!-- Status Badge Logic based on Quantity Field -->
-                            <td class="px-6 py-4">
+                            <!-- <td class="px-6 py-4">
                                 @if($item->quantity == 0)
                                     <span class="px-2.5 py-1 bg-red-100 text-red-700 border border-red-200 font-bold text-xs rounded-full">Out of Stock</span>
                                 @elseif($item->quantity <= 10)
@@ -150,7 +156,7 @@
                                 @else
                                     <span class="px-2.5 py-1 bg-green-50 text-brand-green border border-brand-green/20 font-bold text-xs rounded-full">In Stock</span>
                                 @endif
-                            </td>
+                            </td> -->
 
                             <!-- Protected Actions Triggering adjustments -->
                             @if(auth()->user()?->role->role == 'admin')
@@ -173,7 +179,7 @@
                                     @endif
 
                                     <!-- Edit -->
-                                    <button onclick="openEditInventoryModal('{{ $item->id }}', '{{ $item->item_code }}', '{{ addslashes($item->name) }}', '{{ $item->kind }}', '{{ $item->quantity }}')" 
+                                    <button onclick="openEditInventoryModal('{{ $item->id }}', '{{ $item->supplier->id }}', '{{ addslashes($item->name) }}', '{{ $item->kind->id }}', '{{ $item->cost }}', '{{ $item->quantity }}')" 
                                        class="text-brand-gold hover:underline text-xs font-bold cursor-pointer">
                                         Edit
                                     </button>

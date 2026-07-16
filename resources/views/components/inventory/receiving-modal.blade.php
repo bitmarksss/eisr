@@ -59,6 +59,7 @@
                             <th rowspan="2" class="border border-gray-200 p-2 text-brand-navy">Category</th>
                             <th rowspan="2" class="border border-gray-200 p-2 text-brand-navy">UoM</th>
                             <th rowspan="3" class="border border-gray-200 p-2 text-brand-navy">Remarks</th>
+                            <th rowspan="1" class="border border-gray-200 p-2 text-brand-navy"></th>
                         </tr>
                     </thead>
                     <tbody id="receivingFormInputs" class="bg-white divide-y divide-gray-200">
@@ -112,6 +113,9 @@
                                     name="items[0][remarks]" placeholder="Any additional details..."
                                     class="w-full bg-gray-50 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:border-brand-gold focus:outline-none transition">
                             </td>
+
+                            <!-- Blank for remove button -->
+                            <td></td>
                         </tr>
                     </tbody>
                 </table>
@@ -131,7 +135,7 @@
                     <button type="button" onclick="window.closeModal()" class="px-4 py-2 text-sm font-semibold text-gray-500 hover:text-gray-700 transition cursor-pointer">
                         Cancel
                     </button>
-                    <button type="submit" class="px-5 py-2 rounded-lg bg-brand-gold hover:bg-brand-gold-hover text-white text-sm font-bold shadow-xs transition cursor-pointer">
+                    <button type="submit" class="px-5 py-2 rounded-lg bg-brand-green hover:bg-brand-green-hover text-white text-sm font-bold shadow-xs transition cursor-pointer">
                         Confirm
                     </button>
                 </div>
@@ -163,7 +167,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // 3. Define the Global Add Row Function
     window.addRow = function() {
         const inputs = document.getElementById('receivingFormInputs');
-        const index = inputs.childElementCount;
+        const index = availableIndex(inputs);
 
         // Securely pre-build our select option markup
         const itemOptions = buildOptions(inventoryItems, 'id', 'name');
@@ -213,6 +217,14 @@ document.addEventListener('DOMContentLoaded', () => {
                         name="items[${index}][remarks]" placeholder="Any additional details..."
                         class="w-full bg-gray-50 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:border-brand-gold focus:outline-none transition">
                 </td>
+
+                <!-- Remove Button -->
+                <td class="border border-gray-200 p-1">
+                    <button onclick="removeRow(${index});" 
+                        class="bg-red-500 hover:bg-red-600 active:translate-y-0.5 rounded-lg p-2 cursor-pointer transition">
+                        <i class="fa-solid fa-circle-minus fa-lg text-white"></i>
+                    </button>
+                </td>
             </tr>`;
 
         // 4. Generate the TrustedHTML object and apply it
@@ -230,6 +242,17 @@ document.addEventListener('DOMContentLoaded', () => {
         const newRow = tempTbody.firstElementChild;
         inputs.appendChild(newRow);
     };
+
+    window.removeRow = function(index) {
+        const inputsWrapper = document.getElementById('receivingFormInputs');
+        const row = inputsWrapper.querySelector(`tr[data-index="${index}"]`);
+        row.remove();
+    }
+
+    // Helper: Gets smallest available index number to avoid extremely large index
+    function availableIndex(){
+        
+    }
 
     // Helper: Safely escapes dynamic user data to avoid XSS injections in select options
     function escapeHtml(string) {

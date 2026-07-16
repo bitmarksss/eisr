@@ -32,28 +32,48 @@ document.addEventListener('DOMContentLoaded', () => {
     initModalSystem();
     window.openModal = openModal;
     window.closeModal = closeModal;
-    window.openEditInventoryModal = function (id, item_code, name, category, quantity) {
+    window.openEditInventoryModal = function (id, supplierId, name, category, cost, quantity = null) {
         const modal = document.getElementById('editInventoryModal');
         const form = document.getElementById('editInventoryForm');
 
-        console.log(id, item_code, name, category);
+        // Set item name
+        document.getElementById('edit-item-name').value = name;
+
+        // Select supplier value
+        const supplierEl = document.getElementById('edit-supplier');
+        if (supplierEl && supplierEl.options) {
+            const targetOption = Array.from(supplierEl.options).find(option => option.value.trim() === supplierId);
+
+            if (targetOption) {
+                supplierEl.value = targetOption.value;
+            } else {
+                console.warn(`Supplier option matching "${supplierId}" not found.`);
+            }
+        } else {
+            console.error("Element #edit-supplier-id not found in the DOM.");
+        }
         
-        // Inject values dynamically from the row click arguments
-        document.getElementById('edit_modal_item_code').value = item_code;
-        document.getElementById('edit_modal_item_name').value = name;
-        // const supplierEl = document.getElementById('edit-supplier-id');
-        // if (supplierEl && supplierEl.options) {
-        //     const targetOption = Array.from(supplierEl.options).find(option => option.textContent.trim() === category);
-            
-        //     if (targetOption) {
-        //         supplierEl.value = targetOption.value;
-        //     } else {
-        //         console.warn(`Supplier option matching "${category}" not found.`);
-        //     }
-        // } else {
-        //     console.error("Element #edit-supplier-id not found in the DOM.");
-        // }
-        document.getElementById('edit-modal-quantity').value = quantity;
+        // Set category value
+        const categoryEl = document.getElementById('edit-category');
+        if (categoryEl && categoryEl.options) {
+            const targetOption = Array.from(categoryEl.options).find(option => option.value.trim() === category);
+
+            if (targetOption) {
+                categoryEl.value = targetOption.value;
+            } else {
+                console.warn(`Supplier option matching "${category}" not found.`);
+            }
+        } else {
+            console.error("Element #edit-supplier-id not found in the DOM.");
+        }
+
+        // Set cost
+        document.getElementById('edit-cost').value = cost;
+
+        // Set quantity
+        if (quantity) {
+            document.getElementById('edit-quantity').value = quantity;
+        }
 
         // Set the target endpoint update route dynamically (e.g., /inventory/22)
         form.action = `/inventory/${id}`;

@@ -18,18 +18,18 @@
             @csrf
             @method('PUT') <!-- Spoofs a PUT method required by Laravel resource updates -->
             
-            <!-- 1. Name Field (Mapped to name="name") -->
+            <!-- 1. Name Field (Updated to name="name") -->
             <div>
-                <label for="edit_modal_item_name" class="block text-xs font-bold text-brand-dark uppercase tracking-wider mb-1">Item Title / Descriptor</label>
-                <input type="text" id="edit_modal_item_name" name="name" required placeholder="e.g., Heavy Duty Machine Bolts"
-                    class="w-full bg-gray-50 border @error('name') border-red-500 @else border-gray-300 @enderror rounded-lg px-3 py-2 text-sm focus:border-brand-gold focus:outline-none transition focus:ring-2 focus:ring-brand-gold/20">
-                @error('name') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                <label for="edit-item-name" class="block text-xs font-bold text-brand-dark uppercase tracking-wider mb-1">Item Title / Descriptor</label>
+                <input type="text" id="edit-item-name" name="name" value="{{ old('item_name') }}" required placeholder="e.g., Heavy Duty Machine Bolts"
+                    class="w-full bg-gray-50 border @error('item_name') border-red-500 @else border-gray-300 @enderror rounded-lg px-3 py-2 text-sm focus:border-brand-gold focus:outline-none transition focus:ring-2 focus:ring-brand-gold/20">
+                @error('item_name') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
             </div>
 
             <!-- 2. Supplier field -->
             <div>
-                <label for="edit-supplier-id" class="block text-xs font-bold text-brand-dark uppercase tracking-wider mb-1">Supplier</label>
-                <select id="edit-supplier-id" name="supplier_id" required
+                <label for="edit-supplier" class="block text-xs font-bold text-brand-dark uppercase tracking-wider mb-1">Supplier</label>
+                <select id="edit-supplier" name="supplier_id" required
                     class="w-full bg-gray-50 border @error('supplier_id') border-red-500 @else border-gray-300 @enderror rounded-lg p-2 text-sm focus:border-brand-gold focus:outline-none transition">
                     <option value="" disabled selected>Select Supplier</option>
                     @foreach($suppliers as $supplier)
@@ -39,19 +39,20 @@
                 @error('supplier_id') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
             </div>
 
-            <!-- 2. item_code Field (Mapped to name="item_code") -->
-            <div>
-                <label for="edit_modal_item_code" class="block text-xs font-bold text-brand-dark uppercase tracking-wider mb-1">Item Code Reference</label>
-                <input type="text" id="edit_modal_item_code" name="item_code" required placeholder="e.g., PMC-MCH-552"
+            <!-- 3. item_code Field (Mapped to name="item_code") -->
+            <!-- <div>
+                <label for="edit-item_code" class="block text-xs font-bold text-brand-dark uppercase tracking-wider mb-1">Item Code Barcode Reference</label>
+                <input type="text" id="edit-item_code" name="item_code" value="{{ old('item_code') }}" required placeholder="e.g., PMC-MCH-552"
                     class="w-full bg-gray-50 border @error('item_code') border-red-500 @else border-gray-300 @enderror rounded-lg px-3 py-2 text-sm focus:border-brand-gold focus:outline-none transition">
                 @error('item_code') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
-            </div>
+            </div> -->
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <!-- 3. Category Field (New Field Mapped to name="category") -->
+            
+                <!-- 3. Category Field -->
                 <div>
-                    <label for="modal_category" class="block text-xs font-bold text-brand-dark uppercase tracking-wider mb-1">Category</label>
-                    <select id="modal_category" name="category" required
+                    <label for="edit-category" class="block text-xs font-bold text-brand-dark uppercase tracking-wider mb-1">Category</label>
+                    <select id="edit-category" name="category" required
                         class="w-full bg-gray-50 border @error('category') border-red-500 @else border-gray-300 @enderror rounded-lg p-2 text-sm focus:border-brand-gold focus:outline-none transition">
                         <option value="" disabled selected>Select Category</option>
                         @foreach($categories as $category)
@@ -60,12 +61,24 @@
                     </select>
                     @error('category') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                 </div>
+                
+                <!-- 4. Cost Field -->
+                <div>
+                    <label for="edit-cost" class="block text-xs font-bold text-brand-dark uppercase tracking-wider mb-1">Cost</label>
+                    <div class="flex">
+                        <p class="bg-gray-50 border text-gray-700 border-gray-300 rounded-l-lg px-3 py-2 text-sm">
+                            PHP
+                        </p>
+                        <input type="text" id="edit-cost" name="cost" value="{{ old('cost') }}" required placeholder="e.g., 12.34" class="w-full bg-gray-50 border @error('cost') border-red-500 @else border-gray-300 @enderror rounded-r-lg px-3 py-2 text-sm focus:border-brand-gold focus:outline-none transition">
+                        @error('cost') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                    </div>
+                </div>
 
                 <!-- 4. Quantity Field (Mapped to name="quantity") -->
-                <div>
-                    <label for="edit-modal-quantity" class="block text-xs font-bold text-brand-dark uppercase tracking-wider mb-1">Initial Unit Count</label>
+                <!-- <div>
+                    <label for="edit-quantity" class="block text-xs font-bold text-brand-dark uppercase tracking-wider mb-1">Initial Unit Count</label>
                     <div class="flex">
-                        <input type="number" id="edit-modal-quantity" name="quantity" value="{{ old('quantity', '') }}" min="0" placeholder="0"
+                        <input type="number" id="edit-quantity" name="quantity" value="{{ old('quantity', '') }}" min="0" placeholder="0"
                             class="w-full bg-gray-50 border @error('quantity') border-red-500 @else border-gray-300 @enderror rounded-tl-lg rounded-bl-lg px-3 py-2 text-sm focus:border-brand-gold focus:outline-none transition">
                         @error('quantity') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                     <select class="bg-gray-50 border border-l-transparent border-gray-300 rounded-tr-lg rounded-br-lg px-3 py-2 text-sm focus:border-brand-gold focus:outline-none transition">
@@ -74,7 +87,7 @@
                         @endforeach
                     </select>
                     </div>
-                </div>
+                </div> -->
             </div>
 
             <!-- Footer Bottom Section -->

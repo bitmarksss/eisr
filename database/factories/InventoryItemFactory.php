@@ -20,7 +20,6 @@ class InventoryItemFactory extends Factory
             // Generates uppercase alphanumeric formats like "EXP-DET-8423"
             'item_code' => fake()->unique()->lexify('EXP-???-') . fake()->numerify('####'), 
             'supplier_id' => fake()->numberBetween(1, 10),
-            // 'location' => fake()->randomElement(['surface', 'underground']),
             'name' => ucwords(fake()->words(2, true)),
             'kind_id' => fake()->numberBetween(1, 5),
             'cost' => fake()->randomFloat(1, 15, 100),

@@ -54,7 +54,8 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
         });
 
         Route::prefix('stock')->name('stock.')->group(function () {
-            Route::get('/', [StockController::class, 'index'])->name('index');
+            Route::get('/', [InventoryController::class, 'warehouse_index'])->name('index');
+            Route::get('/management', [StockController::class, 'index'])->name('management');
             Route::post('/store', [StockController::class, 'store'])->name('store');
             Route::put('/{id}', [StockController::class, 'update'])->name('update');
             Route::post('/upload', [StockController::class, 'upload'])->name('upload');
@@ -77,8 +78,8 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
         });
         
         Route::prefix('stock')->name('stock.')->group(function () {
-            Route::get('/', [StockController::class, 'index'])->name('index');
-            Route::post('/store', [StockController::class, 'store'])->name('store');
+            Route::get('/', [InventoryController::class, 'warehouse_index'])->name('index');
+            Route::get('/management', [StockController::class, 'index'])->name('management');
             Route::put('/{id}', [StockController::class, 'update'])->name('update');
             Route::post('/upload', [StockController::class, 'upload'])->name('upload');
 

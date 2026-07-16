@@ -48,18 +48,18 @@
             <i class="fa-solid fa-box-open"></i>
             Inventory Stock
         </a>
-        <!-- Stock Request -->
+        <!-- Stock Management -->
         <a href="{{ route('surface.stock.index', ['location' => 'surface']) }}" 
             class="sidebar-link {{ request()->routeIs('surface.stock.index') ? 'selected' : '' }}">
             <i class="fa-solid fa-file-lines"></i>
             Stock Management
         </a>
         <!-- Issuance -->
-        <a href="{{ route('surface.stock.issuance', ['location' => 'surface']) }}" 
+        <!-- <a href="{{ route('surface.stock.issuance', ['location' => 'surface']) }}" 
             class="sidebar-link {{ request()->routeIs('surface.stock.issuance') ? 'selected' : '' }}">
             <i class="fa-solid fa-people-carry-box"></i>
             Stock Issuance
-        </a>
+        </a> -->
         <br>
         
 

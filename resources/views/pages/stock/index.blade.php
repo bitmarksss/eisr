@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('page-title', ucfirst($location) . " Stock Request")
+@section('page-title', ucfirst($location) . " Stock Management")
 
 @section('sidebar')
     @include('components.sidebar')
@@ -8,8 +8,19 @@
 
 @section('modals')
     @include('components.backdrop')
-    @include('components.stock.add-modal')
-    @include('components.stock.edit-modal')
+
+    @if(request()->routeIs('inventory.*'))
+        @include('components.add-inventory-modal')
+        @include('components.edit-inventory-modal')
+        @include('components.inventory.item-modal')
+    @endif
+
+    @if(request()->routeIs('surface.inventory.*'))
+        @include('components.inventory.receiving-modal')
+
+        @include('components.inventory.stock-card-modal')
+        @include('components.inventory.update-and-record-modal')
+    @endif
 @endsection
 
 @section('content')
@@ -25,12 +36,13 @@
     <!-- Control Matrix Panel -->
     <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         
+        
         <div class="flex flex-wrap items-center justify-between w-full">
             <!-- Search and Filters -->
-            <form method="GET" action="{{ route($location . '.stock.index') }}" class="flex flex-wrap items-center gap-3 flex-1 w-full">
+            <form method="GET" action="{{ route('surface.inventory.index') }}" class="flex flex-wrap items-center gap-3 flex-1 w-full">
                 <div class="flex w-90">
                     <div class="relative min-w-70 flex-1 max-w-md">
-                        <input type="text" name="search" value="{{ request('search') }}" placeholder="Search by type, kind, or user..." 
+                        <input type="text" name="search" value="{{ request('search') }}" placeholder="Search by name, item code, or category..." 
                             class="w-full bg-gray-50 border border-gray-300 text-brand-dark text-sm rounded-tl-lg rounded-bl-lg pl-3 pr-10 py-2 focus:border-brand-gold focus:outline-none focus:ring-2 focus:ring-brand-gold/20 transition">
                     </div>
                     <button type="submit" class="px-2.5 cursor-pointer active:translate-y-0.5 transition
@@ -39,106 +51,146 @@
                     </button>
                 </div>
 
-                <select name="kind_filter" onchange="this.form.submit()" 
+                <select name="category_filter" onchange="this.form.submit()" 
                     class="bg-gray-50 border border-gray-300 text-brand-dark text-sm rounded-lg p-2 focus:outline-none focus:border-brand-gold">
-                    <option value="" {{ request('kind_filter') == '' ? 'selected' : '' }}>All Kinds</option>
-                    @foreach($kinds as $kindOption)
-                        <option value="{{ $kindOption }}" {{ request('kind_filter') == $kindOption ? 'selected' : '' }}>{{ $kindOption }}</option>
+                    <option value="" {{ request('category_filter') == '' ? 'selected' : '' }}>
+                        All Categories
+                    </option>
+                    @foreach($categories as $category)
+                        <option value="{{$category->id}}" {{ request('category_filter') == $category->id ? 'selected' : '' }}>{{ $category->kind }}</option>
                     @endforeach
                 </select>
+
+                
             </form>
             
+            <!-- Dynamic Quick Action Accent Button Based on Role -->
             <div class="flex items-center space-x-4">
-                <button class="bg-brand-gold border-0 hover:bg-brand-gold-hover text-white font-semibold px-4 py-2 rounded-lg shadow transition text-sm cursor-pointer active:translate-y-0.5"
-                onclick="window.openModal('addStockRequestModal')">
-                    Record Stock on Hand
-                </button>
                 
-                <button class="bg-brand-gold border-0 hover:bg-brand-gold-hover text-white font-semibold px-4 py-2 rounded-lg shadow transition text-sm cursor-pointer active:translate-y-0.5"
-                onclick="window.openModal('addStockRequestModal')">
-                    Record Incoming Surface Magazine Stocks
-                </button>
+                <!-- Receive Items from Supplier -->
+                @if(request()->routeIs('surface.stock.index'))
+                    <button class="bg-brand-green border-0  hover:bg-brand-green-hover text-white font-semibold px-4 py-2 rounded-lg shadow transition text-sm cursor-pointer active:translate-y-0.5"
+                    onclick="window.openModal('receivingModal')">
+                        <i class="fa-solid fa-dolly"></i>
+                        Receive Items
+                    </button>
+                @endif
+                
+                <!-- Receive Items from Supplier -->
+                @if(request()->routeIs('surface.stock.management'))
+                    <button class="bg-brand-green border-0  hover:bg-brand-green-hover text-white font-semibold px-4 py-2 rounded-lg shadow transition text-sm cursor-pointer active:translate-y-0.5"
+                    onclick="window.openModal('receivingModal')">
+                        <i class="fa-solid fa-dolly"></i>
+                        Receive ddItems
+                    </button>
+                @endif
             </div>
         </div>
     </div>
 
-    <!-- Stock Request Table Structure -->
+    <!-- Inventory Model Table Structure -->
     <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
         <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse">
                 <thead>
                     <tr class="bg-gray-50 text-xs font-bold text-brand-navy uppercase tracking-wider border-b border-gray-200">
-                        <th class="px-6 py-4">ID</th>
-                        <th class="px-6 py-4">Item (Type)</th>
+                        <!-- <th class="px-6 py-4">Item Code</th> -->
+                        <th class="px-6 py-4">Item Name</th>
+                        <th class="px-6 py-4">Supplier</th>
                         <th class="px-6 py-4">Kind</th>
-                        <th class="px-6 py-4">Requested Qty</th>
-                        <th class="px-6 py-4">Requested By</th>
-                        <th class="px-6 py-4">Status</th>
-                        @if(auth()->user()?->role_id == 1 || auth()->user()?->is_admin)
+                        <!-- <th class="px-6 py-4">Cost</th> -->
+                        <th class="px-6 py-4">Available Quantity</th>
+                        <th class="px-6 py-4">Status Flag</th>
+                        @if(auth()->user()?->role->role == 'admin')
                             <th class="px-6 py-4 text-right">Actions</th>
                         @endif
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-100 text-sm text-gray-700">
                     
-                    @forelse($stock_requests as $requestItem)
+                    @forelse($inventory_items as $item)
                         <tr class="hover:bg-gray-50/50 transition">
-                            <!-- ID Column -->
-                            <td class="px-6 py-4 font-mono text-xs font-semibold text-brand-navy">
+                            <!-- Item Code Column -->
+                            <!-- <td class="px-6 py-4 font-mono text-xs font-semibold text-brand-navy">
                                 <span class="bg-brand-navy/5 text-brand-navy px-2 py-1 rounded">
-                                    #{{ $requestItem->id }}
+                                    {{ $item->item_code }}
                                 </span>
-                            </td>
+                            </td> -->
 
-                            <!-- Type Column -->
+                            <!-- Name Column -->
                             <td class="px-6 py-4 font-semibold text-brand-dark">
-                                {{ $requestItem->type }}
+                                {{ $item->name }}
                             </td>
 
-                            <!-- Kind Column -->
+                            <!-- Supplier Column -->
+                            <td class="px-6 py-4 font-semibold text-brand-dark">
+                                {{ $item->supplier->name }}
+                            </td>
+
+                            <!-- Category Column -->
                             <td class="px-6 py-4">
                                 <span class="px-2.5 py-0.5 bg-slate-100 text-slate-700 text-xs font-medium rounded-md border border-slate-200">
-                                    {{ $requestItem->kind }}
+                                    {{ $item->kind->kind ?? 'Unassigned' }}
                                 </span>
                             </td>
 
-                            <!-- Quantity & UOM Column -->
+                            <!-- Cost Column -->
+                            <!-- <td class="px-6 py-4">
+                                <span class="px-2.5 py-0.5 bg-slate-100 text-slate-700 text-xs font-medium rounded-md border border-slate-200">
+                                    {{ $item->cost ? '₱ '. $item->cost : 'Unassigned' }}
+                                </span>
+                            </td> -->
+
+                            <!-- Quantity Column -->
                             <td class="px-6 py-4 font-bold">
-                                <span class="text-brand-dark">
-                                    {{ number_format($requestItem->quantity['quantity'] ?? 0) }} {{ $requestItem->uom->name ?? 'Units' }}
+                                <span class="{{ $item->quantity <= 10 ? 'text-brand-gold' : ($item->quantity == 0 ? 'text-red-600' : 'text-brand-dark') }}">
+                                    {{ number_format($item->quantity) }} Units
                                 </span>
                             </td>
 
-                            <!-- User Column -->
-                            <td class="px-6 py-4 text-gray-500">
-                                {{ $requestItem->user->name ?? 'Unknown' }}
-                            </td>
-
-                            <!-- Status Badge Logic -->
+                            <!-- Status Badge Logic based on Quantity Field -->
                             <td class="px-6 py-4">
-                                @if($requestItem->status === 'approved')
-                                    <span class="px-2.5 py-1 bg-green-50 text-brand-green border border-brand-green/20 font-bold text-xs rounded-full">Approved</span>
-                                @elseif($requestItem->status === 'rejected')
-                                    <span class="px-2.5 py-1 bg-red-100 text-red-700 border border-red-200 font-bold text-xs rounded-full">Rejected</span>
+                                @if($item->quantity == 0)
+                                    <span class="px-2.5 py-1 bg-red-100 text-red-700 border border-red-200 font-bold text-xs rounded-full">Out of Stock</span>
+                                @elseif($item->quantity <= 10)
+                                    <span class="px-2.5 py-1 bg-amber-50 text-brand-gold border border-brand-gold/20 font-bold text-xs rounded-full">Low Stock</span>
                                 @else
-                                    <span class="px-2.5 py-1 bg-amber-50 text-brand-gold border border-brand-gold/20 font-bold text-xs rounded-full">Pending</span>
+                                    <span class="px-2.5 py-1 bg-green-50 text-brand-green border border-brand-green/20 font-bold text-xs rounded-full">In Stock</span>
                                 @endif
                             </td>
 
-                            <!-- Actions -->
-                            @if(auth()->user()?->role_id == 1 || auth()->user()?->is_admin)
-                                <td class="px-6 py-4 text-right whitespace-nowrap">
-                                    <button onclick="openEditStockRequestModal('{{ $requestItem->id }}', '{{ addslashes($requestItem->type) }}', '{{ $requestItem->kind }}', '{{ $requestItem->quantity['quantity'] ?? 0 }}', '{{ $requestItem->status }}')" 
+                            <!-- Protected Actions Triggering adjustments -->
+                            @if(auth()->user()?->role->role == 'admin')
+                                <td class="px-6 py-4 text-right whitespace-nowrap space-x-3">
+                                    
+                                    <!-- Update & Record -->
+                                    @if(request()->routeIs('surface.inventory.*'))
+
+                                        <button type="button" 
+                                                onclick="stockCardModal('{{ $item->id }}')"
+                                                class="text-brand-navy hover:underline text-xs font-bold cursor-pointer">
+                                            View Stock Card
+                                        </button>
+
+                                        <!-- <button type="button" 
+                                                onclick="updateAndRecordModal('{{ $item->id }}', '{{ addslashes($item->name) }}', '{{ $item->kind->kind ?? 'ANFO' }}', '{{ $item->quantity }}')" 
+                                                class="text-brand-navy hover:underline text-xs font-bold cursor-pointer">
+                                            Update & Record
+                                        </button> -->
+                                    @endif
+
+                                    <!-- Edit -->
+                                    <button onclick="openEditInventoryModal('{{ $item->id }}', '{{ $item->supplier->id }}', '{{ addslashes($item->name) }}', '{{ $item->kind->id }}', '{{ $item->cost }}', '{{ $item->quantity }}')" 
                                        class="text-brand-gold hover:underline text-xs font-bold cursor-pointer">
-                                        Edit / Sign
+                                        Edit
                                     </button>
                                 </td>
                             @endif
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="7" class="px-6 py-12 text-center text-gray-400 font-medium">
-                                No stock requests matched the filter criteria.
+                            <td colspan="6" class="px-6 py-12 text-center text-gray-400 font-medium">
+                                No warehouse products matched the search query parameters.
                             </td>
                         </tr>
                     @endforelse
@@ -148,9 +200,9 @@
         </div>
 
         <!-- Pagination Blocks -->
-        @if(method_exists($stock_requests, 'hasPages') && $stock_requests->hasPages())
+        @if(method_exists($inventory_items, 'hasPages') && $inventoryItems->hasPages())
             <div class="p-4 bg-gray-50 border-t border-gray-100">
-                {{ $stock_requests->appends(request()->query())->links() }}
+                {{ $inventory_items->appends(request()->query())->links() }}
             </div>
         @endif
     </div>

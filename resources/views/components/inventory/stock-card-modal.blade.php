@@ -8,7 +8,7 @@
         
         <!-- Header Section -->
         <div class="p-6 border-b border-gray-100 flex items-center justify-between">
-            <h3 class="text-lg font-bold text-brand-navy uppercase tracking-wider">Explosives Stock Card View</h3>
+            <h3 class="text-lg font-bold text-brand-navy uppercase cursor-pointer tracking-wider">Explosives Stock Card View</h3>
             <button type="button" onclick="window.closeModal()" class="text-gray-400 hover:text-gray-600 text-xl font-bold">✕</button>
         </div>
 
@@ -110,7 +110,7 @@
         <!-- Modal Actions Control Footer -->
         <div class="p-4 bg-gray-50 border-t border-gray-100 flex justify-end items-center">
             <button type="button" onclick="window.closeModal()" 
-                class="bg-white hover:bg-gray-100 border border-gray-300 text-brand-dark font-bold px-5 py-2.5 rounded-lg shadow-2xs text-xs tracking-wider transition">
+                class="bg-white hover:bg-gray-100 border border-gray-300 text-brand-dark font-bold px-5 py-2.5 rounded-lg shadow-2xs text-xs cursor-pointer tracking-wider transition">
                 Close Window
             </button>
         </div>
