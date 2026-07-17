@@ -1,4 +1,4 @@
-<div id="receivingModal" class="fixed inset-0 z-110 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-200">
+<div id="issuanceModal" class="fixed inset-0 z-110 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-200">
 
     <!-- Backdrop Layout Grid -->
     <div id="editBackdrop" class="absolute z-100 inset-0 bg-brand-dark/10 backdrop-blur-xs"
@@ -8,8 +8,8 @@
     <div class="relative bg-white w-full max-w-6xl rounded-2xl shadow-2xl border-0 overflow-hidden transform transition-all z-110 animate-fade-in">
         
         <!-- Header Strip -->
-        <div class="px-6 py-4 bg-brand-green text-white flex justify-between items-center">
-            <h3 class="font-bold tracking-wide text-lg">Item Receiving Form</h3>
+        <div class="px-6 py-4 bg-brand-navy text-white flex justify-between items-center">
+            <h3 class="font-bold tracking-wide text-lg">Underground Issuance Form</h3>
             <button onclick="window.closeModal()" class="text-white/70 hover:text-white font-bold text-xl cursor-pointer p-1">✕</button>
         </div>
 
@@ -18,9 +18,8 @@
             @csrf
             @method('POST')
             
-            <div class="grid grid-cols-4 gap-2">
+            <!-- <div class="grid grid-cols-4 gap-2">
 
-                <!-- Receipt No. -->
                 <div>
                     <label for="receiving-no" class="block text-xs font-bold text-brand-dark uppercase tracking-wider mb-1">Receipt No.</label>
                     <input type="text" id="receiving-no" name="receiving_no" required placeholder="e.g., 1234"
@@ -28,7 +27,6 @@
                     @error('name') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                 </div>    
 
-                <!-- Supplier -->
                 <div class="col-span-2">
                     <label for="edit-supplier-id" class="block text-xs font-bold text-brand-dark uppercase tracking-wider mb-1">Supplier</label>
                     <select id="edit-supplier-id" name="supplier_id" required
@@ -41,14 +39,13 @@
                     @error('supplier_id') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                 </div>
 
-                <!-- Date Received -->
                 <div>
                     <label for="receiving-date" class="block text-xs font-bold text-brand-dark uppercase tracking-wider mb-1">Receiving Date</label>
                     <input type="date" id="receiving-date" name="receiving_date" required 
                         class="w-full bg-gray-50 border @error('receiving_date') border-red-500 @else border-gray-300 @enderror rounded-lg px-3 py-2 text-sm focus:border-brand-gold focus:outline-none transition focus:ring-2 focus:ring-brand-gold/20">
                     @error('name') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                 </div>   
-            </div>
+            </div> -->
 
             <div class="overflow-auto flex-1">
                 <table class="w-full text-left border border-gray-200 rounded-xl text-xs uppercase font-medium text-gray-600">
@@ -62,7 +59,7 @@
                             <th rowspan="1" class="border border-gray-200 p-2 text-brand-navy"></th>
                         </tr>
                     </thead>
-                    <tbody id="receivingFormInputs" class="bg-white divide-y divide-gray-200">
+                    <tbody id="issuanceFormInputs" class="bg-white divide-y divide-gray-200">
                         <tr class="text-center max-h-9" data-index="0">
                             <!-- Quantity -->
                             <td class="border-box border h-full border-gray-200 p-1">
@@ -73,7 +70,7 @@
 
                             <!-- Item Name -->
                             <td class="border border-gray-200 p-1">
-                                <select id="receiving-item-name"
+                                <select id="issuance-item-name"
                                     name="items[0][item_name]" required
                                     class="w-full bg-gray-50 border-gray-300 border rounded-lg p-2 text-sm focus:border-brand-gold focus:outline-none transition">
                                     <option value="" disabled selected>Select Item</option>
@@ -85,7 +82,7 @@
 
                             <!-- Category -->
                             <td class="border border-gray-200 p-1">
-                                <select id="receiving-item-name" 
+                                <select id="issuance-item-name" 
                                     name="items[0][category]" required
                                     class="w-full bg-gray-50 border-gray-300 border rounded-lg p-2 text-sm focus:border-brand-gold focus:outline-none transition">
                                     <option value="" disabled selected>Select Category</option>
@@ -97,7 +94,7 @@
 
                             <!-- UoM -->
                             <td class="border border-gray-200 p-1">
-                                <select id="receiving-item-name" 
+                                <select id="issuance-item-name" 
                                     name="items[0][uom]" required
                                     class="w-full bg-gray-50 border-gray-300 border rounded-lg p-2 text-sm focus:border-brand-gold focus:outline-none transition">
                                     <option value="" disabled selected>Select UoM</option>
@@ -125,8 +122,8 @@
             <div class="pt-4 flex justify-between space-x-3 border-t border-gray-100">
                 <div>
                     <button type="button" 
-                        onclick="addRow('receiving');"
-                        class="px-5 py-2 rounded-lg bg-brand-green hover:bg-brand-green-hover text-white text-sm font-bold shadow-xs transition cursor-pointer">
+                        onclick="addRow('issuance');"
+                        class="px-5 py-2 rounded-lg bg-brand-navy hover:bg-brand-navy-hover text-white text-sm font-bold shadow-xs transition cursor-pointer">
                         + Add Row
                     </button>
                 </div>

@@ -3,6 +3,7 @@ import './bootstrap';
 import { DataTable } from 'simple-datatables';
 window.DataTable = DataTable;
 
+import { escapeHtml, buildOptions, availableIndex } from './components/helpers';
 import { initNotificationSystem } from './components/notification';
 import { initModalSystem, openModal, closeModal } from './components/modal';
 import { initModuleHeaderAnim } from './components/module_header';
@@ -10,6 +11,18 @@ import { initModuleScripts } from './components/module_scripts';
 
 // Initialize when the DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
+
+    // Setup TrustedHTML Policy once globally
+    let rowPolicy;
+    if (window.trustedTypes && window.trustedTypes.createPolicy) {
+        rowPolicy = window.trustedTypes.createPolicy("myRowTemplatePolicy", {
+            createHTML: (htmlString) => htmlString
+        });
+    } else {
+        rowPolicy = { createHTML: (htmlString) => htmlString };
+    }
+
+
     // Initialize notification system
     initNotificationSystem();
 
@@ -27,12 +40,12 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-
     // Initialize modal system
     initModalSystem();
     window.openModal = openModal;
     window.closeModal = closeModal;
     window.openEditInventoryModal = function (id, supplierId, name, category, cost, quantity = null) {
+        
         const modal = document.getElementById('editInventoryModal');
         const form = document.getElementById('editInventoryForm');
 
@@ -150,4 +163,111 @@ document.addEventListener('DOMContentLoaded', () => {
 
         window.openModal('editStockRequestModal');
     }
+
+    window.editStock = function (id, supplier, name, category, quantity) {
+        const form = document.getElementById('editStockForm');
+
+        form.querySelector('#edit-name').textContent = name;
+        form.querySelector('#edit-supplier').textContent = supplier;
+        form.querySelector('#edit-kind').textContent = category;
+        form.querySelector('#edit-quantity').value = quantity;
+
+        window.openModal('editStockModal');
+    }
+
+    window.editLevelModal = function (id, name, code, order, description, active) {
+        const form = document.getElementById('editLevelForm');
+        
+        form.querySelector('#edit-level-name').value = name;
+        form.querySelector('#edit-level-code').value = code;
+        form.querySelector('#edit-level-order').value = order;
+        form.querySelector('#edit-level-desc').value = description;
+
+        window.openModal('editLevelModal');
+    }
+
+    // For RECEIVING and ISSUANCE modal
+    // Global function to add a row to ANY table container
+    window.addRow = function(modalPrefix) {
+        const inputs = document.getElementById(`${modalPrefix}FormInputs`);
+        if (!inputs) return;
+
+        // Pull data off the global window object (which we will seed from Blade)
+        const inventoryItems = window.modalData?.inventoryItems || [];
+        const categories = window.modalData?.categories || [];
+        const uoms = window.modalData?.uoms || [];
+
+        const index = availableIndex(inputs);
+
+        const itemOptions = buildOptions(inventoryItems, 'id', 'name');
+        const categoryOptions = buildOptions(categories, 'id', 'kind');
+        const uomOptions = buildOptions(uoms, 'id', 'unit');
+
+        const rowHtml = `
+            <tr class="text-center max-h-9" data-index="${index}">
+                <!-- Quantity -->
+                <td class="border-box border h-full border-gray-200 p-1">
+                    <input type="number" placeholder="0" 
+                        name="items[${index}][quantity]"
+                        class="w-full h-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-brand-navy text-xs rounded-lg"/>
+                </td>
+
+                <!-- Item Name -->
+                <td class="border border-gray-200 p-1">
+                    <select name="items[${index}][item_name]" required
+                        class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm focus:border-brand-gold focus:outline-none transition">
+                        <option value="" disabled selected>Select Item</option>
+                        ${itemOptions}
+                    </select>
+                </td>
+
+                <!-- Category -->
+                <td class="border border-gray-200 p-1">
+                    <select name="items[${index}][category]" required
+                        class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm focus:border-brand-gold focus:outline-none transition">
+                        <option value="" disabled selected>Select Category</option>
+                        ${categoryOptions}
+                    </select>
+                </td>
+
+                <!-- UoM -->
+                <td class="border border-gray-200 p-1">
+                    <select name="items[${index}][uom]" required
+                        class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm focus:border-brand-gold focus:outline-none transition">
+                        <option value="" disabled selected>Select UoM</option>
+                        ${uomOptions}
+                    </select>
+                </td>
+
+                <!-- Remarks -->
+                <td class="border border-gray-200 p-1">
+                    <input type="text" 
+                        name="items[${index}][remarks]" placeholder="Any additional details..."
+                        class="w-full bg-gray-50 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:border-brand-gold focus:outline-none transition">
+                </td>
+
+                <!-- Remove Button -->
+                <td class="border border-gray-200 p-1">
+                    <button type="button" onclick="removeRow('${modalPrefix}', ${index});" 
+                        class="bg-red-500 hover:bg-red-600 active:translate-y-0.5 rounded-lg p-2 cursor-pointer transition">
+                        <i class="fa-solid fa-circle-minus fa-lg text-white"></i>
+                    </button>
+                </td>
+            </tr>`;
+
+        const trustedRow = rowPolicy.createHTML(rowHtml);
+        const tempTbody = document.createElement('tbody');
+        tempTbody.innerHTML = trustedRow;
+        
+        inputs.appendChild(tempTbody.firstElementChild);
+    };
+
+    // Unified remove function accepting target container configuration
+    window.removeRow = function(modalPrefix, index) {
+        const inputsWrapper = document.getElementById(`${modalPrefix}FormInputs`);
+        if (!inputsWrapper) return;
+        
+        const row = inputsWrapper.querySelector(`tr[data-index="${index}"]`);
+        if (row) row.remove();
+    };
 });

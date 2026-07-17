@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\{
+    ActivityLog, 
+
     InventoryItem, 
     InventoryKind, 
     InventoryStock, 
@@ -23,53 +25,36 @@ class StockController extends Controller
      */
     public function index(Request $request)
     {
-        // Capture the prefix context ('surface' or 'underground')
-        $location = $request->query('location', null); // Default to 'empty' if not provided
+        $location = $request->segment(1) ?? null; // Default to 'empty' if not provided
 
         $stocks = InventoryStock::query()
 
-            // From inventory
-            ->select('inventory_stocks.*') 
-            // Subquery to grab the item name from the inventories table
-            ->addSelect(['item_name' => function ($query) {
-                $query->select('name') // assuming the column is 'name'
-                    ->from('inventory_items')
-                    ->whereColumn('inventory_items.id', 'inventory_stocks.item_id')
-                    ->limit(1);
-            }])
-
             // If location is selected for filtering
-            ->when(($request->filled('location') && $location != 'list'), function ($query) use ($location) {
+            ->when(($location), function ($query) use ($location) {
                 $query->where('location', $location);
             })
 
-            ->when($request->filled('kind_filter'), function ($query) use ($request) {
-                $query->where('kind', $request->kind_filter);
-            })
-
-            ->when($request->filled('kind_filter'), function ($query) use ($request) {
-                $query->where('kind', $request->kind_filter);
-            })
-
-            ->when($request->filled('search'), function ($query) use ($request) {
-                $query->where(function ($q) use ($request) {
-                    $q->where('type', 'like', '%' . $request->search . '%')
-                    ->orWhere('kind', 'like', '%' . $request->search . '%')
-                    ->orWhere('remarks', 'like', '%' . $request->search . '%');
+            // If category is selected for filtering
+            ->when($request->filled('category_filter'), function ($query) use ($request) {
+                $query->whereHas('kind', function ($q) use ($request) {
+                    $q->where('id', $request->category_filter);
                 });
             })
 
-            // ->with(['inventory.unit'])
+            // Assuming you want to search by item name or description
+            ->when($request->filled('search'), function ($query) use ($request) {
+                $query->where('name', 'like', '%' . $request->search . '%');
+            })
+            ->with('inventory')
+            // ->limit(10)
+            ->get();
 
-            ->paginate(15);
-            // ->get();
-
-        // Gather collections for modal select drop-downs
-        $kinds = InventoryKind::pluck('kind');
+        $categories = InventoryKind::get();
         $suppliers = Supplier::get();
-        $uoms = UnitOfMeasurement::get(); // Maps to $uoms collection variable
-            
-        return view('pages.stock.management', compact('stocks', 'kinds', 'suppliers', 'uoms', 'location'));
+        $uoms = UnitOfMeasurement::get();
+        // dd($stocks);
+
+        return view('pages.stock.index', compact('stocks' ,'categories', 'suppliers', 'uoms', 'location'));
     }
 
     /**
@@ -118,6 +103,44 @@ class StockController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+
+    public function logs(Request $request)
+    {
+        $location = $request->segment(1) ?? null; // Default to 'empty' if not provided
+
+        // 1. Start with base query scoped tightly to our target model type
+        $query = ActivityLog::with('user')
+            // ->where('auditable_type', InventoryStock::class)
+            ->latest('id'); // Order by newest logs first
+
+        // 2. Filter by specific action (created, updated, deleted) if provided
+        if ($request->filled('action_filter')) {
+            $query->where('action', $request->action_filter);
+        }
+
+        // 3. Search filter handling (Checks user names, actions, or specific record IDs)
+        if ($request->filled('search')) {
+            $searchTerm = $request->search;
+            
+            $query->where(function ($q) use ($searchTerm) {
+                $q->where('action', 'like', "%{$searchTerm}%")
+                  ->orWhere('auditable_id', $searchTerm) // Exact numeric match for stock IDs
+                  ->orWhere('ip_address', 'like', "%{$searchTerm}%")
+                  ->orWhereHas('user', function ($userQuery) use ($searchTerm) {
+                      $userQuery->where('name', 'like', "%{$searchTerm}%");
+                  });
+            });
+        }
+
+        // 4. Paginate results while preserving current query parameters
+        $logs = $query->paginate(15)->withQueryString();
+
+        // 5. Return the view with the required variables
+        return view('pages.stock.logs', [
+            'logs'     => $logs,
+            'location' => $location,
+        ]);
     }
 
     public function withdrawal() {

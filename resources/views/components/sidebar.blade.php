@@ -43,16 +43,11 @@
              Surface Magazine
         </p>
         <!-- Inventory -->
-        <a href="{{ route('surface.inventory.index', ['location' => 'surface']) }}" 
-            class="sidebar-link {{ request()->routeIs('surface.inventory.*') ? 'selected' : '' }}">
-            <i class="fa-solid fa-box-open"></i>
-            Inventory Stock
-        </a>
-        <!-- Stock Management -->
-        <a href="{{ route('surface.stock.index', ['location' => 'surface']) }}" 
+        <!-- <a href="{{ route('surface.stock.index', ['location' => 'surface']) }}"  -->
+        <a href="{{ route('surface.stock.index') }}" 
             class="sidebar-link {{ request()->routeIs('surface.stock.index') ? 'selected' : '' }}">
-            <i class="fa-solid fa-file-lines"></i>
-            Stock Management
+            <i class="fa-solid fa-boxes-stacked"></i>
+            Inventory Stock
         </a>
         <!-- Issuance -->
         <!-- <a href="{{ route('surface.stock.issuance', ['location' => 'surface']) }}" 
@@ -60,6 +55,12 @@
             <i class="fa-solid fa-people-carry-box"></i>
             Stock Issuance
         </a> -->
+        <!-- <a href="{{ route('surface.stock.logs', ['location' => 'surface']) }}"  -->
+        <a href="{{ route('surface.stock.logs') }}" 
+            class="sidebar-link {{ request()->routeIs('surface.stock.logs') ? 'selected' : '' }}">
+            <i class="fa-solid fa-file-lines"></i>
+            Stock Logs
+        </a>
         <br>
         
 
@@ -69,22 +70,29 @@
             Underground Magazine
         </p>
         <!-- Inventory -->
-        <a href="{{ route('underground.inventory.index', ['location' => 'underground']) }}" 
-            class="sidebar-link {{ request()->routeIs('underground.inventory.*') ? 'selected' : '' }}">
-            <i class="fa-solid fa-box-open"></i>
+        <!-- <a href="{{ route('underground.stock.index', ['location' => 'underground']) }}"  -->
+        <a href="{{ route('underground.stock.index') }}" 
+            class="sidebar-link {{ request()->routeIs('underground.stock.index') ? 'selected' : '' }}">
+            <i class="fa-solid fa-boxes-stacked"></i>
             Inventory Stock
         </a>
-        <!-- Wthdrawal -->
-        <a href="{{ route('underground.stock.withdrawal') }}" 
-            class="sidebar-link {{ request()->routeIs('underground.stock.withdrawal') ? 'selected' : '' }}">
-            <i class="fa-solid fa-hand-holding"></i>
-            Stock Withdrawal
+        <!-- Stock Management -->
+        <!-- <a href="{{ route('underground.stock.index', ['location' => 'surface']) }}"  
+            class="sidebar-link {{ request()->routeIs('surface.stock.index') ? 'selected' : '' }}">
+            <i class="fa-solid fa-file-lines"></i>
+            Stock Management
+        </a> -->
+        <!-- Logs -->
+        <a href="{{ route('underground.stock.logs') }}" 
+            class="sidebar-link {{ request()->routeIs('underground.stock.logs') ? 'selected' : '' }}">
+            <i class="fa-solid fa-file-lines"></i>
+            Stock Logs
         </a>
         <!-- Issuance -->
-        <a href="{{ route('underground.stock.issuance') }}" 
-            class="sidebar-link {{ request()->routeIs('underground.stock.issuance') ? 'selected' : '' }}">
-            <i class="fa-solid fa-people-carry-box"></i>
-            Stock Issuance
+        <a href="{{ route('underground.levels.index') }}" 
+            class="sidebar-link {{ request()->routeIs('underground.levels.index') ? 'selected' : '' }}">
+            <i class="fa-solid fa-bars-staggered"></i>
+            Levels
         </a>
         <br>
         
@@ -104,6 +112,11 @@
             <i class="fa-solid fa-scroll"></i>
             Weekly Reports
         </a>
+        <!-- System Logs -->
+        <a href="#" class="sidebar-link {{ request()->routeIs('logs.*') ? 'selected' : '' }}">
+            <i class="fa-solid fa-clock-rotate-left"></i>
+            System Logs
+        </a>
         <br>
 
         <!-- ADMIN ONLY SECTION -->
@@ -116,10 +129,6 @@
             <a href="{{ route('users.index') }}" class="sidebar-link {{ request()->routeIs('users.*') ? 'selected' : '' }}">
                 <i class="fa-solid fa-user-gear"></i>
                 User Management
-            </a>
-            <a href="#" class="sidebar-link {{ request()->routeIs('logs.*') ? 'selected' : '' }}">
-                <i class="fa-solid fa-clock-rotate-left"></i>
-                System Logs
             </a>
         </div>
         @endif

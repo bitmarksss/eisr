@@ -4,7 +4,8 @@ namespace Database\Factories;
 
 use App\Models\{
     InventoryItem,
-    InventoryStock
+    InventoryStock,
+    Level
 };
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -26,6 +27,7 @@ class InventoryStockFactory extends Factory
             // This will automatically create an Inventory record if one isn't passed
             'item_id' => InventoryItem::factory(), 
             'location' => $this->faker->randomElement(['surface', 'underground']),
+            'level_id' => Level::factory(), 
             'quantity' => $this->faker->numberBetween(0, 500),
             'created_at' => now(),
             'updated_at' => now(),

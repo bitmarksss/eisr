@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('item_id')->constrained('inventory_items'); // Inventory table
             $table->string('location'); // Added location column
+            $table->foreignId('level_id')->constrained('levels'); // Levels table
             $table->integer('quantity')->default(0);
 
             $table->timestamps();

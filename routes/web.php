@@ -6,9 +6,10 @@ use App\Http\Controllers\{
     AuthController,
 
     DashboardController,
-    InventoryController,
-    StockController,
     FileController,
+    InventoryController,
+    LevelController,
+    StockController,
 
     LoanController,
     GroceryController,
@@ -54,14 +55,17 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
         });
 
         Route::prefix('stock')->name('stock.')->group(function () {
-            Route::get('/', [InventoryController::class, 'warehouse_index'])->name('index');
-            Route::get('/management', [StockController::class, 'index'])->name('management');
+            // Route::get('/', [InventoryController::class, 'warehouse_index'])->name('index');
+            Route::get('/', [StockController::class, 'index'])->name('index');
             Route::post('/store', [StockController::class, 'store'])->name('store');
             Route::put('/{id}', [StockController::class, 'update'])->name('update');
             Route::post('/upload', [StockController::class, 'upload'])->name('upload');
 
             // Route::get('/request', [StockController::class, 'request'])->name('index');
             Route::get('/issuance', [StockController::class, 'issuance'])->name('issuance');
+
+            Route::get('/logs', [StockController::class, 'logs'])->name('logs');
+
         });
     });
 
@@ -78,13 +82,21 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
         });
         
         Route::prefix('stock')->name('stock.')->group(function () {
-            Route::get('/', [InventoryController::class, 'warehouse_index'])->name('index');
-            Route::get('/management', [StockController::class, 'index'])->name('management');
+            Route::get('/', [StockController::class, 'index'])->name('index');
+            // Route::get('/management', [StockController::class, 'index'])->name('management');
             Route::put('/{id}', [StockController::class, 'update'])->name('update');
             Route::post('/upload', [StockController::class, 'upload'])->name('upload');
 
             Route::get('/withdrawal', [StockController::class, 'withdrawal'])->name('withdrawal');
             Route::get('/issuance', [StockController::class, 'issuance'])->name('issuance');
+            Route::get('/logs', [StockController::class, 'logs'])->name('logs');
+        });
+        
+        Route::prefix('levels')->name('levels.')->group(function () {
+            Route::get('/', [LevelController::class, 'index'])->name('index');
+
+            Route::get('/store', [LevelController::class, 'store'])->name('store');
+
         });
     });
 

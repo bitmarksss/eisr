@@ -15,9 +15,12 @@
         @include('components.inventory.item-modal')
     @endif
 
-    @if(request()->routeIs('surface.inventory.*'))
+    @if(request()->routeIs('*.inventory.*'))
         @include('components.inventory.receiving-modal')
+        @include('components.inventory.issuance-modal')
+    @endif
 
+    @if(request()->routeIs('surface.inventory.*'))
         @include('components.inventory.stock-card-modal')
         @include('components.inventory.update-and-record-modal')
     @endif
@@ -39,7 +42,7 @@
         
         <div class="flex flex-wrap items-center justify-between w-full">
             <!-- Search and Filters -->
-            <form method="GET" action="{{ route('surface.inventory.index') }}" class="flex flex-wrap items-center gap-3 flex-1 w-full">
+            <form method="GET" action="{{ route('inventory.index') }}" class="flex flex-wrap items-center gap-3 flex-1 w-full">
                 <div class="flex w-90">
                     <div class="relative min-w-70 flex-1 max-w-md">
                         <input type="text" name="search" value="{{ request('search') }}" placeholder="Search by name, item code, or category..." 
@@ -69,18 +72,27 @@
 
                 <!-- Add New Inventory Item -->
                 @if(auth()->user()?->role_id == 1 && request()->routeIs('inventory.*'))
-                    <button class="bg-brand-gold border-0  hover:bg-brand-gold-hover text-white font-semibold px-4 py-2 rounded-lg shadow transition text-sm cursor-pointer active:translate-y-0.5"
+                    <button class="bg-brand-gold border-0  hover:bg-brand-gold-hover text-white font-semibold px-4 py-2 space-x-1 rounded-lg shadow transition text-sm cursor-pointer active:translate-y-0.5"
                     onclick="window.openModal('addInventoryModal')">
                         + Add New Item
                     </button>
                 @endif
                 
                 <!-- Receive Items from Supplier -->
-                @if(request()->routeIs('surface.inventory.index'))
-                    <button class="bg-brand-green border-0  hover:bg-brand-green-hover text-white font-semibold px-4 py-2 rounded-lg shadow transition text-sm cursor-pointer active:translate-y-0.5"
+                @if(request()->routeIs('*.inventory.index'))
+                    <button class="bg-brand-green border-0  hover:bg-brand-green-hover text-white font-semibold px-4 py-2 space-x-1 rounded-lg shadow transition text-sm cursor-pointer active:translate-y-0.5"
                     onclick="window.openModal('receivingModal')">
+                        <i class="fa-solid fa-truck-ramp-box"></i>
+                        <span>Receive Items</span>
+                    </button>
+                @endif
+                
+                <!-- Issue Items to Underground -->
+                @if(request()->routeIs('*.inventory.index'))
+                    <button class="bg-brand-navy border-0  hover:bg-brand-navy-hover text-white font-semibold px-4 py-2 space-x-1 rounded-lg shadow transition text-sm cursor-pointer active:translate-y-0.5"
+                    onclick="window.openModal('issuanceModal')">
                         <i class="fa-solid fa-dolly"></i>
-                        Receive Items
+                        <span>Issue Items</span>
                     </button>
                 @endif
             </div>
@@ -98,8 +110,7 @@
                         <th class="px-6 py-4">Supplier</th>
                         <th class="px-6 py-4">Kind</th>
                         <th class="px-6 py-4">Cost</th>
-                        <!-- <th class="px-6 py-4">Available Quantity</th> -->
-                        <!-- <th class="px-6 py-4">Status Flag</th> -->
+
                         @if(auth()->user()?->role->role == 'admin')
                             <th class="px-6 py-4 text-right">Actions</th>
                         @endif
@@ -140,42 +151,17 @@
                                 </span>
                             </td>
 
-                            <!-- Quantity Column -->
-                            <!-- <td class="px-6 py-4 font-bold">
-                                <span class="{{ $item->quantity <= 10 ? 'text-brand-gold' : ($item->quantity == 0 ? 'text-red-600' : 'text-brand-dark') }}">
-                                    {{ number_format($item->quantity) }} Units
-                                </span>
-                            </td> -->
-
-                            <!-- Status Badge Logic based on Quantity Field -->
-                            <!-- <td class="px-6 py-4">
-                                @if($item->quantity == 0)
-                                    <span class="px-2.5 py-1 bg-red-100 text-red-700 border border-red-200 font-bold text-xs rounded-full">Out of Stock</span>
-                                @elseif($item->quantity <= 10)
-                                    <span class="px-2.5 py-1 bg-amber-50 text-brand-gold border border-brand-gold/20 font-bold text-xs rounded-full">Low Stock</span>
-                                @else
-                                    <span class="px-2.5 py-1 bg-green-50 text-brand-green border border-brand-green/20 font-bold text-xs rounded-full">In Stock</span>
-                                @endif
-                            </td> -->
-
                             <!-- Protected Actions Triggering adjustments -->
                             @if(auth()->user()?->role->role == 'admin')
                                 <td class="px-6 py-4 text-right whitespace-nowrap space-x-3">
                                     
                                     <!-- Update & Record -->
                                     @if(request()->routeIs('surface.inventory.*'))
-
-                                        <button type="button" 
-                                                onclick="stockCardModal('{{ $item->id }}')"
-                                                class="text-brand-navy hover:underline text-xs font-bold cursor-pointer">
-                                            View Stock Card
-                                        </button>
-
-                                        <!-- <button type="button" 
-                                                onclick="updateAndRecordModal('{{ $item->id }}', '{{ addslashes($item->name) }}', '{{ $item->kind->kind ?? 'ANFO' }}', '{{ $item->quantity }}')" 
-                                                class="text-brand-navy hover:underline text-xs font-bold cursor-pointer">
-                                            Update & Record
-                                        </button> -->
+                                    <button type="button" 
+                                            onclick="stockCardModal('{{ $item->id }}')"
+                                            class="text-brand-navy hover:underline text-xs font-bold cursor-pointer">
+                                        View Stock Card
+                                    </button>
                                     @endif
 
                                     <!-- Edit -->

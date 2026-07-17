@@ -28,7 +28,7 @@ class InventoryController extends Controller
      */
     public function index(Request $request)
     {
-        $location = $request->query('location', null); // Default to 'empty' if not provided
+        $location = $request->segment(1) ?? null; // Default to 'empty' if not provided
 
         // Start building the query without executing it yet
         $inventory_items = InventoryItem::query()
@@ -57,6 +57,7 @@ class InventoryController extends Controller
         $categories = InventoryKind::get();
         $suppliers = Supplier::get();
         $uoms = UnitOfMeasurement::get();
+        // dd($inventory_items);
 
         return view('pages.inventory.index', compact('inventory_items' ,'categories', 'suppliers', 'uoms', 'location'));
     }

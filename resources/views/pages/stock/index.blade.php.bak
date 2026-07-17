@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('page-title', ucfirst($location) . " Inventory")
+@section('page-title', ucfirst($location) . " Stock Management")
 
 @section('sidebar')
     @include('components.sidebar')
@@ -15,19 +15,9 @@
         @include('components.inventory.item-modal')
     @endif
 
-    @include('components.stock.edit-modal')
-
-    @if(request()->routeIs('surface.stock.*'))
+    @if(request()->routeIs('surface.inventory.*'))
         @include('components.inventory.receiving-modal')
-        @include('components.inventory.issuance-modal')
-    @endif
 
-    @if(request()->routeIs('underground.stock.*'))
-        @include('components.inventory.receiving-modal')
-        @include('components.inventory.issuance-modal')
-    @endif
-
-    @if(request()->routeIs('surface.stock.*'))
         @include('components.inventory.stock-card-modal')
         @include('components.inventory.update-and-record-modal')
     @endif
@@ -76,32 +66,23 @@
             
             <!-- Dynamic Quick Action Accent Button Based on Role -->
             <div class="flex items-center space-x-4">
-
+                
                 <!-- Receive Items from Supplier -->
-                @if(request()->routeIs('*.stock.index'))
-                    <button class="bg-brand-green border-0  hover:bg-brand-green-hover text-white font-semibold px-4 py-2 space-x-1 rounded-lg shadow transition text-sm cursor-pointer active:translate-y-0.5"
+                @if(request()->routeIs('surface.stock.index'))
+                    <!-- <button class="bg-brand-green border-0  hover:bg-brand-green-hover text-white font-semibold px-4 py-2 rounded-lg shadow transition text-sm cursor-pointer active:translate-y-0.5"
                     onclick="window.openModal('receivingModal')">
                         <i class="fa-solid fa-truck-ramp-box"></i>
-                        <span>Receive Items</span>
-                    </button>
+                        Receive Items
+                    </button> -->
                 @endif
                 
-                <!-- Issue Items to Underground -->
-                @if(request()->routeIs('surface.stock.index'))
-                    <button class="bg-brand-navy border-0  hover:bg-brand-navy-hover text-white font-semibold px-4 py-2 space-x-1 rounded-lg shadow transition text-sm cursor-pointer active:translate-y-0.5"
-                    onclick="window.openModal('issuanceModal')">
+                <!-- Issue items to underground -->
+                @if(request()->routeIs('surface.stock.management'))
+                    <!-- <button class="bg-brand-green border-0  hover:bg-brand-green-hover text-white font-semibold px-4 py-2 rounded-lg shadow transition text-sm cursor-pointer active:translate-y-0.5"
+                    onclick="window.openModal('receivingModal')">
                         <i class="fa-solid fa-dolly"></i>
-                        <span>Issue Items</span>
-                    </button>
-                @endif
-                
-                <!-- Issue Items to Underground -->
-                @if(request()->routeIs('underground.stock.index'))
-                    <button class="bg-brand-navy border-0  hover:bg-brand-navy-hover text-white font-semibold px-4 py-2 space-x-1 rounded-lg shadow transition text-sm cursor-pointer active:translate-y-0.5"
-                    onclick="window.openModal('issuanceModal')">
-                        <i class="fa-solid fa-cart-flatbed"></i>
-                        <span>Transfer Items</span>
-                    </button>
+                        Issue Items
+                    </button> -->
                 @endif
             </div>
         </div>
@@ -117,7 +98,7 @@
                         <th class="px-6 py-4">Item Name</th>
                         <th class="px-6 py-4">Supplier</th>
                         <th class="px-6 py-4">Kind</th>
-                        <th class="px-6 py-4">Cost</th>
+                        <!-- <th class="px-6 py-4">Cost</th> -->
                         <th class="px-6 py-4">Available Quantity</th>
                         <th class="px-6 py-4">Status Flag</th>
                         @if(auth()->user()?->role->role == 'admin')
@@ -127,9 +108,9 @@
                 </thead>
                 <tbody class="divide-y divide-gray-100 text-sm text-gray-700">
                     
-                    @forelse($stocks as $item)
+                    @forelse($inventory_items as $item)
                         <tr class="hover:bg-gray-50/50 transition">
-                            <!-- item_code Column -->
+                            <!-- Item Code Column -->
                             <!-- <td class="px-6 py-4 font-mono text-xs font-semibold text-brand-navy">
                                 <span class="bg-brand-navy/5 text-brand-navy px-2 py-1 rounded">
                                     {{ $item->item_code }}
@@ -154,16 +135,16 @@
                             </td>
 
                             <!-- Cost Column -->
-                            <td class="px-6 py-4">
+                            <!-- <td class="px-6 py-4">
                                 <span class="px-2.5 py-0.5 bg-slate-100 text-slate-700 text-xs font-medium rounded-md border border-slate-200">
                                     {{ $item->cost ? '₱ '. $item->cost : 'Unassigned' }}
                                 </span>
-                            </td>
+                            </td> -->
 
                             <!-- Quantity Column -->
                             <td class="px-6 py-4 font-bold">
                                 <span class="{{ $item->quantity <= 10 ? 'text-brand-gold' : ($item->quantity == 0 ? 'text-red-600' : 'text-brand-dark') }}">
-                                    {{ number_format($item->quantity) }}
+                                    {{ number_format($item->quantity) }} Units
                                 </span>
                             </td>
 
@@ -183,14 +164,23 @@
                                 <td class="px-6 py-4 text-right whitespace-nowrap space-x-3">
                                     
                                     <!-- Update & Record -->
-                                    <button type="button" 
-                                            onclick="stockCardModal('{{ $item->id }}')"
-                                            class="text-brand-navy hover:underline text-xs font-bold cursor-pointer">
-                                        View Stock Card
-                                    </button>
+                                    @if(request()->routeIs('surface.inventory.*'))
+
+                                        <button type="button" 
+                                                onclick="stockCardModal('{{ $item->id }}')"
+                                                class="text-brand-navy hover:underline text-xs font-bold cursor-pointer">
+                                            View Stock Card
+                                        </button>
+
+                                        <!-- <button type="button" 
+                                                onclick="updateAndRecordModal('{{ $item->id }}', '{{ addslashes($item->name) }}', '{{ $item->kind->kind ?? 'ANFO' }}', '{{ $item->quantity }}')" 
+                                                class="text-brand-navy hover:underline text-xs font-bold cursor-pointer">
+                                            Update & Record
+                                        </button> -->
+                                    @endif
 
                                     <!-- Edit -->
-                                    <button onclick="editStock('{{ $item->id }}', '{{ $item->supplier->name }}', '{{ addslashes($item->name) }}', '{{ $item->kind->kind }}', '{{ $item->quantity }}')" 
+                                    <button onclick="openEditInventoryModal('{{ $item->id }}', '{{ $item->supplier->id }}', '{{ addslashes($item->name) }}', '{{ $item->kind->id }}', '{{ $item->cost }}', '{{ $item->quantity }}')" 
                                        class="text-brand-gold hover:underline text-xs font-bold cursor-pointer">
                                         Edit
                                     </button>
@@ -210,9 +200,9 @@
         </div>
 
         <!-- Pagination Blocks -->
-        @if(method_exists($stocks, 'hasPages') && $inventoryItems->hasPages())
+        @if(method_exists($inventory_items, 'hasPages') && $inventoryItems->hasPages())
             <div class="p-4 bg-gray-50 border-t border-gray-100">
-                {{ $stocks->appends(request()->query())->links() }}
+                {{ $inventory_items->appends(request()->query())->links() }}
             </div>
         @endif
     </div>

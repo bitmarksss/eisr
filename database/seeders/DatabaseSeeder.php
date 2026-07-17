@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
             SupplierSeeder::class, // Test
             InventoryKindSeeder::class,
             InventoryItemSeeder::class, // Test
+            LevelSeeder::class, // Test
             InventoryStockSeeder::class, // Test
             StockSeeder::class, // Test
         ]);
