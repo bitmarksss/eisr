@@ -23,14 +23,41 @@ class InventoryStockFactory extends Factory
      */
     public function definition(): array
     {
+        $location = $this->faker->randomElement(['surface', 'underground']);
+
         return [
-            // This will automatically create an Inventory record if one isn't passed
+            // Automatically maps the inventory item link
             'item_id' => InventoryItem::factory(), 
-            'location' => $this->faker->randomElement(['surface', 'underground']),
-            'level_id' => Level::factory(), 
-            'quantity' => $this->faker->numberBetween(0, 500),
+            'location' => $location,
+            
+            // Evaluates location condition to set or strip the underground level mapping
+            'level_id' => $location === 'underground' ? Level::factory() : null, 
+            
+            'quantity' => $this->faker->numberBetween(10, 500),
             'created_at' => now(),
             'updated_at' => now(),
         ];
+    }
+
+    /**
+     * Explicit state state modifier for testing dedicated surface stock
+     */
+    public function surface(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'location' => 'surface',
+            'level_id' => null,
+        ]);
+    }
+
+    /**
+     * Explicit state modifier for testing dedicated underground level stock
+     */
+    public function underground(?int $levelId = null): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'location' => 'underground',
+            'level_id' => $levelId ?? Level::factory(),
+        ]);
     }
 }

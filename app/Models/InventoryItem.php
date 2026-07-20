@@ -42,4 +42,11 @@ class InventoryItem extends Model
     {
         return $this->hasMany(InventoryStock::class, 'item_id');
     }
+
+    public function levels()
+    {
+        return $this->belongsToMany(Level::class, 'inventory_stocks', 'item_id', 'level_id')
+                    ->withPivot('location', 'quantity')
+                    ->withTimestamps();
+    }
 }

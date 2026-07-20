@@ -34,11 +34,11 @@ class InventoryController extends Controller
         $inventory_items = InventoryItem::query()
 
             // If location is selected for filtering
-            ->when(($request->filled('location') && $location != 'list'), function ($query) use ($location) {
-                $query->whereHas('stock', function($q) use ($location) {
-                    $q->where('location', $location);
-                });
-            })
+            // ->when(($request->filled('location') && $location != 'list'), function ($query) use ($location) {
+            //     $query->whereHas('stock', function($q) use ($location) {
+            //         $q->where('location', $location);
+            //     });
+            // })
 
             // If category is selected for filtering
             ->when($request->filled('category_filter'), function ($query) use ($request) {

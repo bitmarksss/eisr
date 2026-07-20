@@ -6,9 +6,7 @@
     </div>
 
     <!-- Navigation Links -->
-    <nav class="flex-1 px-4 space-y-1 overflow-y-scroll
-         
-    ">
+    <nav class="flex-1 px-4 space-y-1 overflow-y-scroll">
 
         <!-- MENU -->
         <p class="sidebar-label
@@ -19,20 +17,6 @@
             class="sidebar-link {{ request()->routeIs('dashboard') ? 'selected' : '' }}">
             <i class="fa-solid fa-chart-bar"></i>
             Dashboard
-        </a>
-        <br>
-
-
-        <!-- INVENTORY -->
-        <p class="sidebar-label
-            {{ request()->routeIs('inventory.*') ? 'border-0 border-b border-brand-navy/50' : '' }}">
-            Inventory
-        </p>
-        <!-- Items-->
-        <a href="{{ route('inventory.index')}}" 
-            class="sidebar-link {{ request()->routeIs('inventory.*') ? 'selected' : '' }}">
-            <i class="fa-solid fa-box-open"></i>
-            Items List
         </a>
         <br>
 
@@ -88,12 +72,6 @@
             <i class="fa-solid fa-file-lines"></i>
             Stock Logs
         </a>
-        <!-- Issuance -->
-        <a href="{{ route('underground.levels.index') }}" 
-            class="sidebar-link {{ request()->routeIs('underground.levels.index') ? 'selected' : '' }}">
-            <i class="fa-solid fa-bars-staggered"></i>
-            Levels
-        </a>
         <br>
         
 
@@ -113,15 +91,35 @@
             Weekly Reports
         </a>
         <!-- System Logs -->
-        <a href="#" class="sidebar-link {{ request()->routeIs('logs.*') ? 'selected' : '' }}">
+        <a href="{{ route('reports.logs') }}" class="sidebar-link {{ request()->routeIs('reports.logs') ? 'selected' : '' }}">
             <i class="fa-solid fa-clock-rotate-left"></i>
             System Logs
         </a>
         <br>
 
+
+        <!-- MAINTENANCE -->
+        <p class="sidebar-label
+            {{ request()->routeIs('maintenance.*') ? 'border-0 border-b border-brand-navy/50' : '' }}">
+            Maintenance
+        </p>
+        <!-- Items-->
+        <a href="{{ route('maintenance.inventory.index')}}" 
+            class="sidebar-link {{ request()->routeIs('maintenance.inventory.*') ? 'selected' : '' }}">
+            <i class="fa-solid fa-box-open"></i>
+            Inventory Items
+        </a>
+        <!-- Levels -->
+        <a href="{{ route('maintenance.levels.index') }}" 
+            class="sidebar-link {{ request()->routeIs('maintenance.levels.index') ? 'selected' : '' }}">
+            <i class="fa-solid fa-bars-staggered"></i>
+            Levels
+        </a>
+        <br>
+
         <!-- ADMIN ONLY SECTION -->
         @if(auth()->user() && auth()->user()->role->role == 'admin')
-        <div class="pt-4 mt-4 space-y-2">
+        <div class="py-4 mt-1 space-y-2">
             <p class="sidebar-label
                 {{ request()->is('admin/*') ? 'border-0 border-b border-brand-navy/50' : '' }}">
                 Admin Controls

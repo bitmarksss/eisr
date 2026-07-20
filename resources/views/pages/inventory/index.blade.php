@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('page-title', ucfirst($location) . " Inventory")
+@section('page-title', ucfirst($location))
 
 @section('sidebar')
     @include('components.sidebar')
@@ -9,15 +9,10 @@
 @section('modals')
     @include('components.backdrop')
 
-    @if(request()->routeIs('inventory.*'))
+    @if(request()->routeIs('maintenance.inventory.*'))
         @include('components.add-inventory-modal')
         @include('components.edit-inventory-modal')
         @include('components.inventory.item-modal')
-    @endif
-
-    @if(request()->routeIs('*.inventory.*'))
-        @include('components.inventory.receiving-modal')
-        @include('components.inventory.issuance-modal')
     @endif
 
     @if(request()->routeIs('surface.inventory.*'))
@@ -42,7 +37,7 @@
         
         <div class="flex flex-wrap items-center justify-between w-full">
             <!-- Search and Filters -->
-            <form method="GET" action="{{ route('inventory.index') }}" class="flex flex-wrap items-center gap-3 flex-1 w-full">
+            <form method="GET" action="{{ route('maintenance.inventory.index') }}" class="flex flex-wrap items-center gap-3 flex-1 w-full">
                 <div class="flex w-90">
                     <div class="relative min-w-70 flex-1 max-w-md">
                         <input type="text" name="search" value="{{ request('search') }}" placeholder="Search by name, item code, or category..." 
@@ -71,29 +66,31 @@
             <div class="flex items-center space-x-4">
 
                 <!-- Add New Inventory Item -->
-                @if(auth()->user()?->role_id == 1 && request()->routeIs('inventory.*'))
+                @if(auth()->user()?->role_id == 1)
                     <button class="bg-brand-gold border-0  hover:bg-brand-gold-hover text-white font-semibold px-4 py-2 space-x-1 rounded-lg shadow transition text-sm cursor-pointer active:translate-y-0.5"
                     onclick="window.openModal('addInventoryModal')">
                         + Add New Item
                     </button>
                 @endif
                 
-                <!-- Receive Items from Supplier -->
-                @if(request()->routeIs('*.inventory.index'))
-                    <button class="bg-brand-green border-0  hover:bg-brand-green-hover text-white font-semibold px-4 py-2 space-x-1 rounded-lg shadow transition text-sm cursor-pointer active:translate-y-0.5"
-                    onclick="window.openModal('receivingModal')">
-                        <i class="fa-solid fa-truck-ramp-box"></i>
-                        <span>Receive Items</span>
-                    </button>
-                @endif
-                
-                <!-- Issue Items to Underground -->
-                @if(request()->routeIs('*.inventory.index'))
-                    <button class="bg-brand-navy border-0  hover:bg-brand-navy-hover text-white font-semibold px-4 py-2 space-x-1 rounded-lg shadow transition text-sm cursor-pointer active:translate-y-0.5"
-                    onclick="window.openModal('issuanceModal')">
-                        <i class="fa-solid fa-dolly"></i>
-                        <span>Issue Items</span>
-                    </button>
+                @if(false) <!-- FALSED for testing-->
+                    <!-- Receive Items from Supplier -->
+                    @if(request()->routeIs('*.inventory.index'))
+                        <button class="bg-brand-green border-0  hover:bg-brand-green-hover text-white font-semibold px-4 py-2 space-x-1 rounded-lg shadow transition text-sm cursor-pointer active:translate-y-0.5"
+                        onclick="window.openModal('receivingModal')">
+                            <i class="fa-solid fa-truck-ramp-box"></i>
+                            <span>Receive Items</span>
+                        </button>
+                    @endif
+                    
+                    <!-- Issue Items to Underground -->
+                    @if(request()->routeIs('*.inventory.index'))
+                        <button class="bg-brand-navy border-0  hover:bg-brand-navy-hover text-white font-semibold px-4 py-2 space-x-1 rounded-lg shadow transition text-sm cursor-pointer active:translate-y-0.5"
+                        onclick="window.openModal('issuanceModal')">
+                            <i class="fa-solid fa-dolly"></i>
+                            <span>Issue Items</span>
+                        </button>
+                    @endif
                 @endif
             </div>
         </div>

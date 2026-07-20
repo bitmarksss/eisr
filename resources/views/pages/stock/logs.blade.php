@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('page-title', ucfirst($location) . " Stock Activity Logs")
+@section('page-title', "Activity Logs")
 
 @section('sidebar')
     @include('components.sidebar')

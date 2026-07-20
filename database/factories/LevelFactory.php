@@ -25,7 +25,7 @@ class LevelFactory extends Factory
         $currentNumber = self::$sequenceNumber++;
 
         return [
-            'name'        => "Floor {$currentNumber}",
+            'name'        => "Level {$currentNumber}",
             'code'        => "L{$currentNumber}",
             'sort_order'  => $currentNumber,
             'description' => "Automated storage layout deck for floor level {$currentNumber}.",

@@ -31,7 +31,7 @@
                 <!-- 2. Code -->
                 <div>
                     <label for="edit-level-code" class="block text-xs font-bold text-brand-dark uppercase tracking-wider mb-1">Code</label>
-                    <input type="number" id="edit-level-code" name="code" value="{{ old('code') }}" required min="1" placeholder="e.g., L1"
+                    <input type="text" id="edit-level-code" name="code" value="{{ old('code') }}" required placeholder="e.g., L1"
                         class="w-full bg-gray-50 border @error('code') border-red-500 @else border-gray-300 @enderror rounded-lg px-3 py-2 text-sm focus:border-brand-gold focus:outline-none transition focus:ring-2 focus:ring-brand-gold/20">
                     @error('code') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                 </div>    

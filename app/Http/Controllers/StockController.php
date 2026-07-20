@@ -8,6 +8,7 @@ use App\Models\{
     InventoryItem, 
     InventoryKind, 
     InventoryStock, 
+    Level,
     Stock,
     Supplier, 
     UploadedFile, 
@@ -26,35 +27,42 @@ class StockController extends Controller
     public function index(Request $request)
     {
         $location = $request->segment(1) ?? null; // Default to 'empty' if not provided
+        // dd($request);
 
         $stocks = InventoryStock::query()
 
-            // If location is selected for filtering
+            // Filter stocks backed on location
             ->when(($location), function ($query) use ($location) {
                 $query->where('location', $location);
             })
 
-            // If category is selected for filtering
-            ->when($request->filled('category_filter'), function ($query) use ($request) {
-                $query->whereHas('kind', function ($q) use ($request) {
-                    $q->where('id', $request->category_filter);
-                });
+            // If level filter is selected
+            ->when(($request->filled('level_filter') && $location == 'underground'), function ($query) use ($request) {
+                $query->where('level_id', $request->level_filter);
             })
 
             // Assuming you want to search by item name or description
             ->when($request->filled('search'), function ($query) use ($request) {
                 $query->where('name', 'like', '%' . $request->search . '%');
             })
-            ->with('inventory')
+
+            // If category is selected for filtering
+            ->when($request->filled('category_filter'), function ($query) use ($request) {
+                $query->whereHas('inventory.kind', function ($q) use ($request) {
+                    $q->where('id', $request->category_filter);
+                });
+            })
+
+            ->with(['inventory', 'level'])
             // ->limit(10)
             ->get();
 
         $categories = InventoryKind::get();
+        $levels = Level::get();
         $suppliers = Supplier::get();
         $uoms = UnitOfMeasurement::get();
-        // dd($stocks);
 
-        return view('pages.stock.index', compact('stocks' ,'categories', 'suppliers', 'uoms', 'location'));
+        return view('pages.stock.index', compact('stocks' ,'categories', 'levels', 'suppliers', 'uoms', 'location'));
     }
 
     /**

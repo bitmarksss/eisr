@@ -47,7 +47,18 @@
                 </div>   
             </div> -->
 
-            <div class="overflow-auto flex-1">
+            <div class="flex items-center justify-center space-x-2">
+                <label for="item-level" class="block text-lg font-bold text-brand-dark uppercase tracking-wider mb-1">Level No.</label>
+                <select id="edit-supplier-id" name="supplier_id" required
+                    class="w-[25%] bg-gray-50 border @error('supplier_id') border-red-500 @else border-gray-300 @enderror rounded-lg p-2 text-sm focus:border-brand-gold focus:outline-none transition">
+                    <option value="" disabled selected>Select Level</option>
+                    @foreach($levels as $level)
+                        <option value="{{ $level->id }}" {{ old('supplier_id') == $level->id ? 'selected' : '' }}>{{ $level->name }}</option>
+                    @endforeach
+                </select>
+            </div>
+
+            <div class="overflow-auto flex-1 pt-4 border-t border-gray-200">
                 <table class="w-full text-left border border-gray-200 rounded-xl text-xs uppercase font-medium text-gray-600">
                     <thead class="bg-gray-50 text-center select-none sticky top-0 z-10">
                         <tr>

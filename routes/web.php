@@ -9,6 +9,7 @@ use App\Http\Controllers\{
     FileController,
     InventoryController,
     LevelController,
+    ReportsController,
     StockController,
 
     LoanController,
@@ -37,12 +38,23 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-    // INVENTORY
-    Route::prefix('inventory')->name('inventory.')->group(function () {
-        Route::get('/', [InventoryController::class, 'index'])->name('index');
-        Route::post('/store', [InventoryController::class, 'store'])->name('store');
-        Route::put('/{id}', [InventoryController::class, 'update'])->name('update');
-        Route::post('/upload', [InventoryController::class, 'upload'])->name('upload');
+    // MAINTENANCE
+    Route::prefix('maintenance')->name('maintenance.')->group(function () {
+        
+        // ITEMS
+        Route::prefix('inventory')->name('inventory.')->group(function () {
+            Route::get('/', [InventoryController::class, 'index'])->name('index');
+            Route::post('/store', [InventoryController::class, 'store'])->name('store');
+            Route::put('/{id}', [InventoryController::class, 'update'])->name('update');
+            Route::post('/upload', [InventoryController::class, 'upload'])->name('upload');
+        });
+        
+        // LEVELS
+        Route::prefix('levels')->name('levels.')->group(function () {
+            Route::get('/', [LevelController::class, 'index'])->name('index');
+            Route::get('/store', [LevelController::class, 'store'])->name('store');
+            Route::get('/update', [LevelController::class, 'update'])->name('update');
+        });
     });
 
     // SURFACE
@@ -91,14 +103,14 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
             Route::get('/issuance', [StockController::class, 'issuance'])->name('issuance');
             Route::get('/logs', [StockController::class, 'logs'])->name('logs');
         });
-        
-        Route::prefix('levels')->name('levels.')->group(function () {
-            Route::get('/', [LevelController::class, 'index'])->name('index');
-
-            Route::get('/store', [LevelController::class, 'store'])->name('store');
-
-        });
     });
+
+    // REPORTS
+    Route::prefix('reports')->name('reports.')->group(function () {
+        Route::get('/', [ReportsController::class, 'logs'])->name('logs');
+
+    });
+
 
     Route::prefix('file')->group(function () {
         Route::get('/', [FileController::class, 'index'])->name('file.index');

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('page-title', ucfirst($location) . " Inventory")
+@section('page-title', ucfirst($location) . " Stock")
 
 @section('sidebar')
     @include('components.sidebar')
@@ -49,7 +49,22 @@
         
         <div class="flex flex-wrap items-center justify-between w-full">
             <!-- Search and Filters -->
-            <form method="GET" action="{{ route('surface.inventory.index') }}" class="flex flex-wrap items-center gap-3 flex-1 w-full">
+            <form method="GET" action="{{ route($location . '.stock.index') }}" class="flex flex-wrap items-center gap-3 flex-1 w-full">
+
+                @if(request()->routeIs('underground.*'))
+                <!-- Level Filter -->
+                <select name="level_filter" onchange="this.form.submit()" 
+                    class="bg-gray-50 border border-gray-300 text-brand-dark text-sm rounded-lg p-2 focus:outline-none focus:border-brand-gold">
+                    <option value="" {{ request('level_filter') == '' ? 'selected' : '' }}>
+                        All Levels
+                    </option>
+                    @foreach($levels as $level)
+                        <option value="{{$level->id}}" {{ request('level_filter') == $level->id ? 'selected' : '' }}>{{ $level->name }}</option>
+                    @endforeach
+                </select>
+                @endif
+                
+                <!-- Search Filter -->
                 <div class="flex w-90">
                     <div class="relative min-w-70 flex-1 max-w-md">
                         <input type="text" name="search" value="{{ request('search') }}" placeholder="Search by name, item code, or category..." 
@@ -61,6 +76,7 @@
                     </button>
                 </div>
 
+                <!-- Category Filter -->
                 <select name="category_filter" onchange="this.form.submit()" 
                     class="bg-gray-50 border border-gray-300 text-brand-dark text-sm rounded-lg p-2 focus:outline-none focus:border-brand-gold">
                     <option value="" {{ request('category_filter') == '' ? 'selected' : '' }}>
@@ -70,33 +86,29 @@
                         <option value="{{$category->id}}" {{ request('category_filter') == $category->id ? 'selected' : '' }}>{{ $category->kind }}</option>
                     @endforeach
                 </select>
-
-                
             </form>
             
             <!-- Dynamic Quick Action Accent Button Based on Role -->
             <div class="flex items-center space-x-4">
 
                 <!-- Receive Items from Supplier -->
-                @if(request()->routeIs('*.stock.index'))
-                    <button class="bg-brand-green border-0  hover:bg-brand-green-hover text-white font-semibold px-4 py-2 space-x-1 rounded-lg shadow transition text-sm cursor-pointer active:translate-y-0.5"
+                @if(request()->routeIs('surface.stock.index')) <!-- limited receiving to SURFACE -->
+                <button class="bg-brand-green border-0  hover:bg-brand-green-hover text-white font-semibold px-4 py-2 space-x-1 rounded-lg shadow transition text-sm cursor-pointer active:translate-y-0.5"
                     onclick="window.openModal('receivingModal')">
-                        <i class="fa-solid fa-truck-ramp-box"></i>
-                        <span>Receive Items</span>
-                    </button>
-                @endif
+                    <i class="fa-solid fa-truck-ramp-box"></i>
+                    <span>Receive Items</span>
+                </button>
                 
                 <!-- Issue Items to Underground -->
-                @if(request()->routeIs('surface.stock.index'))
-                    <button class="bg-brand-navy border-0  hover:bg-brand-navy-hover text-white font-semibold px-4 py-2 space-x-1 rounded-lg shadow transition text-sm cursor-pointer active:translate-y-0.5"
+                <button class="bg-brand-navy border-0  hover:bg-brand-navy-hover text-white font-semibold px-4 py-2 space-x-1 rounded-lg shadow transition text-sm cursor-pointer active:translate-y-0.5"
                     onclick="window.openModal('issuanceModal')">
-                        <i class="fa-solid fa-dolly"></i>
-                        <span>Issue Items</span>
-                    </button>
+                    <i class="fa-solid fa-dolly"></i>
+                    <span>Issue Items</span>
+                </button>
                 @endif
                 
-                <!-- Issue Items to Underground -->
-                @if(request()->routeIs('underground.stock.index'))
+                <!-- DEPRECATED: Issue Items to Underground -->
+                @if(request()->routeIs('underground.stock.index') && false) <!-- added false to hide -->
                     <button class="bg-brand-navy border-0  hover:bg-brand-navy-hover text-white font-semibold px-4 py-2 space-x-1 rounded-lg shadow transition text-sm cursor-pointer active:translate-y-0.5"
                     onclick="window.openModal('issuanceModal')">
                         <i class="fa-solid fa-cart-flatbed"></i>
@@ -115,6 +127,9 @@
                     <tr class="bg-gray-50 text-xs font-bold text-brand-navy uppercase tracking-wider border-b border-gray-200">
                         <!-- <th class="px-6 py-4">Item Code</th> -->
                         <th class="px-6 py-4">Item Name</th>
+                        @if(request()->routeIs('underground.*'))
+                            <th class="px-6 py-4">Level</th>
+                        @endif
                         <th class="px-6 py-4">Supplier</th>
                         <th class="px-6 py-4">Kind</th>
                         <th class="px-6 py-4">Cost</th>
@@ -128,81 +143,92 @@
                 <tbody class="divide-y divide-gray-100 text-sm text-gray-700">
                     
                     @forelse($stocks as $item)
-                        <tr class="hover:bg-gray-50/50 transition">
-                            <!-- item_code Column -->
-                            <!-- <td class="px-6 py-4 font-mono text-xs font-semibold text-brand-navy">
-                                <span class="bg-brand-navy/5 text-brand-navy px-2 py-1 rounded">
-                                    {{ $item->item_code }}
-                                </span>
-                            </td> -->
+                    <tr class="hover:bg-gray-50/50 transition">
+                        <!-- item_code Column -->
+                        <!-- <td class="px-6 py-4 font-mono text-xs font-semibold text-brand-navy">
+                            <span class="bg-brand-navy/5 text-brand-navy px-2 py-1 rounded">
+                                {{ $item->item_code }}
+                            </span>
+                        </td> -->
 
-                            <!-- Name Column -->
-                            <td class="px-6 py-4 font-semibold text-brand-dark">
-                                {{ $item->name }}
-                            </td>
+                        <!-- Name Column -->
+                        <td class="px-6 py-4 font-semibold text-brand-dark">
+                            {{ $item->name }}
+                        </td>
 
-                            <!-- Supplier Column -->
-                            <td class="px-6 py-4 font-semibold text-brand-dark">
-                                {{ $item->supplier->name }}
-                            </td>
+                        <!-- Level Column -->
+                        @if(request()->routeIs('underground.*'))
+                        <td class="px-6 py-4 font-semibold text-brand-dark">
+                            <span class="px-3 py-1 bg-slate-100 text-brand-navy/80 text-xs font-bold rounded-full border border-brand-navy/20">
+                                {{ $item->level->name }}
+                            </span>
+                        </td>
+                        @endif
 
-                            <!-- Category Column -->
-                            <td class="px-6 py-4">
-                                <span class="px-2.5 py-0.5 bg-slate-100 text-slate-700 text-xs font-medium rounded-md border border-slate-200">
-                                    {{ $item->kind->kind ?? 'Unassigned' }}
-                                </span>
-                            </td>
+                        <!-- Supplier Column -->
+                        <td class="px-6 py-4 font-semibold text-brand-dark">
+                            {{ $item->supplier->name }}
+                        </td>
 
-                            <!-- Cost Column -->
-                            <td class="px-6 py-4">
-                                <span class="px-2.5 py-0.5 bg-slate-100 text-slate-700 text-xs font-medium rounded-md border border-slate-200">
-                                    {{ $item->cost ? '₱ '. $item->cost : 'Unassigned' }}
-                                </span>
-                            </td>
+                        <!-- Category Column -->
+                        <td class="px-6 py-4">
+                            <span class="px-2.5 py-0.5 bg-slate-100 text-slate-700 text-xs font-medium rounded-md border border-slate-200">
+                                {{ $item->kind->kind ?? 'Unassigned' }}
+                            </span>
+                        </td>
 
-                            <!-- Quantity Column -->
-                            <td class="px-6 py-4 font-bold">
-                                <span class="{{ $item->quantity <= 10 ? 'text-brand-gold' : ($item->quantity == 0 ? 'text-red-600' : 'text-brand-dark') }}">
-                                    {{ number_format($item->quantity) }}
-                                </span>
-                            </td>
+                        <!-- Cost Column -->
+                        <td class="px-6 py-4">
+                            <span class="px-2.5 py-0.5 bg-slate-100 text-slate-700 text-xs font-medium rounded-md border border-slate-200">
+                                {{ $item->cost ? '₱ '. $item->cost : 'Unassigned' }}
+                            </span>
+                        </td>
 
-                            <!-- Status Badge Logic based on Quantity Field -->
-                            <td class="px-6 py-4">
-                                @if($item->quantity == 0)
-                                    <span class="px-2.5 py-1 bg-red-100 text-red-700 border border-red-200 font-bold text-xs rounded-full">Out of Stock</span>
-                                @elseif($item->quantity <= 10)
-                                    <span class="px-2.5 py-1 bg-amber-50 text-brand-gold border border-brand-gold/20 font-bold text-xs rounded-full">Low Stock</span>
-                                @else
-                                    <span class="px-2.5 py-1 bg-green-50 text-brand-green border border-brand-green/20 font-bold text-xs rounded-full">In Stock</span>
-                                @endif
-                            </td>
+                        <!-- Quantity Column -->
+                        <td class="px-6 py-4 font-bold">
+                            <span class="{{ $item->quantity <= 10 ? 'text-brand-gold' : ($item->quantity == 0 ? 'text-red-600' : 'text-brand-dark') }}">
+                                {{ number_format($item->quantity) }}
+                            </span>
+                        </td>
 
-                            <!-- Protected Actions Triggering adjustments -->
-                            @if(auth()->user()?->role->role == 'admin')
-                                <td class="px-6 py-4 text-right whitespace-nowrap space-x-3">
-                                    
-                                    <!-- Update & Record -->
-                                    <button type="button" 
-                                            onclick="stockCardModal('{{ $item->id }}')"
-                                            class="text-brand-navy hover:underline text-xs font-bold cursor-pointer">
-                                        View Stock Card
-                                    </button>
-
-                                    <!-- Edit -->
-                                    <button onclick="editStock('{{ $item->id }}', '{{ $item->supplier->name }}', '{{ addslashes($item->name) }}', '{{ $item->kind->kind }}', '{{ $item->quantity }}')" 
-                                       class="text-brand-gold hover:underline text-xs font-bold cursor-pointer">
-                                        Edit
-                                    </button>
-                                </td>
+                        <!-- Status Badge Logic based on Quantity Field -->
+                        <td class="px-6 py-4">
+                            @if($item->quantity == 0)
+                                <span class="px-2.5 py-1 bg-red-100 text-red-700 border border-red-200 font-bold text-xs rounded-full">Out of Stock</span>
+                            @elseif($item->quantity <= 10)
+                                <span class="px-2.5 py-1 bg-amber-50 text-brand-gold border border-brand-gold/20 font-bold text-xs rounded-full">Low Stock</span>
+                            @else
+                                <span class="px-2.5 py-1 bg-green-50 text-brand-green border border-brand-green/20 font-bold text-xs rounded-full">In Stock</span>
                             @endif
-                        </tr>
+                        </td>
+
+                        <!-- Protected Actions Triggering adjustments -->
+                        @if(auth()->user()?->role->role == 'admin')
+                        <td class="px-6 py-4 text-right whitespace-nowrap space-x-3">
+                            
+                            <!-- Update & Record -->
+                            @if(request()->routeIs('surface.*'))
+                            <button type="button" 
+                                    onclick="stockCardModal('{{ $item->id }}')"
+                                    class="text-brand-navy hover:underline text-xs font-bold cursor-pointer">
+                                View Stock Card
+                            </button>
+                            @endif
+
+                            <!-- Edit -->
+                            <button onclick="editStock('{{ $item->id }}', '{{ $item->supplier->name }}', '{{ addslashes($item->name) }}', '{{ $item->kind->kind }}', '{{ $item->quantity }}')" 
+                                class="text-brand-gold hover:underline text-xs font-bold cursor-pointer">
+                                Edit
+                            </button>
+                        </td>
+                        @endif
+                    </tr>
                     @empty
-                        <tr>
-                            <td colspan="6" class="px-6 py-12 text-center text-gray-400 font-medium">
-                                No warehouse products matched the search query parameters.
-                            </td>
-                        </tr>
+                    <tr>
+                        <td colspan="6" class="px-6 py-12 text-center text-gray-400 font-medium">
+                            No warehouse products matched the search query parameters.
+                        </td>
+                    </tr>
                     @endforelse
 
                 </tbody>
