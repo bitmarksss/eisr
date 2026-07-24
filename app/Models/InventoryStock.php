@@ -33,7 +33,7 @@ class InventoryStock extends Model
     /**
      * Get the inventory item that owns this stock record.
      */
-    public function inventory(): BelongsTo
+    public function item(): BelongsTo
     {
         return $this->belongsTo(InventoryItem::class, 'item_id');
     }

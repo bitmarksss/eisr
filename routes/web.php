@@ -73,8 +73,10 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
             Route::put('/{id}', [StockController::class, 'update'])->name('update');
             Route::post('/upload', [StockController::class, 'upload'])->name('upload');
 
-            // Route::get('/request', [StockController::class, 'request'])->name('index');
+            Route::get('/receive', [StockController::class, 'receive'])->name('receive');
             Route::get('/issuance', [StockController::class, 'issuance'])->name('issuance');
+
+            // Route::get('/issuance', [StockController::class, 'issuance'])->name('issuance');
 
             Route::get('/logs', [StockController::class, 'logs'])->name('logs');
 
@@ -107,7 +109,21 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
 
     // REPORTS
     Route::prefix('reports')->name('reports.')->group(function () {
-        Route::get('/', [ReportsController::class, 'logs'])->name('logs');
+        Route::get('/movement-data', [ReportsController::class, 'movement_data'])->name('movement-data');
+        
+        Route::prefix('pmc-tigerway')->name('pmc-tigerway.')->group(function () {
+            Route::get('/surface', [ReportsController::class, 'surface'])->name('surface');
+            Route::get('/underground', [ReportsController::class, 'underground'])->name('underground');
+        });
+
+
+        Route::get('/', [ReportsController::class, 'index'])->name('index');
+        Route::prefix('daily')->name('daily.')->group(function () {
+            Route::get('/', [ReportsController::class, 'daily_index'])->name('index');
+        });
+        Route::prefix('weekly')->name('weekly.')->group(function () {
+            Route::get('/', [ReportsController::class, 'weekly_index'])->name('index');
+        });
 
     });
 
@@ -118,13 +134,15 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
 
     });
     
-    Route::prefix('admin')->group(function () {
+    Route::prefix('admin')->name('admin.')->group(function () {
         Route::prefix('users')->group(function () {
             Route::get('/', [UserController::class, 'index'])->name('users.index');
 
             Route::post('/store', [UserController::class, 'store'])->name('users.store');
             Route::put('/{id}', [UserController::class, 'update'])->name('users.update');
         });
+
+        Route::get('/logs', [ReportsController::class, 'logs'])->name('logs');
     });
 
 

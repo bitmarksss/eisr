@@ -1,52 +1,25 @@
 @extends('layouts.app')
 
-@section('page-title', ucfirst($location) . " Stock")
+@section('page-title', 'Underground Consumption Report')
 
 @section('sidebar')
     @include('components.sidebar')
 @endsection
 
-@section('modals')
-    @include('components.backdrop')
-
-    @if(request()->routeIs('inventory.*'))
-        @include('components.add-inventory-modal')
-        @include('components.edit-inventory-modal')
-        @include('components.inventory.item-modal')
-    @endif
-
-    @include('components.stock.edit-modal')
-
-    @if(request()->routeIs('surface.stock.*'))
-        @include('components.inventory.receiving-modal')
-        @include('components.inventory.issuance-modal')
-    @endif
-
-    @if(request()->routeIs('underground.stock.*'))
-        @include('components.inventory.receiving-modal')
-        @include('components.inventory.issuance-modal')
-    @endif
-
-    @if(request()->routeIs('surface.stock.*'))
-        @include('components.inventory.stock-card-modal')
-        @include('components.inventory.update-and-record-modal')
-    @endif
-@endsection
 
 @section('content')
 <div class="space-y-6">
 
     <!-- Flash Messages -->
     @if(session('success'))
-        <div class="bg-green-100 border border-brand-green/30 text-brand-green p-4 rounded-xl text-sm font-semibold flex items-center shadow-xs">
-            <span class="mr-2">✓</span> {{ session('success') }}
-        </div>
+    <div class="bg-green-100 border border-brand-green/30 text-brand-green p-4 rounded-xl text-sm font-semibold flex items-center shadow-xs">
+        <span class="mr-2">✓</span> {{ session('success') }}
+    </div>
     @endif
+
 
     <!-- Control Matrix Panel -->
     <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        
-        
         <div class="flex flex-wrap items-center justify-between w-full">
             <!-- Search and Filters -->
             <form method="GET" action="{{ route($location . '.stock.index') }}" class="flex flex-wrap items-center gap-3 flex-1 w-full">
@@ -135,6 +108,7 @@
             </div>
         </div>
     </div>
+    
 
     <!-- Inventory Model Table Structure -->
     <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
@@ -259,6 +233,13 @@
             </div>
         @endif
     </div>
-
 </div>
+
 @endsection
+
+
+@push('scripts')
+<script type="module">
+
+</script>
+@endpush

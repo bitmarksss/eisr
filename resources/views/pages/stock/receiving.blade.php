@@ -20,8 +20,8 @@
     <div class="bg-white w-full rounded-2xl border-0 overflow-hidden">
         
         <!-- Header Strip -->
-        <div class="px-6 py-4 bg-white text-brand-navy flex justify-center items-center">
-            <p class="px-4 w-full font-bold tracking-wide text-2xl border-0 border-b border-brand-green">Item Issuance Form</p>
+        <div class="px-6 py-4 bg-white text-brand-navy flex justify-between items-center">
+            <h3 class="px-4 w-full font-bold tracking-wide text-2xl border-0 border-b border-brand-green">Item Receiving Form</h3>
         </div>
 
 
@@ -30,15 +30,36 @@
             @csrf
             @method('POST')
             
-            <div class="flex items-center justify-center space-x-2">
-                <label for="item-level" class="block text-lg font-bold text-brand-dark uppercase tracking-wider mb-1">Level No.</label>
-                <select id="edit-supplier-id" name="supplier_id" required
-                    class="w-[25%] bg-gray-50 border @error('supplier_id') border-red-500 @else border-gray-300 @enderror rounded-lg p-2 text-sm focus:border-brand-gold focus:outline-none transition">
-                    <option value="" disabled selected>Select Level</option>
-                    @foreach($levels as $level)
-                        <option value="{{ $level->id }}" {{ old('supplier_id') == $level->id ? 'selected' : '' }}>{{ $level->name }}</option>
-                    @endforeach
-                </select>
+            <div class="grid grid-cols-4 gap-2">
+
+                <!-- Receipt No. -->
+                <div>
+                    <label for="receiving-no" class="block text-xs font-bold text-brand-dark uppercase tracking-wider mb-1">Receipt No.</label>
+                    <input type="text" id="receiving-no" name="receiving_no" required placeholder="e.g., 1234"
+                        class="w-full bg-gray-50 border @error('receiving_no') border-red-500 @else border-gray-300 @enderror rounded-lg px-3 py-2 text-sm focus:border-brand-gold focus:outline-none transition focus:ring-2 focus:ring-brand-gold/20">
+                    @error('name') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                </div>    
+
+                <!-- Supplier -->
+                <div class="col-span-2">
+                    <label for="edit-supplier-id" class="block text-xs font-bold text-brand-dark uppercase tracking-wider mb-1">Supplier</label>
+                    <select id="edit-supplier-id" name="supplier_id" required
+                        class="w-full bg-gray-50 border @error('supplier_id') border-red-500 @else border-gray-300 @enderror rounded-lg p-2 text-sm focus:border-brand-gold focus:outline-none transition">
+                        <option value="" disabled selected>Select Supplier</option>
+                        @foreach($suppliers as $supplier)
+                            <option value="{{ $supplier->id }}" {{ old('supplier_id') == $supplier->id ? 'selected' : '' }}>{{ $supplier->name }}</option>
+                        @endforeach
+                    </select>
+                    @error('supplier_id') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                </div>
+
+                <!-- Date Received -->
+                <div>
+                    <label for="receiving-date" class="block text-xs font-bold text-brand-dark uppercase tracking-wider mb-1">Receiving Date</label>
+                    <input type="date" id="receiving-date" name="receiving_date" required 
+                        class="w-full bg-gray-50 border @error('receiving_date') border-red-500 @else border-gray-300 @enderror rounded-lg px-3 py-2 text-sm focus:border-brand-gold focus:outline-none transition focus:ring-2 focus:ring-brand-gold/20">
+                    @error('name') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                </div>   
             </div>
 
             <div class="overflow-auto flex-1">

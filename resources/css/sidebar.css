@@ -3,7 +3,7 @@
         px-4 
         pb-1
         text-xs 
-        font-bold 
+        font-semibold 
         uppercase 
         tracking-wider
         text-brand-navy/80
@@ -22,7 +22,7 @@
         rounded-lg 
         text-gray-400
         text-sm
-        font-medium 
+        font-medium
         transition
 }
 

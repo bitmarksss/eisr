@@ -99,6 +99,18 @@ document.addEventListener('DOMContentLoaded', () => {
         // modal.classList.remove('opacity-0', 'pointer-events-none');
     }
 
+    window.toggleDropdown = function(id, btn) {
+        const menu = document.getElementById(id);
+        const icon = btn.querySelector('.chevron-icon');
+
+        if (menu) {
+            menu.classList.toggle('hidden');
+        }
+        if (icon) {
+            icon.classList.toggle('rotate-90');
+        }
+    }
+
     window.closeEditInventoryModal = function() {
         const modal = document.getElementById('editInventoryModal');
         modal.classList.add('opacity-0', 'pointer-events-none');

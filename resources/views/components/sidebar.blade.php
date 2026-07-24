@@ -2,116 +2,235 @@
     <!-- Brand Header / Logo Area -->
     <div class="p-6 flex items-center space-x-3 ">
         <!-- Placeholder for your logow.png -->
-        <span class="font-bold text-base tracking-wider text-brand-green">EXPLOSIVES DEPARTMENT INVENTORY SYSTEM</span>
+        <span class="font-bold text-sm tracking-wider text-brand-green">EXPLOSIVES DEPARTMENT INVENTORY SYSTEM</span>
     </div>
 
     <!-- Navigation Links -->
-    <nav class="flex-1 px-4 space-y-1 overflow-y-scroll">
+    <nav class="flex-1 px-4 space-y-1 overflow-y-auto">
 
         <!-- MENU -->
-        <p class="sidebar-label
-            {{ request()->routeIs('dashboard') ? 'border-0 border-b border-brand-navy/50' : '' }}">
+        <p class="sidebar-label {{ request()->routeIs('dashboard') ? 'border-0 border-b border-brand-navy/50' : '' }}">
             Menu
         </p>
-        <a href="{{ route('dashboard') }}" 
-            class="sidebar-link {{ request()->routeIs('dashboard') ? 'selected' : '' }}">
+        <a href="{{ route('dashboard') }}" class="sidebar-link {{ request()->routeIs('dashboard') ? 'selected' : '' }}">
             <i class="fa-solid fa-chart-bar"></i>
             Dashboard
         </a>
         <br>
 
-
         <!-- MINE SURFACE -->
-        <p class="sidebar-label
-            {{ request()->routeIs('surface.*') ? 'border-0 border-b border-brand-navy/50' : '' }}">
-             Surface Magazine
+        <p class="sidebar-label {{ request()->routeIs('surface.*') ? 'border-0 border-b border-brand-navy/50' : '' }}">
+            Surface Magazine
         </p>
-        <!-- Inventory -->
-        <!-- <a href="{{ route('surface.stock.index', ['location' => 'surface']) }}"  -->
-        <a href="{{ route('surface.stock.index') }}" 
-            class="sidebar-link {{ request()->routeIs('surface.stock.index') ? 'selected' : '' }}">
+        <a href="{{ route('surface.stock.index') }}" class="sidebar-link {{ request()->routeIs('surface.stock.*') ? 'selected' : '' }}">
             <i class="fa-solid fa-boxes-stacked"></i>
             Inventory Stock
         </a>
-        <!-- Issuance -->
-        <!-- <a href="{{ route('surface.stock.issuance', ['location' => 'surface']) }}" 
-            class="sidebar-link {{ request()->routeIs('surface.stock.issuance') ? 'selected' : '' }}">
-            <i class="fa-solid fa-people-carry-box"></i>
-            Stock Issuance
-        </a> -->
-        <!-- <a href="{{ route('surface.stock.logs', ['location' => 'surface']) }}"  -->
-        <a href="{{ route('surface.stock.logs') }}" 
-            class="sidebar-link {{ request()->routeIs('surface.stock.logs') ? 'selected' : '' }}">
+        <a href="{{ route('surface.stock.logs') }}" class="sidebar-link {{ request()->routeIs('surface.stock.logs') ? 'selected' : '' }}">
             <i class="fa-solid fa-file-lines"></i>
             Stock Logs
         </a>
         <br>
-        
 
         <!-- MINE UNDERGROUND -->
-        <p class="sidebar-label
-            {{ request()->routeIs('underground.*') ? 'border-0 border-b border-brand-navy/50' : '' }}">
+        <p class="sidebar-label {{ request()->routeIs('underground.*') ? 'border-0 border-b border-brand-navy/50' : '' }}">
             Underground Magazine
         </p>
-        <!-- Inventory -->
-        <!-- <a href="{{ route('underground.stock.index', ['location' => 'underground']) }}"  -->
-        <a href="{{ route('underground.stock.index') }}" 
-            class="sidebar-link {{ request()->routeIs('underground.stock.index') ? 'selected' : '' }}">
+        <a href="{{ route('underground.stock.index') }}" class="sidebar-link {{ request()->routeIs('underground.stock.index') ? 'selected' : '' }}">
             <i class="fa-solid fa-boxes-stacked"></i>
             Inventory Stock
         </a>
-        <!-- Stock Management -->
-        <!-- <a href="{{ route('underground.stock.index', ['location' => 'surface']) }}"  
-            class="sidebar-link {{ request()->routeIs('surface.stock.index') ? 'selected' : '' }}">
-            <i class="fa-solid fa-file-lines"></i>
-            Stock Management
-        </a> -->
-        <!-- Logs -->
-        <a href="{{ route('underground.stock.logs') }}" 
-            class="sidebar-link {{ request()->routeIs('underground.stock.logs') ? 'selected' : '' }}">
+        <a href="{{ route('underground.stock.logs') }}" class="sidebar-link {{ request()->routeIs('underground.stock.logs') ? 'selected' : '' }}">
             <i class="fa-solid fa-file-lines"></i>
             Stock Logs
         </a>
         <br>
-        
 
-        <!-- REPORTS -->
-        <p class="sidebar-label
-            {{ request()->routeIs('reports.*') ? 'border-0 border-b border-brand-navy/50' : '' }}">
+        <!-- REPORTS DROPDOWNS SECTION -->
+        <p class="sidebar-label {{ request()->routeIs('reports.*') ? 'border-0 border-b border-brand-navy/50' : '' }}">
             REPORTS
         </p>
-        <!-- Inventory -->
-        <a href="" class="sidebar-link">
+
+        <!-- 1. PMC and Tigerway -->
+        <div class="space-y-1">
+            <button type="button" onclick="toggleDropdown('dropdown-pmc', this)" class="sidebar-link w-full flex items-center justify-between text-left cursor-pointer transition-all">
+                <span class="flex items-center space-x-2">
+                    <i class="fa-solid fa-folder text-xs"></i>
+                    <span class="text-sm">PMC and Tigerway</span>
+                </span>
+                <i class="fa-solid fa-chevron-right text-xs transition-transform duration-200 chevron-icon"></i>
+            </button>
+            
+            <div id="dropdown-pmc" class="hidden pl-4 space-y-1 text-xs transition-all">
+                <a href="{{ route('reports.pmc-tigerway.surface') }}" class="sidebar-link w-full text-left py-1.5 px-2 hover:bg-brand-green/10 rounded cursor-pointer">
+                    <i class="fa-solid fa-scroll"></i>
+                    Surface Consumption
+                </a>
+                <button type="button" class="sidebar-link w-full text-left py-1.5 px-2 hover:bg-brand-green/10 rounded cursor-pointer">
+                    <i class="fa-solid fa-scroll"></i>
+                    Underground Consumption
+                </button>
+                <button type="button" class="sidebar-link w-full text-left py-1.5 px-2 hover:bg-brand-green/10 rounded cursor-pointer">
+                    <i class="fa-solid fa-scroll"></i>
+                    PMC-RSU - RCSU Report
+                </button>
+                <button type="button" class="sidebar-link w-full text-left py-1.5 px-2 hover:bg-brand-green/10 rounded cursor-pointer">
+                    <i class="fa-solid fa-scroll"></i>
+                    Tigerway Weekly Consumption
+                </button>
+                <button type="button" class="sidebar-link w-full text-left py-1.5 px-2 hover:bg-brand-green/10 rounded cursor-pointer">
+                    <i class="fa-solid fa-scroll"></i>
+                    Tigerway - RCSU Report
+                </button>
+            </div>
+        </div>
+
+        <!-- 2. Mill MCD -->
+        <div class="space-y-1">
+            <button type="button" onclick="toggleDropdown('dropdown-mill', this)" class="sidebar-link w-full flex items-center justify-between text-left cursor-pointer">
+                <span class="flex items-center space-x-2">
+                    <i class="fa-solid fa-folder text-xs"></i>
+                    <span class="text-sm">Mill MCD</span>
+                </span>
+                <i class="fa-solid fa-chevron-right text-xs transition-transform duration-200 chevron-icon"></i>
+            </button>
+            
+            <div id="dropdown-mill" class="hidden pl-4 space-y-1 text-xs transition-all">
+                <button type="button" onclick="openDetailConsumptionModal()" class="sidebar-link w-full text-left py-1.5 px-2 hover:bg-brand-green/10 rounded cursor-pointer">
+                    <i class="fa-solid fa-scroll"></i>
+                    Explosives Weekly - Daily MCD
+                </button>
+                <button type="button" onclick="openWeeklySummaryModal()" class="sidebar-link w-full text-left py-1.5 px-2 hover:bg-brand-green/10 rounded cursor-pointer">
+                    <i class="fa-solid fa-scroll"></i>
+                    Explosives Weekly - MCD
+                </button>
+            </div>
+        </div>
+
+        <!-- 3. Blaster Reports -->
+        <div class="space-y-1">
+            <button type="button" onclick="toggleDropdown('dropdown-blaster', this)" class="sidebar-link w-full flex items-center justify-between text-left cursor-pointer">
+                <span class="flex items-center space-x-2">
+                    <i class="fa-solid fa-folder text-xs"></i>
+                    <span class="text-sm">Blaster Reports</span>
+                </span>
+                <i class="fa-solid fa-chevron-right text-xs transition-transform duration-200 chevron-icon"></i>
+            </button>
+            
+            <div id="dropdown-blaster" class="hidden pl-4 space-y-1 text-xs transition-all">
+                <button type="button" onclick="openDetailConsumptionModal()" class="sidebar-link w-full text-left py-1.5 px-2 hover:bg-brand-green/10 rounded cursor-pointer">
+                    <i class="fa-solid fa-scroll"></i>
+                    Daily Blaster Report - PMC
+                </button>
+                <button type="button" onclick="openWeeklySummaryModal()" class="sidebar-link w-full text-left py-1.5 px-2 hover:bg-brand-green/10 rounded cursor-pointer">
+                    <i class="fa-solid fa-scroll"></i>
+                    Daily Blaster Report - Tigerway
+                </button>
+            </div>
+        </div>
+
+        <!-- 4. MGB Reports -->
+        <div class="space-y-1">
+            <button type="button" onclick="toggleDropdown('dropdown-mgb', this)" class="sidebar-link w-full flex items-center justify-between text-left cursor-pointer">
+                <span class="flex items-center space-x-2">
+                    <i class="fa-solid fa-folder text-xs"></i>
+                    <span class="text-sm">MGB Reports</span>
+                </span>
+                <i class="fa-solid fa-chevron-right text-xs transition-transform duration-200 chevron-icon"></i>
+            </button>
+            
+            <div id="dropdown-mgb" class="hidden pl-4 space-y-1 text-xs transition-all">
+                <button type="button" onclick="openDetailConsumptionModal()" class="sidebar-link w-full text-left py-1.5 px-2 hover:bg-brand-green/10 rounded cursor-pointer">
+                    <i class="fa-solid fa-scroll"></i>
+                    Daily Report - MGB
+                </button>
+                <button type="button" onclick="openWeeklySummaryModal()" class="sidebar-link w-full text-left py-1.5 px-2 hover:bg-brand-green/10 rounded cursor-pointer">
+                    <i class="fa-solid fa-scroll"></i>
+                    BR Report - MGB
+                </button>
+                <button type="button" onclick="openWeeklySummaryModal()" class="sidebar-link w-full text-left py-1.5 px-2 hover:bg-brand-green/10 rounded cursor-pointer">
+                    <i class="fa-solid fa-scroll"></i>
+                    FY 2026 - MGB
+                </button>
+                <button type="button" onclick="openWeeklySummaryModal()" class="sidebar-link w-full text-left py-1.5 px-2 hover:bg-brand-green/10 rounded cursor-pointer">
+                    <i class="fa-solid fa-scroll"></i>
+                    Explosives & Accessories Con.
+                </button>
+            </div>
+        </div>
+
+        <!-- 5. Explosives Monthly Report -->
+        <div class="space-y-1">
+            <button type="button" onclick="toggleDropdown('dropdown-monthly', this)" class="sidebar-link w-full flex items-center justify-between text-left cursor-pointer">
+                <span class="flex items-center space-x-2">
+                    <i class="fa-solid fa-folder text-xs"></i>
+                    <span class="text-sm">Explosives Monthly Report</span>
+                </span>
+                <i class="fa-solid fa-chevron-right text-xs transition-transform duration-200 chevron-icon"></i>
+            </button>
+            
+            <div id="dropdown-monthly" class="hidden pl-4 space-y-1 text-xs transition-all">
+                <button type="button" onclick="openDetailConsumptionModal()" class="sidebar-link w-full text-left py-1.5 px-2 hover:bg-brand-green/10 rounded cursor-pointer">
+                    <i class="fa-solid fa-scroll"></i>
+                    Daily Consumption - Monthly
+                </button>
+                <button type="button" onclick="openWeeklySummaryModal()" class="sidebar-link w-full text-left py-1.5 px-2 hover:bg-brand-green/10 rounded cursor-pointer">
+                    <i class="fa-solid fa-scroll"></i>
+                    Costing 2026 - Monthly
+                </button>
+                <button type="button" onclick="openWeeklySummaryModal()" class="sidebar-link w-full text-left py-1.5 px-2 hover:bg-brand-green/10 rounded cursor-pointer">
+                    <i class="fa-solid fa-scroll"></i>
+                    Monthly Report 2026
+                </button>
+                <button type="button" onclick="openWeeklySummaryModal()" class="sidebar-link w-full text-left py-1.5 px-2 hover:bg-brand-green/10 rounded cursor-pointer">
+                    <i class="fa-solid fa-scroll"></i>
+                    Monthly Comparative 2026
+                </button>
+                <button type="button" onclick="openWeeklySummaryModal()" class="sidebar-link w-full text-left py-1.5 px-2 hover:bg-brand-green/10 rounded cursor-pointer">
+                    <i class="fa-solid fa-scroll"></i>
+                    Explosives Deliveries - Monthly
+                </button>
+            </div>
+        </div>
+
+        <!-- 6. Explosives Usage Analysis -->
+        <div class="space-y-1">
+            <button type="button" onclick="toggleDropdown('dropdown-usage', this)" class="sidebar-link w-full flex items-center justify-between text-left cursor-pointer">
+                <span class="flex items-center space-x-2">
+                    <i class="fa-solid fa-folder text-xs"></i>
+                    <span class="text-sm">Explosives Usage Analysis</span>
+                </span>
+                <i class="fa-solid fa-chevron-right text-xs transition-transform duration-200 chevron-icon"></i>
+            </button>
+            
+            <div id="dropdown-usage" class="hidden pl-4 space-y-1 text-xs transition-all">
+                <button type="button" onclick="openDetailConsumptionModal()" class="sidebar-link w-full text-left py-1.5 px-2 hover:bg-brand-green/10 rounded cursor-pointer">
+                    <i class="fa-solid fa-scroll"></i>
+                    Daily Usage Analysis 2026
+                </button>
+            </div>
+        </div>
+
+        <!-- Standard Report Links -->
+        <a href="{{ route('reports.index') }}" class="sidebar-link {{ request()->routeIs('reports.index') ? 'selected' : '' }}">
             <i class="fa-solid fa-scroll"></i>
-            Daily Reports
+            All Reports
         </a>
-        <!-- Stock Request -->
-        <a href="" class="sidebar-link">
+        <a href="{{ route('reports.movement-data') }}" class="sidebar-link {{ request()->routeIs('reports.movement-data') ? 'selected' : '' }}">
             <i class="fa-solid fa-scroll"></i>
-            Weekly Reports
-        </a>
-        <!-- System Logs -->
-        <a href="{{ route('reports.logs') }}" class="sidebar-link {{ request()->routeIs('reports.logs') ? 'selected' : '' }}">
-            <i class="fa-solid fa-clock-rotate-left"></i>
-            System Logs
+            Movement Data
         </a>
         <br>
 
-
         <!-- MAINTENANCE -->
-        <p class="sidebar-label
-            {{ request()->routeIs('maintenance.*') ? 'border-0 border-b border-brand-navy/50' : '' }}">
+        <p class="sidebar-label {{ request()->routeIs('maintenance.*') ? 'border-0 border-b border-brand-navy/50' : '' }}">
             Maintenance
         </p>
-        <!-- Items-->
-        <a href="{{ route('maintenance.inventory.index')}}" 
-            class="sidebar-link {{ request()->routeIs('maintenance.inventory.*') ? 'selected' : '' }}">
+        <a href="{{ route('maintenance.inventory.index')}}" class="sidebar-link {{ request()->routeIs('maintenance.inventory.*') ? 'selected' : '' }}">
             <i class="fa-solid fa-box-open"></i>
             Inventory Items
         </a>
-        <!-- Levels -->
-        <a href="{{ route('maintenance.levels.index') }}" 
-            class="sidebar-link {{ request()->routeIs('maintenance.levels.index') ? 'selected' : '' }}">
+        <a href="{{ route('maintenance.levels.index') }}" class="sidebar-link {{ request()->routeIs('maintenance.levels.index') ? 'selected' : '' }}">
             <i class="fa-solid fa-bars-staggered"></i>
             Levels
         </a>
@@ -120,13 +239,16 @@
         <!-- ADMIN ONLY SECTION -->
         @if(auth()->user() && auth()->user()->role->role == 'admin')
         <div class="py-4 mt-1 space-y-2">
-            <p class="sidebar-label
-                {{ request()->is('admin/*') ? 'border-0 border-b border-brand-navy/50' : '' }}">
+            <p class="sidebar-label {{ request()->is('admin/*') ? 'border-0 border-b border-brand-navy/50' : '' }}">
                 Admin Controls
             </p>
-            <a href="{{ route('users.index') }}" class="sidebar-link {{ request()->routeIs('users.*') ? 'selected' : '' }}">
+            <a href="{{ route('admin.users.index') }}" class="sidebar-link {{ request()->routeIs('admin.users.*') ? 'selected' : '' }}">
                 <i class="fa-solid fa-user-gear"></i>
                 User Management
+            </a>
+            <a href="{{ route('admin.logs') }}" class="sidebar-link {{ request()->routeIs('admin.logs') ? 'selected' : '' }}">
+                <i class="fa-solid fa-clock-rotate-left"></i>
+                System Logs
             </a>
         </div>
         @endif

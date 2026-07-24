@@ -4,12 +4,143 @@ namespace App\Http\Controllers;
 
 use App\Models\{
     ActivityLog, 
+    InventoryKind,
+    InventoryItem,
+    InventoryStock,
+    StockMovement
 };
 
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 
 class ReportsController extends Controller
 {
+    private const WEEKLY_REPORT_TYPES = [
+        1 => 'Surface Consumption',
+        2 => 'Underground Consumption',
+        3 => 'RCSU Report - PMC-RSU',
+        4 => 'Tigerway Weekly Consumption',
+        5 => 'RCSU Report - Tigerway',
+    ];
+
+    public function index(Request $request) 
+    {
+        $selectedTypeId = (int) $request->input('type', 1);
+
+        $types = collect(self::WEEKLY_REPORT_TYPES)
+            ->map(fn ($name, $id) => (object) [
+                'id' => $id,
+                'name' => $name,
+            ])
+            ->values();
+
+        $selectedTypeObj = $types->firstWhere('id', $selectedTypeId) ?? $types->first();
+        $report_type = $selectedTypeObj->name; 
+
+        // Eager load stockMovements along with item relations
+        $items = InventoryItem::with(['supplier', 'unit'])->limit(5)->get();
+
+        // dd($items);
+        return view('pages.reports.index', [
+            'report_type' => $report_type,
+            'type' => $selectedTypeId,
+            'types' => $types,
+            'items' => $items,
+        ]);
+    }
+
+    public function weekly_index(Request $request) 
+    {
+        $selectedTypeId = (int) $request->input('type', 1);
+
+        $types = collect(self::WEEKLY_REPORT_TYPES)
+            ->map(fn ($name, $id) => (object) [
+                'id' => $id,
+                'name' => $name,
+            ])
+            ->values();
+
+        $selectedTypeObj = $types->firstWhere('id', $selectedTypeId) ?? $types->first();
+        $report_type = $selectedTypeObj->name; 
+
+        // Eager load stockMovements along with item relations
+        $items = InventoryItem::with(['supplier', 'unit'])->limit(5)->get();
+
+        // dd($items);
+        return view('pages.reports.weekly.index', [
+            'report_type' => $report_type,
+            'type' => $selectedTypeId,
+            'types' => $types,
+            'items' => $items,
+        ]);
+    }
+
+    public function surface(Request $request) 
+    {
+        $filterInputs = [
+            'search' => $request->input('search'),
+            'item' => $request->input('item'),
+            'kind' => $request->input('kind'),
+        ];
+
+        $selected_item = InventoryStock::query()
+
+            // Search Filter
+            ->when($filterInputs['search'], function ($query) use ($filterInputs) {
+                $query->where('item.name', 'LIKE', '%'. $filterInputs['search'] .'%');
+            })
+            
+            // Item Filter
+            ->when($filterInputs['item'], function ($query) use ($filterInputs) {
+                $query->where('item_id', $filterInputs['item']);
+            })
+
+            ->with(['item'])
+            ->first();
+
+        // dd($filterInputs, $selected_item);
+        
+        $items = InventoryItem::select('id', 'name')->get();
+        $categories = InventoryKind::get();
+        return view('pages.reports.pmc-tigerway.surface-consumption', [
+            'items' => $items,
+            'categories' => $categories,
+            'selectedItem' => $selected_item
+        ]);
+    }
+
+    public function underground(Request $request) {
+        
+        return view('pages.reports.pmc-tigerway.underground-consumption');
+    }
+    
+    public function movement_data(Request $request)
+    {
+        $query = StockMovement::with([
+            'user', 
+            'items.item.unit', 
+            'items.destinationLevel'
+        ])
+            ->withCount('items')
+            ->latest();
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where('reference_no', 'like', "%{$search}%")
+                ->orWhere('notes', 'like', "%{$search}%");
+        }
+
+        if ($request->filled('type_filter')) {
+            $query->where('type', $request->type_filter);
+        }
+
+        // dd($query->first());
+
+        $movements = $query->paginate(15);
+
+        return view('pages.reports.movement-data', compact('movements'));
+    }
     
     public function logs(Request $request)
     {
@@ -48,4 +179,6 @@ class ReportsController extends Controller
             'location' => $location,
         ]);
     }
+
+    
 }

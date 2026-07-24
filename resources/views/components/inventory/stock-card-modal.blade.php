@@ -35,17 +35,18 @@
                         <th rowspan="2" class="border border-gray-200 p-2 text-brand-navy">Outgoing</th>
                         <th rowspan="2" class="border border-gray-200 p-2 text-brand-navy">Ending</th>
                         <th rowspan="2" class="border border-gray-200 p-2 text-brand-navy">UoM</th>
-                        <th colspan="2" class="border border-gray-200 p-1.5 bg-gray-100 text-[10px] text-brand-navy">Checked By</th>
+                        <!-- <th colspan="2" class="border border-gray-200 p-1.5 bg-gray-100 text-[10px] text-brand-navy">Checked By</th>
                         <th colspan="3" class="border border-gray-200 p-1.5 bg-gray-100 text-[10px] text-brand-navy">Witnessed By</th>
-                        <th rowspan="2" class="border border-gray-200 p-2 text-center text-brand-navy">Actions</th>
+                        <th rowspan="2" class="border border-gray-200 p-2 text-center text-brand-navy">Actions</th> 
+                        -->
                     </tr>
-                    <tr class="bg-gray-50 text-[9px] font-normal text-gray-500">
+                    <!-- <tr class="bg-gray-50 text-[9px] font-normal text-gray-500">
                         <th class="border border-gray-200 p-1">Mag. Warehouseman</th>
                         <th class="border border-gray-200 p-1">Foreman Blaster</th>
                         <th class="border border-gray-200 p-1">Security On Duty</th>
                         <th class="border border-gray-200 p-1">PNP Rep.</th>
                         <th class="border border-gray-200 p-1">Army Rep.</th>
-                    </tr>
+                    </tr> -->
                 </thead>
                 <tbody id="stockFormRows" class="bg-white divide-y divide-gray-200 text-gray-700">
                     
@@ -57,14 +58,14 @@
                         <td class="border border-gray-200 p-2.5 text-gray-400">0</td>
                         <td class="border border-gray-200 p-2.5 font-bold text-brand-dark">650</td>
                         <td class="border border-gray-200 p-2.5 lowercase text-gray-500">pcs</td>
-                        <td class="border border-gray-200 p-2.5 normal-case">J. Doe</td>
+                        <!-- <td class="border border-gray-200 p-2.5 normal-case">J. Doe</td>
                         <td class="border border-gray-200 p-2.5 normal-case">A. Smith</td>
                         <td class="border border-gray-200 p-2.5 normal-case">Sgt. Reyes</td>
                         <td class="border border-gray-200 p-2.5 normal-case">Insp. Santos</td>
                         <td class="border border-gray-200 p-2.5 normal-case">Lt. Garcia</td>
                         <td class="border border-gray-200 p-2.5 text-center">
                             <button type="button" class="px-2 py-1 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded text-[10px] transition">View</button>
-                        </td>
+                        </td> -->
                     </tr>
 
                     <!-- Row 2 -->
@@ -75,14 +76,14 @@
                         <td class="border border-gray-200 p-2.5 text-red-600 font-semibold">-120</td>
                         <td class="border border-gray-200 p-2.5 font-bold text-brand-dark">530</td>
                         <td class="border border-gray-200 p-2.5 lowercase text-gray-500">pcs</td>
-                        <td class="border border-gray-200 p-2.5 normal-case">J. Doe</td>
+                        <!-- <td class="border border-gray-200 p-2.5 normal-case">J. Doe</td>
                         <td class="border border-gray-200 p-2.5 normal-case">M. Ramos</td>
                         <td class="border border-gray-200 p-2.5 normal-case">Sgt. Reyes</td>
                         <td class="border border-gray-200 p-2.5 normal-case">Insp. Santos</td>
                         <td class="border border-gray-200 p-2.5 normal-case">Lt. Garcia</td>
                         <td class="border border-gray-200 p-2.5 text-center">
                             <button type="button" class="px-2 py-1 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded text-[10px] transition">View</button>
-                        </td>
+                        </td> -->
                     </tr>
 
                     <!-- Row 3 -->
@@ -93,14 +94,14 @@
                         <td class="border border-gray-200 p-2.5 text-red-600 font-semibold">-30</td>
                         <td class="border border-gray-200 p-2.5 font-bold text-brand-dark">500</td>
                         <td class="border border-gray-200 p-2.5 lowercase text-gray-500">pcs</td>
-                        <td class="border border-gray-200 p-2.5 normal-case">J. Doe</td>
+                        <!-- <td class="border border-gray-200 p-2.5 normal-case">J. Doe</td>
                         <td class="border border-gray-200 p-2.5 normal-case">M. Ramos</td>
                         <td class="border border-gray-200 p-2.5 normal-case">Sgt. Reyes</td>
                         <td class="border border-gray-200 p-2.5 normal-case">Insp. Santos</td>
                         <td class="border border-gray-200 p-2.5 normal-case">Lt. Garcia</td>
                         <td class="border border-gray-200 p-2.5 text-center">
                             <button type="button" class="px-2 py-1 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded text-[10px] transition">View</button>
-                        </td>
+                        </td> -->
                     </tr>
 
                 </tbody>
@@ -111,7 +112,7 @@
         <div class="p-4 bg-gray-50 border-t border-gray-100 flex justify-end items-center">
             <button type="button" onclick="window.closeModal()" 
                 class="bg-white hover:bg-gray-100 border border-gray-300 text-brand-dark font-bold px-5 py-2.5 rounded-lg shadow-2xs text-xs cursor-pointer tracking-wider transition">
-                Close Window
+                Close
             </button>
         </div>
     </div>

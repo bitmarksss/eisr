@@ -10,13 +10,13 @@
 @source "../**/*.blade.php";
 @source "../**/*.js";
 
-@font-face {
+/* @font-face {
     font-family: 'Outfit';
     src: url('../fonts/Outfit-VariableFont_wght.ttf') format('truetype-variations');
-    font-weight: 100 900; /* This enables all weights from 100 to 900 */
+    font-weight: 100 900;
     font-style: normal;
     font-display: swap;
-}
+} */
 
 @theme {
   /* Injecting your logo's exact colors */
@@ -52,7 +52,16 @@
 }
 
 * {
-    font-family: 'Outfit', sans-serif;
+    font-family: 'Outfit', 'Verdana', sans-serif;
+}
+
+/* UNIVERSALS */
+.disabled {
+    pointer-events: none !important;
+    cursor: default !important;
+    
+    @apply
+        text-gray-200
 }
 
 .datatable-table th {

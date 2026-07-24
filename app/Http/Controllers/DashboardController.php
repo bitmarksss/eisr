@@ -47,7 +47,7 @@ class DashboardController extends Controller
         $inventory = InventoryItem::get();
 
         $item_count = $inventory->count();
-        $low_stock_count = InventoryStock::with('inventory')->where('quantity', '<', 100)->get()->count();
+        $low_stock_count = InventoryStock::with('item')->where('quantity', '<', 100)->get()->count();
 
         return view('pages.dashboard', compact('stats', 'results', 'search', 'inventory', 'item_count', 'low_stock_count'));
     }

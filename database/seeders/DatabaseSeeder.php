@@ -24,6 +24,7 @@ class DatabaseSeeder extends Seeder
             LevelSeeder::class, // Test
             InventoryStockSeeder::class, // Test
             StockSeeder::class, // Test
+            StockMovementSeeder::class, // Test
         ]);
     }
 }
