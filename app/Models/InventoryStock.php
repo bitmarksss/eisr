@@ -51,35 +51,35 @@ class InventoryStock extends Model
     protected function name(): Attribute
     {
         return Attribute::make(
-            get: fn () => $this->inventory?->name
+            get: fn () => $this->item?->name
         );
     }
 
     protected function supplier(): Attribute
     {
         return Attribute::make(
-            get: fn () => $this->inventory?->supplier
+            get: fn () => $this->item?->supplier
         );
     }
 
     protected function kind(): Attribute
     {
         return Attribute::make(
-            get: fn () => $this->inventory?->kind
+            get: fn () => $this->item?->kind
         );
     }
 
     protected function cost(): Attribute
     {
         return Attribute::make(
-            get: fn () => $this->inventory?->cost
+            get: fn () => $this->item?->cost
         );
     }
 
     protected function unit(): Attribute
     {
         return Attribute::make(
-            get: fn () => $this->inventory?->unit?->unit
+            get: fn () => $this->item?->unit?->unit
         );
     }
 }

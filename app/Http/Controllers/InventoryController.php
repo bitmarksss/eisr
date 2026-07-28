@@ -57,7 +57,6 @@ class InventoryController extends Controller
         $categories = InventoryKind::get();
         $suppliers = Supplier::get();
         $uoms = UnitOfMeasurement::get();
-        // dd($inventory_items);
 
         return view('pages.inventory.index', compact('inventory_items' ,'categories', 'suppliers', 'uoms', 'location'));
     }
@@ -92,7 +91,6 @@ class InventoryController extends Controller
                 ->withInput();
         }
 
-        dd('validated data', $validated_data);
 
         // 2. Persist data via Mass Assignment using your fillable array
         InventoryItem::create([

@@ -55,7 +55,7 @@ class StockController extends Controller
                 });
             })
 
-            ->with(['item', 'level'])
+            ->with(['item', 'item.supplier', 'level'])
             // ->limit(10)
             ->get();
 
@@ -63,6 +63,7 @@ class StockController extends Controller
         $levels = Level::get();
         $suppliers = Supplier::get();
         $uoms = UnitOfMeasurement::get();
+        // dd($stocks);
 
         return view('pages.stock.index', compact('stocks' ,'categories', 'levels', 'suppliers', 'uoms', 'location'));
     }

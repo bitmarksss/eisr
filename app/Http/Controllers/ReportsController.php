@@ -23,6 +23,55 @@ class ReportsController extends Controller
         4 => 'Tigerway Weekly Consumption',
         5 => 'RCSU Report - Tigerway',
     ];
+    private const MONTHS = [
+        1 => 'January',
+        2 => 'February',
+        3 => 'March',
+        4 => 'April',
+        5 => 'May',
+        6 => 'June',
+        7 => 'July',
+        8 => 'August',
+        9 => 'September',
+        10 => 'October',
+        11 => 'November',
+        12 => 'December',
+    ];
+    private const VIEWS_PMC_TIGERWAY = [
+        'consumption' => [
+            'surface' => 'pages.reports.pmc-tigerway.surface-consumption',
+            'underground' =>  'pages.reports.pmc-tigerway.underground-consumption',
+            'tigerway' => 'pages.reports.pmc-tigerway.tigerway-consumption'
+        ],
+
+        'rcsu' => [
+            'pmc' => 'pages.reports.pmc-tigerway.pmc-rcsu',
+            'tigerway' => 'pages.reports.pmc-tigerway.tigerway-rcsu'
+        ]
+    ];
+    private const VIEWS_MILL_MCD = [
+        'daily' => 'pages.reports.mill-mcd.weekly-daily',
+        'weekly' => 'pages.reports.mill-mcd.weekly'
+    ];
+    private const VIEWS_PNP = [
+        'pmc' => 'pages.reports.pnp.blaster-pmc',
+        'tigerway' => 'pages.reports.pnp.blaster-tigerway'
+    ];
+    private const VIEWS_MGB = [
+        'daily' => 'pages.reports.mgb.daily',
+        'br' => 'pages.reports.mgb.br',
+        'fy' => 'pages.reports.mgb.fy',
+        'explosive' => 'pages.reports.mgb.explosive'
+    ];
+    private const VIEWS_EXPLOSIVES = [
+        'daily' => 'pages.reports.explosives.daily',
+        'costing' => 'pages.reports.explosives.costing',
+        'monthly' => 'pages.reports.explosives.monthly',
+        'comparative' => 'pages.reports.explosives.comparative',
+        'deliveries' => 'pages.reports.explosives.deliveries',
+
+        'usage' => 'pages.reports.explosives.usage'
+    ];
 
     public function index(Request $request) 
     {
@@ -41,12 +90,12 @@ class ReportsController extends Controller
         // Eager load stockMovements along with item relations
         $items = InventoryItem::with(['supplier', 'unit'])->limit(5)->get();
 
-        // dd($items);
         return view('pages.reports.index', [
             'report_type' => $report_type,
             'type' => $selectedTypeId,
             'types' => $types,
             'items' => $items,
+            'months' => self::MONTHS
         ]);
     }
 
@@ -84,7 +133,7 @@ class ReportsController extends Controller
             'kind' => $request->input('kind'),
         ];
 
-        $selected_item = InventoryStock::query()
+        $selected_items = InventoryStock::query()
 
             // Search Filter
             ->when($filterInputs['search'], function ($query) use ($filterInputs) {
@@ -96,8 +145,9 @@ class ReportsController extends Controller
                 $query->where('item_id', $filterInputs['item']);
             })
 
-            ->with(['item'])
-            ->first();
+            ->with(['item.kind'])
+            ->limit(5)
+            ->get();
 
         // dd($filterInputs, $selected_item);
         
@@ -106,15 +156,285 @@ class ReportsController extends Controller
         return view('pages.reports.pmc-tigerway.surface-consumption', [
             'items' => $items,
             'categories' => $categories,
-            'selectedItem' => $selected_item
+            'selectedItems' => $selected_items
         ]);
     }
 
     public function underground(Request $request) {
-        
-        return view('pages.reports.pmc-tigerway.underground-consumption');
+         $filterInputs = [
+            'search' => $request->input('search'),
+            'item' => $request->input('item'),
+            'kind' => $request->input('kind'),
+        ];
+
+        $selected_items = InventoryStock::query()
+
+            // Search Filter
+            ->when($filterInputs['search'], function ($query) use ($filterInputs) {
+                $query->where('item.name', 'LIKE', '%'. $filterInputs['search'] .'%');
+            })
+            
+            // Item Filter
+            ->when($filterInputs['item'], function ($query) use ($filterInputs) {
+                $query->where('item_id', $filterInputs['item']);
+            })
+
+            ->with(['item.kind'])
+            ->limit(5)
+            ->get();
+
+        $items = InventoryItem::select('id', 'name')->get();
+        $categories = InventoryKind::get();
+
+        return view('pages.reports.pmc-tigerway.underground-consumption', [
+            'items' => $items,
+            'categories' => $categories,
+            'selectedItems' => $selected_items
+        ]);
     }
-    
+
+    public function weekly_consumption(Request $request, String $type) {
+        $filterInputs = [
+            'search' => $request->input('search'),
+            'item' => $request->input('item'),
+            'kind' => $request->input('kind'),
+        ];
+
+        $selected_items = InventoryStock::query()
+
+            // Search Filter
+            ->when($filterInputs['search'], function ($query) use ($filterInputs) {
+                $query->where('item.name', 'LIKE', '%'. $filterInputs['search'] .'%');
+            })
+            
+            // Item Filter
+            ->when($filterInputs['item'], function ($query) use ($filterInputs) {
+                $query->where('item_id', $filterInputs['item']);
+            })
+
+            ->with(['item.kind'])
+            ->limit(5)
+            ->get();
+
+        $items = InventoryItem::select('id', 'name')->get();
+        $categories = InventoryKind::get();
+
+        $view = self::VIEWS_PMC_TIGERWAY['consumption'][$type];
+        return view($view, [
+            'items' => $items,
+            'categories' => $categories,
+            'selectedItems' => $selected_items
+        ]);
+    }
+    public function weekly_rcsu(Request $request, String $type) {
+        $filterInputs = [
+            'search' => $request->input('search'),
+            'item' => $request->input('item'),
+            'kind' => $request->input('kind'),
+        ];
+
+        $selected_items = InventoryStock::query()
+
+            // Search Filter
+            ->when($filterInputs['search'], function ($query) use ($filterInputs) {
+                $query->where('item.name', 'LIKE', '%'. $filterInputs['search'] .'%');
+            })
+            
+            // Item Filter
+            ->when($filterInputs['item'], function ($query) use ($filterInputs) {
+                $query->where('item_id', $filterInputs['item']);
+            })
+
+            ->with(['item.kind'])
+            ->limit(5)
+            ->get();
+
+        $items = InventoryItem::select('id', 'name')->get();
+        $categories = InventoryKind::get();
+
+        $view = self::VIEWS_PMC_TIGERWAY['rcsu'][$type];
+        return view($view, [
+            'items' => $items,
+            'categories' => $categories,
+            'selectedItems' => $selected_items
+        ]);
+    }
+
+    public function weekly_mill_mcd(Request $request, String $type) {
+        $filterInputs = [
+            'search' => $request->input('search'),
+            'item' => $request->input('item'),
+            'kind' => $request->input('kind'),
+        ];
+
+        $selected_items = InventoryStock::query()
+
+            // Search Filter
+            ->when($filterInputs['search'], function ($query) use ($filterInputs) {
+                $query->where('item.name', 'LIKE', '%'. $filterInputs['search'] .'%');
+            })
+            
+            // Item Filter
+            ->when($filterInputs['item'], function ($query) use ($filterInputs) {
+                $query->where('item_id', $filterInputs['item']);
+            })
+
+            ->with(['item.kind'])
+            ->limit(5)
+            ->get();
+
+        $items = InventoryItem::select('id', 'name')->get();
+        $categories = InventoryKind::get();
+
+        $view = self::VIEWS_MILL_MCD[$type];
+        return view($view, [
+            'items' => $items,
+            'categories' => $categories,
+            'selectedItems' => $selected_items
+        ]);
+    }
+
+    public function blaster(Request $request, String $type) {
+        $filterInputs = [
+            'search' => $request->input('search'),
+            'item' => $request->input('item'),
+            'kind' => $request->input('kind'),
+        ];
+
+        $selected_items = InventoryStock::query()
+
+            // Search Filter
+            ->when($filterInputs['search'], function ($query) use ($filterInputs) {
+                $query->where('item.name', 'LIKE', '%'. $filterInputs['search'] .'%');
+            })
+            
+            // Item Filter
+            ->when($filterInputs['item'], function ($query) use ($filterInputs) {
+                $query->where('item_id', $filterInputs['item']);
+            })
+
+            ->with(['item.kind'])
+            ->limit(5)
+            ->get();
+
+        $items = InventoryItem::select('id', 'name')->get();
+        $categories = InventoryKind::get();
+
+        $view = self::VIEWS_PNP[$type];
+        return view($view, [
+            'items' => $items,
+            'categories' => $categories,
+            'selectedItems' => $selected_items
+        ]);
+    }
+
+    public function mgb(Request $request, String $type) {
+        $filterInputs = [
+            'search' => $request->input('search'),
+            'item' => $request->input('item'),
+            'kind' => $request->input('kind'),
+        ];
+
+        $selected_items = InventoryStock::query()
+
+            // Search Filter
+            ->when($filterInputs['search'], function ($query) use ($filterInputs) {
+                $query->where('item.name', 'LIKE', '%'. $filterInputs['search'] .'%');
+            })
+            
+            // Item Filter
+            ->when($filterInputs['item'], function ($query) use ($filterInputs) {
+                $query->where('item_id', $filterInputs['item']);
+            })
+
+            ->with(['item.kind'])
+            ->limit(5)
+            ->get();
+
+        $items = InventoryItem::select('id', 'name')->get();
+        $categories = InventoryKind::get();
+
+        $view = self::VIEWS_MGB[$type];
+        return view($view, [
+            'type' => $type, 
+            'items' => $items,
+            'categories' => $categories,
+            'selectedItems' => $selected_items,
+            'months' => self::MONTHS,
+        ]);
+    }
+
+    public function explosives(Request $request, String $type) {
+        $filterInputs = [
+            'search' => $request->input('search'),
+            'item' => $request->input('item'),
+            'kind' => $request->input('kind'),
+        ];
+
+        $selected_items = InventoryStock::query()
+
+            // Search Filter
+            ->when($filterInputs['search'], function ($query) use ($filterInputs) {
+                $query->where('item.name', 'LIKE', '%'. $filterInputs['search'] .'%');
+            })
+            
+            // Item Filter
+            ->when($filterInputs['item'], function ($query) use ($filterInputs) {
+                $query->where('item_id', $filterInputs['item']);
+            })
+
+            ->with(['item.kind'])
+            ->limit(5)
+            ->get();
+
+        $items = InventoryItem::select('id', 'name')->get();
+        $categories = InventoryKind::get();
+
+        $view = self::VIEWS_EXPLOSIVES[$type];
+        return view($view, [
+            'type' => $type, 
+            'items' => $items,
+            'categories' => $categories,
+            'selectedItems' => $selected_items,
+            'months' => self::MONTHS,
+        ]);
+    }
+
+    public function explo_usage(Request $request) 
+    {
+        $filterInputs = [
+            'search' => $request->input('search'),
+            'item' => $request->input('item'),
+            'kind' => $request->input('kind'),
+        ];
+
+        $selected_items = InventoryStock::query()
+
+            // Search Filter
+            ->when($filterInputs['search'], function ($query) use ($filterInputs) {
+                $query->where('item.name', 'LIKE', '%'. $filterInputs['search'] .'%');
+            })
+            
+            // Item Filter
+            ->when($filterInputs['item'], function ($query) use ($filterInputs) {
+                $query->where('item_id', $filterInputs['item']);
+            })
+
+            ->with(['item.kind'])
+            ->limit(5)
+            ->get();
+
+        $items = InventoryItem::select('id', 'name')->get();
+        $categories = InventoryKind::get();
+
+        return view('pages.reports.explosives.usage', [
+            'items' => $items,
+            'categories' => $categories,
+            'selectedItems' => $selected_items,
+            'months' => self::MONTHS,
+        ]);
+    }
+
     public function movement_data(Request $request)
     {
         $query = StockMovement::with([

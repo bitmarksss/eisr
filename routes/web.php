@@ -114,6 +114,25 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
         Route::prefix('pmc-tigerway')->name('pmc-tigerway.')->group(function () {
             Route::get('/surface', [ReportsController::class, 'surface'])->name('surface');
             Route::get('/underground', [ReportsController::class, 'underground'])->name('underground');
+
+            Route::get('/consumption/{type}', [ReportsController::class, 'weekly_consumption'])->name('consumption');
+            Route::get('/rcsu/{type}', [ReportsController::class, 'weekly_rcsu'])->name('rcsu');
+        });
+        
+        Route::prefix('mill-mcd')->name('mill-mcd.')->group(function () {
+            Route::get('/{type}', [ReportsController::class, 'weekly_mill_mcd'])->name('weekly');
+        });
+        
+        Route::prefix('pnp')->name('pnp.')->group(function () {
+            Route::get('/{type}', [ReportsController::class, 'blaster'])->name('blaster');
+        });
+
+        Route::prefix('mgb')->name('mgb.')->group(function () {
+            Route::get('/{type}', [ReportsController::class, 'mgb'])->name('index');
+        });
+
+        Route::prefix('explosives')->name('explosives.')->group(function () {
+            Route::get('/{type}', [ReportsController::class, 'explosives'])->name('index');
         });
 
 

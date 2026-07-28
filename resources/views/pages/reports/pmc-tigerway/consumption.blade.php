@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('page-title', 'Underground Consumption Report')
+@section('page-title', $location . ' Consumption Report')
 
 @section('sidebar')
     @include('components.sidebar')
@@ -22,27 +22,17 @@
         <div class="flex flex-wrap items-center justify-between w-full">
             
             <!-- Search and Filters -->
-            <form method="GET" action="{{ route('reports.pmc-tigerway.surface') }}" class="flex flex-wrap items-center gap-3 flex-1 w-full">
-                
-                <!-- Search Filter -->
-                <!-- <div class="space-y-1">
-                    <label class="block text-xs font-semibold">Search:</label>
-                    <div class="flex w-90">
-                        <div class="relative min-w-70 flex-1 max-w-md">
-                            <input type="text" name="search" value="{{ request('search') }}" placeholder="Type item by name, or category..." 
-                                class="w-full bg-gray-50 border border-gray-300 text-brand-dark text-sm rounded-tl-lg rounded-bl-lg pl-3 pr-10 py-2 focus:border-brand-gold focus:outline-none focus:ring-2 focus:ring-brand-gold/20 transition">
-                        </div>
-                        <button type="submit" class="px-2.5 cursor-pointer active:translate-y-0.5 transition
-                        bg-brand-gold hover:bg-brand-gold-hover border border-brand-gold border-l-0 rounded-tr-lg rounded-br-lg">
-                            <i class="fa-solid fa-magnifying-glass text-white"></i>
-                        </button>
-                    </div>
-                </div> -->
+            <form method="GET" action="{{ route('reports.pmc-tigerway.consumption') }}" class="flex flex-wrap items-center gap-3 flex-1 w-full">
 
                 <!-- Date Filter -->
                 <div class="space-y-1">
                     <label class="block text-xs font-semibold">Date Start:</label>
-                    <input type="date" name="date" value="{{ request('date') }}"
+                    <input type="date" name="start_date" value="{{ request('start_date') }}"
+                                class="w-70 bg-gray-50 border border-gray-300 text-brand-dark text-sm rounded-lg pl-3 pr-3 py-2 focus:border-brand-gold focus:outline-none focus:ring-2 focus:ring-brand-gold/20 transition">
+                </div>
+                <div class="space-y-1">
+                    <label class="block text-xs font-semibold">Date End:</label>
+                    <input type="date" name="end_date" value="{{ request('end_date') }}"
                                 class="w-70 bg-gray-50 border border-gray-300 text-brand-dark text-sm rounded-lg pl-3 pr-3 py-2 focus:border-brand-gold focus:outline-none focus:ring-2 focus:ring-brand-gold/20 transition">
                 </div>
 
@@ -57,15 +47,17 @@
                     </select>
                 </div>
 
-                <!-- Item Category -->
+                <!-- Location Filter -->
                 <div class="space-y-1">
-                    <label class="block text-xs font-semibold">Item Kind:</label>
-                    <select name="category" onchange="this.form.submit()" 
+                    <label class="block text-xs font-semibold">Location:</label>
+                    <select name="location" onchange="this.form.submit()" 
                         class="bg-gray-50 border border-gray-300 text-brand-dark text-sm rounded-lg p-2 focus:outline-none focus:border-brand-gold">
-                        <option value="" {{ request('category') == '' ? 'selected' : '' }}> All Categories </option>
-                        @foreach($categories as $category)
-                            <option value="{{ $category->id }}" {{ request('category') == $category->id ? 'selected' : '' }}>{{ $category->kind }}</option>
-                        @endforeach
+                        <option {{ request('location') == 'Surface' ? 'selected' : '' }}
+                            value="Surface"> Surface </option>
+                        <option {{ request('location') == 'Underground' ? 'selected' : '' }}
+                            value="Underground"> Underground </option>
+                        <option {{ request('location') == 'TIGERWAY' ? 'selected' : '' }}
+                            value="TIGERWAY"> TIGERWAY </option>
                     </select>
                 </div>
             </form>

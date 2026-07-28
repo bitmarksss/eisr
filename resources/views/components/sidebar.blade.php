@@ -62,26 +62,30 @@
             </button>
             
             <div id="dropdown-pmc" class="hidden pl-4 space-y-1 text-xs transition-all">
-                <a href="{{ route('reports.pmc-tigerway.surface') }}" class="sidebar-link w-full text-left py-1.5 px-2 hover:bg-brand-green/10 rounded cursor-pointer">
+                <a href="{{ route('reports.pmc-tigerway.consumption', ['type' => 'surface']) }}" class="sidebar-link w-full text-left py-1.5 px-2 hover:bg-brand-green/10 rounded cursor-pointer">
+                    <i class="fa-solid fa-scroll"></i>
+                    Consumption Report
+                </a>
+                <a href="{{ route('reports.pmc-tigerway.consumption', ['type' => 'surface']) }}" class="sidebar-link w-full text-left py-1.5 px-2 hover:bg-brand-green/10 rounded cursor-pointer">
                     <i class="fa-solid fa-scroll"></i>
                     Surface Consumption
                 </a>
-                <button type="button" class="sidebar-link w-full text-left py-1.5 px-2 hover:bg-brand-green/10 rounded cursor-pointer">
+                <a href="{{ route('reports.pmc-tigerway.consumption', ['type' => 'underground']) }}" class="sidebar-link w-full text-left py-1.5 px-2 hover:bg-brand-green/10 rounded cursor-pointer">
                     <i class="fa-solid fa-scroll"></i>
                     Underground Consumption
-                </button>
-                <button type="button" class="sidebar-link w-full text-left py-1.5 px-2 hover:bg-brand-green/10 rounded cursor-pointer">
+                </a>
+                <a href="{{ route('reports.pmc-tigerway.rcsu', ['type' => 'pmc']) }}" class="sidebar-link w-full text-left py-1.5 px-2 hover:bg-brand-green/10 rounded cursor-pointer">
                     <i class="fa-solid fa-scroll"></i>
                     PMC-RSU - RCSU Report
-                </button>
-                <button type="button" class="sidebar-link w-full text-left py-1.5 px-2 hover:bg-brand-green/10 rounded cursor-pointer">
+                </a>
+                <a href="{{ route('reports.pmc-tigerway.consumption', ['type' => 'tigerway']) }}" class="sidebar-link w-full text-left py-1.5 px-2 hover:bg-brand-green/10 rounded cursor-pointer">
                     <i class="fa-solid fa-scroll"></i>
                     Tigerway Weekly Consumption
-                </button>
-                <button type="button" class="sidebar-link w-full text-left py-1.5 px-2 hover:bg-brand-green/10 rounded cursor-pointer">
+                </a>
+                <a href="{{ route('reports.pmc-tigerway.rcsu', ['type' => 'tigerway']) }}" class="sidebar-link w-full text-left py-1.5 px-2 hover:bg-brand-green/10 rounded cursor-pointer">
                     <i class="fa-solid fa-scroll"></i>
                     Tigerway - RCSU Report
-                </button>
+                </a>
             </div>
         </div>
 
@@ -96,14 +100,14 @@
             </button>
             
             <div id="dropdown-mill" class="hidden pl-4 space-y-1 text-xs transition-all">
-                <button type="button" onclick="openDetailConsumptionModal()" class="sidebar-link w-full text-left py-1.5 px-2 hover:bg-brand-green/10 rounded cursor-pointer">
+                <a href="{{ route('reports.mill-mcd.weekly', ['type' => 'daily']) }}" class="sidebar-link w-full text-left py-1.5 px-2 hover:bg-brand-green/10 rounded cursor-pointer">
                     <i class="fa-solid fa-scroll"></i>
                     Explosives Weekly - Daily MCD
-                </button>
-                <button type="button" onclick="openWeeklySummaryModal()" class="sidebar-link w-full text-left py-1.5 px-2 hover:bg-brand-green/10 rounded cursor-pointer">
+                </a>
+                <a href="{{ route('reports.mill-mcd.weekly', ['type' => 'weekly']) }}" class="sidebar-link w-full text-left py-1.5 px-2 hover:bg-brand-green/10 rounded cursor-pointer">
                     <i class="fa-solid fa-scroll"></i>
                     Explosives Weekly - MCD
-                </button>
+                </a>
             </div>
         </div>
 
@@ -118,14 +122,14 @@
             </button>
             
             <div id="dropdown-blaster" class="hidden pl-4 space-y-1 text-xs transition-all">
-                <button type="button" onclick="openDetailConsumptionModal()" class="sidebar-link w-full text-left py-1.5 px-2 hover:bg-brand-green/10 rounded cursor-pointer">
+                <a href="{{ route('reports.pnp.blaster', ['type' => 'pmc']) }}" class="sidebar-link w-full text-left py-1.5 px-2 hover:bg-brand-green/10 rounded cursor-pointer">
                     <i class="fa-solid fa-scroll"></i>
                     Daily Blaster Report - PMC
-                </button>
-                <button type="button" onclick="openWeeklySummaryModal()" class="sidebar-link w-full text-left py-1.5 px-2 hover:bg-brand-green/10 rounded cursor-pointer">
+                </a>
+                <a href="{{ route('reports.pnp.blaster', ['type' => 'tigerway']) }}" class="sidebar-link w-full text-left py-1.5 px-2 hover:bg-brand-green/10 rounded cursor-pointer">
                     <i class="fa-solid fa-scroll"></i>
                     Daily Blaster Report - Tigerway
-                </button>
+                </a>
             </div>
         </div>
 
@@ -140,22 +144,22 @@
             </button>
             
             <div id="dropdown-mgb" class="hidden pl-4 space-y-1 text-xs transition-all">
-                <button type="button" onclick="openDetailConsumptionModal()" class="sidebar-link w-full text-left py-1.5 px-2 hover:bg-brand-green/10 rounded cursor-pointer">
+                <a href="{{ route('reports.mgb.index', ['type' => 'daily']) }}" class="sidebar-link w-full text-left py-1.5 px-2 hover:bg-brand-green/10 rounded cursor-pointer">
                     <i class="fa-solid fa-scroll"></i>
                     Daily Report - MGB
-                </button>
-                <button type="button" onclick="openWeeklySummaryModal()" class="sidebar-link w-full text-left py-1.5 px-2 hover:bg-brand-green/10 rounded cursor-pointer">
+                </a>
+                <a href="{{ route('reports.mgb.index', ['type' => 'br']) }}" class="sidebar-link w-full text-left py-1.5 px-2 hover:bg-brand-green/10 rounded cursor-pointer">
                     <i class="fa-solid fa-scroll"></i>
                     BR Report - MGB
-                </button>
-                <button type="button" onclick="openWeeklySummaryModal()" class="sidebar-link w-full text-left py-1.5 px-2 hover:bg-brand-green/10 rounded cursor-pointer">
+                </a>
+                <a href="{{ route('reports.mgb.index', ['type' => 'fy']) }}" class="sidebar-link w-full text-left py-1.5 px-2 hover:bg-brand-green/10 rounded cursor-pointer">
                     <i class="fa-solid fa-scroll"></i>
-                    FY 2026 - MGB
-                </button>
-                <button type="button" onclick="openWeeklySummaryModal()" class="sidebar-link w-full text-left py-1.5 px-2 hover:bg-brand-green/10 rounded cursor-pointer">
+                    FY - MGB
+                </a>
+                <a href="{{ route('reports.mgb.index', ['type' => 'explosive']) }}" class="sidebar-link w-full text-left py-1.5 px-2 hover:bg-brand-green/10 rounded cursor-pointer">
                     <i class="fa-solid fa-scroll"></i>
                     Explosives & Accessories Con.
-                </button>
+                </a>
             </div>
         </div>
 
@@ -170,26 +174,26 @@
             </button>
             
             <div id="dropdown-monthly" class="hidden pl-4 space-y-1 text-xs transition-all">
-                <button type="button" onclick="openDetailConsumptionModal()" class="sidebar-link w-full text-left py-1.5 px-2 hover:bg-brand-green/10 rounded cursor-pointer">
+                <a href="{{ route('reports.explosives.index', ['type' => 'daily']) }}" class="sidebar-link w-full text-left py-1.5 px-2 hover:bg-brand-green/10 rounded cursor-pointer">
                     <i class="fa-solid fa-scroll"></i>
                     Daily Consumption - Monthly
-                </button>
-                <button type="button" onclick="openWeeklySummaryModal()" class="sidebar-link w-full text-left py-1.5 px-2 hover:bg-brand-green/10 rounded cursor-pointer">
+                </a>
+                <a href="{{ route('reports.explosives.index', ['type' => 'costing']) }}" class="sidebar-link w-full text-left py-1.5 px-2 hover:bg-brand-green/10 rounded cursor-pointer">
                     <i class="fa-solid fa-scroll"></i>
                     Costing 2026 - Monthly
-                </button>
-                <button type="button" onclick="openWeeklySummaryModal()" class="sidebar-link w-full text-left py-1.5 px-2 hover:bg-brand-green/10 rounded cursor-pointer">
+                </a>
+                <a href="{{ route('reports.explosives.index', ['type' => 'monthly']) }}" class="sidebar-link w-full text-left py-1.5 px-2 hover:bg-brand-green/10 rounded cursor-pointer">
                     <i class="fa-solid fa-scroll"></i>
                     Monthly Report 2026
-                </button>
-                <button type="button" onclick="openWeeklySummaryModal()" class="sidebar-link w-full text-left py-1.5 px-2 hover:bg-brand-green/10 rounded cursor-pointer">
+                </a>
+                <a href="{{ route('reports.explosives.index', ['type' => 'comparative']) }}" class="sidebar-link w-full text-left py-1.5 px-2 hover:bg-brand-green/10 rounded cursor-pointer">
                     <i class="fa-solid fa-scroll"></i>
                     Monthly Comparative 2026
-                </button>
-                <button type="button" onclick="openWeeklySummaryModal()" class="sidebar-link w-full text-left py-1.5 px-2 hover:bg-brand-green/10 rounded cursor-pointer">
+                </a>
+                <a href="{{ route('reports.explosives.index', ['type' => 'deliveries']) }}" class="sidebar-link w-full text-left py-1.5 px-2 hover:bg-brand-green/10 rounded cursor-pointer">
                     <i class="fa-solid fa-scroll"></i>
                     Explosives Deliveries - Monthly
-                </button>
+                </a>
             </div>
         </div>
 
@@ -204,10 +208,10 @@
             </button>
             
             <div id="dropdown-usage" class="hidden pl-4 space-y-1 text-xs transition-all">
-                <button type="button" onclick="openDetailConsumptionModal()" class="sidebar-link w-full text-left py-1.5 px-2 hover:bg-brand-green/10 rounded cursor-pointer">
+                <a href="{{ route('reports.explosives.index', ['type' => 'usage']) }}" class="sidebar-link w-full text-left py-1.5 px-2 hover:bg-brand-green/10 rounded cursor-pointer">
                     <i class="fa-solid fa-scroll"></i>
                     Daily Usage Analysis 2026
-                </button>
+                </a>
             </div>
         </div>
 

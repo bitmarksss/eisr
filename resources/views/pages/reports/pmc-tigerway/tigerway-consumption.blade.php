@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('page-title', 'Underground Consumption Report')
+@section('page-title', 'Tigerway Consumption Report')
 
 @section('sidebar')
     @include('components.sidebar')

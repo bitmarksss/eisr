@@ -1,18 +1,55 @@
-<div id="rcsuModal" class="fixed inset-0 z-110 flex items-center justify-center p-2 sm:p-4 opacity-0 pointer-events-none transition-opacity duration-200">
+@extends('layouts.app')
 
-    <!-- Backdrop -->
-    <div id="rcsuModalBackdrop" class="absolute z-100 inset-0 bg-brand-dark/20 backdrop-blur-xs" onclick="closeRcsuModal()"></div>
+@section('page-title', 'PMC RCSU Report')
 
-    <!-- Central Window Frame (Extra wide to fit matrix columns) -->
-    <div class="relative bg-white w-full max-w-[98vw] rounded-2xl shadow-2xl border border-gray-200 overflow-hidden transform transition-all z-110 flex flex-col max-h-[92vh]">
+@section('sidebar')
+    @include('components.sidebar')
+@endsection
+
+
+@section('content')
+<div class="space-y-6">
+
+    <!-- Flash Messages -->
+    @if(session('success'))
+    <div class="bg-green-100 border border-brand-green/30 text-brand-green p-4 rounded-xl text-sm font-semibold flex items-center shadow-xs">
+        <span class="mr-2">✓</span> {{ session('success') }}
+    </div>
+    @endif
+    
+    <!-- Control Matrix Panel -->
+    <div class="bg-white p-4 mb-10 rounded-xl border border-gray-200 shadow-sm flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div class="flex flex-wrap items-center justify-between w-full">
+            
+            <!-- Search and Filters -->
+            <form method="GET" action="{{ route('reports.pmc-tigerway.surface') }}" class="flex flex-wrap items-center gap-3 flex-1 w-full">
+
+                <!-- Date Filter -->
+                <div class="space-y-1">
+                    <label class="block text-xs font-semibold">Date Start:</label>
+                    <input type="date" name="date" value="{{ request('date') }}"
+                                class="w-70 bg-gray-50 border border-gray-300 text-brand-dark text-sm rounded-lg pl-3 pr-3 py-2 focus:border-brand-gold focus:outline-none focus:ring-2 focus:ring-brand-gold/20 transition">
+                </div>
+
+            </form>
+            
+            <button type="button" class="px-4 py-2 rounded-lg bg-brand-green hover:bg-brand-green-hover active:translate-y-0.5 text-white text-sm font-bold transition cursor-pointer flex items-center gap-1.5">
+                <i class="fa-solid fa-file-excel text-white"></i>
+                Export
+            </button>
+        </div>
+    </div>
+
+
+
+    <div class="relative bg-white w-full max-w-[98vw] rounded-xl shadow-2xl border border-gray-200 overflow-hidden transform transition-all z-110 flex flex-col max-h-[92vh]">
         
         <!-- Header Strip -->
         <div class="px-6 py-4 bg-brand-green text-white flex justify-between items-center shrink-0">
             <div>
-                <h3 class="font-bold tracking-wider uppercase text-lg" id="reportModalTitle">Explosives Weekly Consumption</h3>
-                <p class="text-xs text-brand-gold font-medium" id="reportModalDateRange">JUNE 1–7, 2026</p>
+                <h3 class="font-bold tracking-wider uppercase text-lg" id="reportModalTitle">EXPLOSIVES WEEKLY CONSUMPTION</h3>
+                <p class="text-sm text-brand-gold font-medium" id="reportModalDateRange">JUNE 1–7, 2026</p>
             </div>
-            <button type="button" onclick="closeRcsuModal()" class="text-white/70 hover:text-white font-bold text-xl cursor-pointer p-1">✕</button>
         </div>
 
         <!-- Scrollable Matrix Grid -->
@@ -22,9 +59,9 @@
                 <thead class="bg-emerald-50/70 text-gray-800 uppercase tracking-tight sticky top-0 z-20 shadow-xs">
                     
                     <!-- Tier 1: Supplier Grouping -->
-                    <tr>
-                        <th class="border border-gray-300 p-2 min-w-[50px] bg-emerald-100/80 sticky left-0 z-30" rowspan="3">Date</th>
-                        <th class="border border-gray-300 p-2 min-w-[180px] bg-emerald-100/80 sticky left-[100px] z-30" rowspan="3" colspan="2">Description</th>
+                    <tr class="bg-gray-100/80">
+                        <th class="border border-gray-300 p-2 min-w-[50px] sticky left-0 z-30" rowspan="3">Date</th>
+                        <th class="border border-gray-300 p-2 min-w-[180px] sticky left-[100px] z-30" rowspan="3" colspan="2">Description</th>
                         <th class="border border-gray-300 p-1 font-bold text-brand-navy" colspan="2">Mt. Rock</th>
                         <th class="border border-gray-300 p-1 font-bold text-brand-navy" colspan="2">Expedition</th>
                         <th class="border border-gray-300 p-1 font-bold text-brand-navy" colspan="3">Mt. Rock / Expedition</th>
@@ -34,7 +71,7 @@
                     </tr>
 
                     <!-- Tier 2: Product Name / Specification -->
-                    <tr>
+                    <tr class="bg-gray-100/80">
                         <th class="border border-gray-300 p-1" colspan="2">Emulsion 200 (Neogel)</th>
                         <th class="border border-gray-300 p-1" colspan="2">Emulsion 215 (Senatel/Pulsar)</th>
                         <th class="border border-gray-300 p-1">Anfo</th>
@@ -200,13 +237,15 @@
                 </tbody>
             </table>
         </div>
-
-        <!-- Footer Bar -->
-        <div class="px-6 py-3 bg-gray-50 border-t border-gray-200 flex justify-between items-center shrink-0">
-            <span class="text-xs text-gray-500 font-semibold">Note: Scroll horizontally to view all product categories.</span>
-            <button type="button" onclick="closeRcsuModal()" class="px-5 py-2 rounded-lg bg-brand-gold hover:bg-brand-gold-hover text-white text-xs font-bold transition cursor-pointer">
-                Close Report
-            </button>
-        </div>
     </div>
+
 </div>
+
+@endsection
+
+
+@push('scripts')
+<script type="module">
+
+</script>
+@endpush
