@@ -44,7 +44,7 @@ class DashboardController extends Controller
 
         // $stats['balance'] = $stats['payments'] - ($stats['loans'] + $stats['carenderia'] + $stats['grocery']);
 
-        $inventory = InventoryItem::get();
+        $inventory = InventoryStock::with('item')->get();
 
         $item_count = $inventory->count();
         $low_stock_count = InventoryStock::with('item')->where('quantity', '<', 100)->get()->count();

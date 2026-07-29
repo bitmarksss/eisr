@@ -193,11 +193,12 @@ class ReportsController extends Controller
         ]);
     }
 
-    public function weekly_consumption(Request $request, String $type) {
+    public function weekly_consumption(Request $request) {
         $filterInputs = [
             'search' => $request->input('search'),
             'item' => $request->input('item'),
             'kind' => $request->input('kind'),
+            'location' => $request->input('location')
         ];
 
         $selected_items = InventoryStock::query()
@@ -219,18 +220,21 @@ class ReportsController extends Controller
         $items = InventoryItem::select('id', 'name')->get();
         $categories = InventoryKind::get();
 
-        $view = self::VIEWS_PMC_TIGERWAY['consumption'][$type];
+        // $view = self::VIEWS_PMC_TIGERWAY['consumption'][$type];
+        $view = 'pages.reports.pmc-tigerway.consumption';
         return view($view, [
             'items' => $items,
             'categories' => $categories,
-            'selectedItems' => $selected_items
+            'selectedItems' => $selected_items,
+            'location' => $filterInputs['location']
         ]);
     }
-    public function weekly_rcsu(Request $request, String $type) {
+    public function weekly_rcsu(Request $request) {
         $filterInputs = [
             'search' => $request->input('search'),
             'item' => $request->input('item'),
             'kind' => $request->input('kind'),
+            'location' => $request->input('location')
         ];
 
         $selected_items = InventoryStock::query()
@@ -252,11 +256,13 @@ class ReportsController extends Controller
         $items = InventoryItem::select('id', 'name')->get();
         $categories = InventoryKind::get();
 
-        $view = self::VIEWS_PMC_TIGERWAY['rcsu'][$type];
+        $view = 'pages.reports.pmc-tigerway.rcsu';
+        // $view = self::VIEWS_PMC_TIGERWAY['rcsu'][$type];
         return view($view, [
             'items' => $items,
             'categories' => $categories,
-            'selectedItems' => $selected_items
+            'selectedItems' => $selected_items,
+            'location' => $filterInputs['location']
         ]);
     }
 
@@ -265,6 +271,7 @@ class ReportsController extends Controller
             'search' => $request->input('search'),
             'item' => $request->input('item'),
             'kind' => $request->input('kind'),
+            'type' => $request->input('type')
         ];
 
         $selected_items = InventoryStock::query()
@@ -286,80 +293,42 @@ class ReportsController extends Controller
         $items = InventoryItem::select('id', 'name')->get();
         $categories = InventoryKind::get();
 
-        $view = self::VIEWS_MILL_MCD[$type];
+        // $view = self::VIEWS_MILL_MCD[$type];
+        $view = 'pages.reports.mill-mcd.index';
         return view($view, [
-            'items' => $items,
-            'categories' => $categories,
-            'selectedItems' => $selected_items
-        ]);
-    }
-
-    public function blaster(Request $request, String $type) {
-        $filterInputs = [
-            'search' => $request->input('search'),
-            'item' => $request->input('item'),
-            'kind' => $request->input('kind'),
-        ];
-
-        $selected_items = InventoryStock::query()
-
-            // Search Filter
-            ->when($filterInputs['search'], function ($query) use ($filterInputs) {
-                $query->where('item.name', 'LIKE', '%'. $filterInputs['search'] .'%');
-            })
-            
-            // Item Filter
-            ->when($filterInputs['item'], function ($query) use ($filterInputs) {
-                $query->where('item_id', $filterInputs['item']);
-            })
-
-            ->with(['item.kind'])
-            ->limit(5)
-            ->get();
-
-        $items = InventoryItem::select('id', 'name')->get();
-        $categories = InventoryKind::get();
-
-        $view = self::VIEWS_PNP[$type];
-        return view($view, [
-            'items' => $items,
-            'categories' => $categories,
-            'selectedItems' => $selected_items
-        ]);
-    }
-
-    public function mgb(Request $request, String $type) {
-        $filterInputs = [
-            'search' => $request->input('search'),
-            'item' => $request->input('item'),
-            'kind' => $request->input('kind'),
-        ];
-
-        $selected_items = InventoryStock::query()
-
-            // Search Filter
-            ->when($filterInputs['search'], function ($query) use ($filterInputs) {
-                $query->where('item.name', 'LIKE', '%'. $filterInputs['search'] .'%');
-            })
-            
-            // Item Filter
-            ->when($filterInputs['item'], function ($query) use ($filterInputs) {
-                $query->where('item_id', $filterInputs['item']);
-            })
-
-            ->with(['item.kind'])
-            ->limit(5)
-            ->get();
-
-        $items = InventoryItem::select('id', 'name')->get();
-        $categories = InventoryKind::get();
-
-        $view = self::VIEWS_MGB[$type];
-        return view($view, [
-            'type' => $type, 
             'items' => $items,
             'categories' => $categories,
             'selectedItems' => $selected_items,
+            'type' => $filterInputs['type'] ?? 'daily'
+        ]);
+    }
+
+    public function blaster(Request $request) {
+        $filterInputs = [
+            'start' => $request->input('start_date'),
+            'end' => $request->input('end_date'),
+            'kind' => $request->input('kind'),
+            'location' => $request->input('location') ?? 'pmc',
+        ];
+
+        // $view = self::VIEWS_PNP[$type];
+        $view = 'pages.reports.pnp.index';
+        return view($view, [
+            'location' => $filterInputs['location']
+        ]);
+    }
+
+    public function mgb(Request $request) {
+        $filterInputs = [
+            'search' => $request->input('search'),
+            'item' => $request->input('item'),
+            'kind' => $request->input('kind'),
+            'type' => $request->input('type')
+        ];
+
+        $view = 'pages.reports.mgb.index';
+        return view($view, [
+            'type' => $filterInputs['type'], 
             'months' => self::MONTHS,
         ]);
     }

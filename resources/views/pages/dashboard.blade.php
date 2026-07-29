@@ -112,7 +112,7 @@
             <tr class="bg-gray-100 text-xs font-semibold text-gray-600 uppercase tracking-wider border-b border-gray-200">
                 <th class="px-6 py-3">Item Code</th>
                 <th class="px-6 py-3">Item Name</th>
-                <th class="px-6 py-3">Stock Level</th>
+                <th class="px-6 py-3">Stocky Quantity</th>
                 <th class="px-6 py-3">Status</th>
                 <th class="px-6 py-3 text-right">Actions</th>
             </tr>
@@ -121,8 +121,8 @@
             @foreach($inventory as $item)
             <!-- Row 1 (Normal Stock Level) -->
             <tr class="hover:bg-gray-50/70 transition">
-                <td class="px-6 py-4 font-mono font-semibold text-brand-navy">{{ $item->item_code }}</td>
-                <td class="px-6 py-4 font-medium">{{ $item->name }}</td>
+                <td class="px-6 py-4 font-mono font-semibold text-brand-navy">{{ $item->item->item_code }}</td>
+                <td class="px-6 py-4 font-medium">{{ $item->item->name }}</td>
                 <td class="px-6 py-4 
                 {{ $item->quantity > 100 ? '' : 'text-brand-gold font-bold' }}">{{ $item->quantity }} Units</td>
                 <td class="px-6 py-4">

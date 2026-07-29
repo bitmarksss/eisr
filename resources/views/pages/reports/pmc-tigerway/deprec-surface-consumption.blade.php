@@ -21,7 +21,7 @@
         <div class="flex flex-wrap items-center justify-between w-full">
             
             <!-- Search and Filters -->
-            <form method="GET" action="{{ route('reports.pmc-tigerway.consumption') }}" class="flex flex-wrap items-center gap-3 flex-1 w-full">
+            <form method="GET" action="{{ route('reports.pmc-tigerway.surface') }}" class="flex flex-wrap items-center gap-3 flex-1 w-full">
 
                 <!-- Date Filter -->
                 <div class="space-y-1">
@@ -79,7 +79,7 @@
         </p>
         <div class="pt-2 text-left text-xs font-bold text-gray-700 space-y-1 border-t border-gray-100">
             <div><span class="inline-block w-36">Name of Company :</span> PHILSAGA MINING CORPORATION</div>
-            <div><span class="inline-block w-36">Magazine :</span> {{strtoupper($location) ?? 'N/A'}} MAGAZINE</div>
+            <div><span class="inline-block w-36">Magazine :</span> {{$location ?? 'N/A'}} MAGAZINE</div>
         </div>
     </div>
 

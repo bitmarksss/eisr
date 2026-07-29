@@ -112,23 +112,23 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
         Route::get('/movement-data', [ReportsController::class, 'movement_data'])->name('movement-data');
         
         Route::prefix('pmc-tigerway')->name('pmc-tigerway.')->group(function () {
-            Route::get('/surface', [ReportsController::class, 'surface'])->name('surface');
-            Route::get('/underground', [ReportsController::class, 'underground'])->name('underground');
+            // Route::get('/surface', [ReportsController::class, 'surface'])->name('surface');
+            // Route::get('/underground', [ReportsController::class, 'underground'])->name('underground');
 
-            Route::get('/consumption/{type}', [ReportsController::class, 'weekly_consumption'])->name('consumption');
-            Route::get('/rcsu/{type}', [ReportsController::class, 'weekly_rcsu'])->name('rcsu');
+            Route::get('/consumption', [ReportsController::class, 'weekly_consumption'])->name('consumption');
+            Route::get('/rcsu', [ReportsController::class, 'weekly_rcsu'])->name('rcsu');
         });
         
         Route::prefix('mill-mcd')->name('mill-mcd.')->group(function () {
-            Route::get('/{type}', [ReportsController::class, 'weekly_mill_mcd'])->name('weekly');
+            Route::get('/{type}', [ReportsController::class, 'weekly_mill_mcd'])->name('index');
         });
         
         Route::prefix('pnp')->name('pnp.')->group(function () {
-            Route::get('/{type}', [ReportsController::class, 'blaster'])->name('blaster');
+            Route::get('/', [ReportsController::class, 'blaster'])->name('index');
         });
 
         Route::prefix('mgb')->name('mgb.')->group(function () {
-            Route::get('/{type}', [ReportsController::class, 'mgb'])->name('index');
+            Route::get('/', [ReportsController::class, 'mgb'])->name('index');
         });
 
         Route::prefix('explosives')->name('explosives.')->group(function () {

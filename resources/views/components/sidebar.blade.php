@@ -62,10 +62,16 @@
             </button>
             
             <div id="dropdown-pmc" class="hidden pl-4 space-y-1 text-xs transition-all">
-                <a href="{{ route('reports.pmc-tigerway.consumption', ['type' => 'surface']) }}" class="sidebar-link w-full text-left py-1.5 px-2 hover:bg-brand-green/10 rounded cursor-pointer">
+                <a href="{{ route('reports.pmc-tigerway.consumption', ['location' => 'surface']) }}" class="sidebar-link w-full text-left py-1.5 px-2 hover:bg-brand-green/10 rounded cursor-pointer">
                     <i class="fa-solid fa-scroll"></i>
                     Consumption Report
                 </a>
+                <a href="{{ route('reports.pmc-tigerway.rcsu', ['location' => 'pmc']) }}" class="sidebar-link w-full text-left py-1.5 px-2 hover:bg-brand-green/10 rounded cursor-pointer">
+                    <i class="fa-solid fa-scroll"></i>
+                    RCSU Report
+                </a>
+
+                {{--
                 <a href="{{ route('reports.pmc-tigerway.consumption', ['type' => 'surface']) }}" class="sidebar-link w-full text-left py-1.5 px-2 hover:bg-brand-green/10 rounded cursor-pointer">
                     <i class="fa-solid fa-scroll"></i>
                     Surface Consumption
@@ -82,10 +88,12 @@
                     <i class="fa-solid fa-scroll"></i>
                     Tigerway Weekly Consumption
                 </a>
+
                 <a href="{{ route('reports.pmc-tigerway.rcsu', ['type' => 'tigerway']) }}" class="sidebar-link w-full text-left py-1.5 px-2 hover:bg-brand-green/10 rounded cursor-pointer">
                     <i class="fa-solid fa-scroll"></i>
                     Tigerway - RCSU Report
                 </a>
+                --}}
             </div>
         </div>
 
@@ -100,14 +108,14 @@
             </button>
             
             <div id="dropdown-mill" class="hidden pl-4 space-y-1 text-xs transition-all">
-                <a href="{{ route('reports.mill-mcd.weekly', ['type' => 'daily']) }}" class="sidebar-link w-full text-left py-1.5 px-2 hover:bg-brand-green/10 rounded cursor-pointer">
+                <a href="{{ route('reports.mill-mcd.index', ['type' => 'daily']) }}" class="sidebar-link w-full text-left py-1.5 px-2 hover:bg-brand-green/10 rounded cursor-pointer">
                     <i class="fa-solid fa-scroll"></i>
-                    Explosives Weekly - Daily MCD
+                    Explosives Report
                 </a>
-                <a href="{{ route('reports.mill-mcd.weekly', ['type' => 'weekly']) }}" class="sidebar-link w-full text-left py-1.5 px-2 hover:bg-brand-green/10 rounded cursor-pointer">
+                <!-- <a href="{{ route('reports.mill-mcd.index', ['type' => 'weekly']) }}" class="sidebar-link w-full text-left py-1.5 px-2 hover:bg-brand-green/10 rounded cursor-pointer">
                     <i class="fa-solid fa-scroll"></i>
                     Explosives Weekly - MCD
-                </a>
+                </a> -->
             </div>
         </div>
 
@@ -122,6 +130,11 @@
             </button>
             
             <div id="dropdown-blaster" class="hidden pl-4 space-y-1 text-xs transition-all">
+                <a href="{{ route('reports.pnp.index') }}" class="sidebar-link w-full text-left py-1.5 px-2 hover:bg-brand-green/10 rounded cursor-pointer">
+                    <i class="fa-solid fa-scroll"></i>
+                    View Reports
+                </a>
+                {{--
                 <a href="{{ route('reports.pnp.blaster', ['type' => 'pmc']) }}" class="sidebar-link w-full text-left py-1.5 px-2 hover:bg-brand-green/10 rounded cursor-pointer">
                     <i class="fa-solid fa-scroll"></i>
                     Daily Blaster Report - PMC
@@ -130,6 +143,7 @@
                     <i class="fa-solid fa-scroll"></i>
                     Daily Blaster Report - Tigerway
                 </a>
+                --}}
             </div>
         </div>
 
@@ -146,6 +160,11 @@
             <div id="dropdown-mgb" class="hidden pl-4 space-y-1 text-xs transition-all">
                 <a href="{{ route('reports.mgb.index', ['type' => 'daily']) }}" class="sidebar-link w-full text-left py-1.5 px-2 hover:bg-brand-green/10 rounded cursor-pointer">
                     <i class="fa-solid fa-scroll"></i>
+                    View Report
+                </a>
+                {{--
+                <a href="{{ route('reports.mgb.index', ['type' => 'daily']) }}" class="sidebar-link w-full text-left py-1.5 px-2 hover:bg-brand-green/10 rounded cursor-pointer">
+                    <i class="fa-solid fa-scroll"></i>
                     Daily Report - MGB
                 </a>
                 <a href="{{ route('reports.mgb.index', ['type' => 'br']) }}" class="sidebar-link w-full text-left py-1.5 px-2 hover:bg-brand-green/10 rounded cursor-pointer">
@@ -160,6 +179,7 @@
                     <i class="fa-solid fa-scroll"></i>
                     Explosives & Accessories Con.
                 </a>
+                --}}
             </div>
         </div>
 
@@ -216,10 +236,10 @@
         </div>
 
         <!-- Standard Report Links -->
-        <a href="{{ route('reports.index') }}" class="sidebar-link {{ request()->routeIs('reports.index') ? 'selected' : '' }}">
+        <!-- <a href="{{ route('reports.index') }}" class="sidebar-link {{ request()->routeIs('reports.index') ? 'selected' : '' }}">
             <i class="fa-solid fa-scroll"></i>
             All Reports
-        </a>
+        </a> -->
         <a href="{{ route('reports.movement-data') }}" class="sidebar-link {{ request()->routeIs('reports.movement-data') ? 'selected' : '' }}">
             <i class="fa-solid fa-scroll"></i>
             Movement Data

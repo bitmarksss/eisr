@@ -22,7 +22,7 @@
         <div class="flex flex-wrap items-center justify-between w-full">
             
             <!-- Search and Filters -->
-            <form method="GET" action="{{ route('reports.pmc-tigerway.surface') }}" class="flex flex-wrap items-center gap-3 flex-1 w-full">
+            <form method="GET" action="{{ route('reports.mill-mcd.index', ['type' => $type]) }}" class="flex flex-wrap items-center gap-3 flex-1 w-full">
 
                 <!-- Date Filter -->
                 <div class="space-y-1">
