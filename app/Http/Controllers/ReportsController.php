@@ -99,6 +99,16 @@ class ReportsController extends Controller
         ]);
     }
 
+    public function daily(Request $request)
+    {
+        $types = ['total', 'sinug-ang', 'l03', 'l7', 'l8', 'l9', 'l10', 'l11', 'l12', 'l425', 'l460', 'summary'];
+        
+        return view('pages.reports.daily.index', [
+            'months' => self::MONTHS,
+            'types' => $types,
+        ]);
+    }
+
     public function weekly_index(Request $request) 
     {
         $selectedTypeId = (int) $request->input('type', 1);
@@ -116,7 +126,6 @@ class ReportsController extends Controller
         // Eager load stockMovements along with item relations
         $items = InventoryItem::with(['supplier', 'unit'])->limit(5)->get();
 
-        // dd($items);
         return view('pages.reports.weekly.index', [
             'report_type' => $report_type,
             'type' => $selectedTypeId,
@@ -149,7 +158,6 @@ class ReportsController extends Controller
             ->limit(5)
             ->get();
 
-        // dd($filterInputs, $selected_item);
         
         $items = InventoryItem::select('id', 'name')->get();
         $categories = InventoryKind::get();
@@ -223,6 +231,7 @@ class ReportsController extends Controller
         // $view = self::VIEWS_PMC_TIGERWAY['consumption'][$type];
         $view = 'pages.reports.pmc-tigerway.consumption';
         return view($view, [
+            'type' => 'consumption',
             'items' => $items,
             'categories' => $categories,
             'selectedItems' => $selected_items,
@@ -258,7 +267,8 @@ class ReportsController extends Controller
 
         $view = 'pages.reports.pmc-tigerway.rcsu';
         // $view = self::VIEWS_PMC_TIGERWAY['rcsu'][$type];
-        return view($view, [
+        return view($view,[
+            'type' => 'rcsu',
             'items' => $items,
             'categories' => $categories,
             'selectedItems' => $selected_items,

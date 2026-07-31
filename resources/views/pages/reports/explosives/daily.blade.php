@@ -47,12 +47,17 @@
     <div class="relative bg-white w-full rounded-xl shadow-2xl border border-gray-200 overflow-hidden flex flex-col">
         
         <!-- Header Strip -->
-        <div class="px-6 py-4 bg-brand-green text-white flex justify-between items-center shrink-0">
-            <div>
-                <h3 class="font-bold tracking-wider uppercase text-lg">Daily Explosives Consumption Log</h3>
-                <p class="text-xs text-brand-gold font-medium">PHILSAGA MINING CORPORATION &nbsp;|&nbsp; MAY 1-31, 2026</p>
+        <!-- <div class="grid grid-cols-1 md:grid-cols-3 gap-4 p-4">
+            <div class="col-span-4 text-center">
+                <h2 class="text-xs md:text-base font-black uppercase tracking-wide text-gray-800">
+                    Explosive Daily Consumption
+                </h2>
+                <h3 class="text-xs md:text-base uppercase tracking-wide text-gray-800">
+                    MONTH OF MAY 2026
+                </h3>
             </div>
-        </div>
+        </div> -->
+        @include('pages.reports.explosives.header')
 
         <!-- Scrollable Matrix Viewport -->
         <div class="p-4 overflow-auto flex-1">
@@ -389,36 +394,7 @@
             </table>
         </div>
 
-        {{--
-        <!-- Excel-Style Bottom Tabs Container -->
-        <div class="bg-gray-100 border-t border-gray-300 px-4 pt-2 flex items-center justify-between shrink-0">
-            <div class="flex items-end gap-1">
-                <!-- Tab 1 (Active) -->
-                <button type="button" class="bg-white text-emerald-800 font-bold border-t-2 border-x border-t-emerald-700 border-x-gray-300 px-4 py-1.5 text-xs rounded-t shadow-xs flex items-center gap-2 cursor-pointer relative -mb-[1px] z-10">
-                    <span class="border-b-2 border-emerald-700 pb-0.5">MAY 2026-PMC</span>
-                </button>
-
-                <!-- Tab 2 (Inactive) -->
-                <button type="button" class="bg-gray-200/70 hover:bg-white text-gray-600 font-medium border-t border-x border-gray-300 px-4 py-1.5 text-xs rounded-t transition cursor-pointer">
-                    MAY 2026- EXPLO
-                </button>
-
-                <!-- Tab 3 (Inactive) -->
-                <button type="button" class="bg-gray-200/70 hover:bg-white text-gray-600 font-medium border-t border-x border-gray-300 px-4 py-1.5 text-xs rounded-t transition cursor-pointer">
-                    MAY 2026- TIGERWAY
-                </button>
-            </div>
-
-            <!-- Export Button -->
-            <div class="pb-2">
-                <button type="button" class="px-4 py-1.5 rounded-lg bg-brand-green hover:bg-brand-green-hover active:translate-y-0.5 text-white text-xs font-bold transition cursor-pointer flex items-center gap-1.5">
-                    <i class="fa-solid fa-file-excel text-white"></i>
-                    Export
-                </button>
-            </div>
-        </div>
-        --}}
-
+        @include('pages.reports.explosives.footer')
     </div>
 
 </div>

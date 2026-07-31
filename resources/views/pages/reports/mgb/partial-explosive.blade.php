@@ -1,14 +1,5 @@
 <!-- Header Strip -->
-<div class="gap-4 p-4">
-    <div class="col-span-4 text-center text-xs">
-        <h2 class="text-xs md:text-base font-black uppercase tracking-wide text-gray-800">
-            EXPLOSIVES AND ACCESSORIES CONSUMPTION
-        </h2>
-        <h3 class="uppercase tracking-wide text-gray-800">
-            REPORT FOR THE MONTH OF MAY 2026
-        </h3>
-    </div>
-</div>
+@include('pages.reports.mgb.header')
 
 <!-- Main Report Body Container -->
 <div class="p-6 text-xs text-gray-800 space-y-6 overflow-auto flex-1">

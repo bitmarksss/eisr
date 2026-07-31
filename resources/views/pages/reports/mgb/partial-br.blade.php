@@ -1,15 +1,6 @@
 
 <!-- Header Strip -->
-<div class="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 bg-gray-50 rounded-xl border border-gray-200">
-    <div class="col-span-4 text-center">
-        <h2 class="text-xs md:text-base font-black uppercase tracking-wide text-gray-800">
-            Blasting Report for the Month of May 2026
-        </h2>
-        <h3 class="text-xs md:text-base uppercase tracking-wide text-gray-800">
-            MONTHLY SUMMARY DETAILS
-        </h3>
-    </div>
-</div>
+@include('pages.reports.mgb.header')
 
 <!-- Report Content Container -->
 <div class="p-6 text-sm text-gray-800 space-y-6 overflow-auto max-w-5xl mx-auto w-full">

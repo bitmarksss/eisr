@@ -49,12 +49,7 @@
     <div class="relative bg-white w-full max-w-[98vw] rounded-xl shadow-2xl border border-gray-200 overflow-hidden transform transition-all z-110 flex flex-col max-h-[92vh]">
         
         <!-- Header Strip -->
-        <div class="px-6 py-4 bg-brand-green text-white flex justify-between items-center shrink-0">
-            <div>
-                <h3 class="font-bold tracking-wider uppercase text-lg" id="reportModalTitle">EXPLOSIVES MONTHLY REPORT</h3>
-                <p class="text-sm text-brand-gold font-medium" id="reportModalDateRange">MAY 1–31, 2026</p>
-            </div>
-        </div>
+        @include('pages.reports.explosives.header')
 
         <!-- Scrollable Matrix Grid -->
         <div class="p-4 overflow-auto flex-1">
@@ -310,6 +305,9 @@
                 </tbody>
             </table>
         </div>
+
+        <!-- Footer -->
+         @include('pages.reports.explosives.footer')
     </div>
 
 </div>

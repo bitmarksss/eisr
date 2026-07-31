@@ -240,6 +240,10 @@
             <i class="fa-solid fa-scroll"></i>
             All Reports
         </a> -->
+        <a href="{{ route('reports.daily', ['type' => 'total']) }}" class="sidebar-link {{ request()->routeIs('reports.daily') ? 'selected' : '' }}">
+            <i class="fa-solid fa-scroll"></i>
+            Daily Report
+        </a>
         <a href="{{ route('reports.movement-data') }}" class="sidebar-link {{ request()->routeIs('reports.movement-data') ? 'selected' : '' }}">
             <i class="fa-solid fa-scroll"></i>
             Movement Data

@@ -68,34 +68,22 @@
         </div>
     </div>
 
-    <!-- Header Section (Placed Before Foreach) -->
-    <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm text-center space-y-2">
-        <h2 class="text-base md:text-lg font-black uppercase tracking-wide text-gray-800">
-            WEEKLY REPORT ON UPDATES ON EXPLOSIVES AND EXPLOSIVE INGREDIENTS TRANSACTIONS
-        </h2>
-        <p class="text-sm font-bold text-gray-700">
-            Period Covered : {{ request('start_date') ? \Carbon\Carbon::parse(request('start_date'))->format('F j, Y') : 'JUNE 1-7, 2026' }}
-            @if(request('end_date')) - {{ \Carbon\Carbon::parse(request('end_date'))->format('F j, Y') }} @endif
-        </p>
-        <div class="pt-2 text-left text-xs font-bold text-gray-700 space-y-1 border-t border-gray-100">
-            <div><span class="inline-block w-36">Name of Company :</span> PHILSAGA MINING CORPORATION</div>
-            <div><span class="inline-block w-36">Magazine :</span> {{strtoupper($location) ?? 'N/A'}} MAGAZINE</div>
-        </div>
-    </div>
-
     <!-- Selected Items Cards -->
     @foreach($selectedItems as $item)
     <div class="relative bg-white w-full rounded-xl shadow-lg border border-gray-200 overflow-hidden transform transition-all flex flex-col mb-6">
+        
+        <!-- Header -->
+        @include('pages.reports.pmc-tigerway.header')
+
         <div class="px-6 py-3 bg-gray-50 border-b border-gray-200 text-brand-navy flex justify-between items-center shrink-0">
             <div class="flex items-center space-x-3">
-                <span class="text-xs font-bold uppercase tracking-wider text-gray-500">Item Name:</span>
-                <span class="font-bold tracking-wide text-base text-gray-800">{{ $item->item->name ?? 'Select an item...'}}</span>
+                <span class="font-bold uppercase tracking-wider text-gray-500">Item Name:</span>
+                <span class="font-bold tracking-wide text-gray-800">{{ $item->item->name ?? 'Select an item...'}}</span>
             </div>
         </div>
-
         <!-- Table Container -->
-        <div class="px-6 pt-4 pb-2 overflow-auto flex-1">
-            <table class="w-full text-left border-collapse border border-gray-300 text-xs">
+        <div class="p-6 overflow-auto flex-1">
+            <table class="w-full text-left text-sm border-collapse border border-gray-300">
                 <thead>
                     <tr class="bg-gray-100 text-brand-navy font-bold uppercase text-center tracking-wider border-b border-gray-300">
                         <th class="border border-gray-300 p-2">Kind</th>
@@ -112,31 +100,31 @@
                     <tr class="text-center hover:bg-gray-50">
                         <td class="border border-gray-300 p-2">{{ $item->item->name }} / {{ $item->item->kind->kind ?? '' }}</td>
                         <td class="border border-gray-300 p-2">{{ $item->item->unit->unit ?? 'Pcs'}}</td>
-                        <td class="border border-gray-300 p-2">{{ $item->entry_date ?? '' }}</td>
-                        <td class="border border-gray-300 p-2">{{ $item->quantity ?? '' }}</td>
-                        <td class="border border-gray-300 p-2 font-semibold"></td>
+                        <td class="border border-gray-300 p-2">{{ $item->entry_date ?? '06-June-2026' }}</td>
                         <td class="border border-gray-300 p-2">10,750</td>
-                        <td class="border border-gray-300 p-2 font-bold">{{ number_format($item->placehold ?? 49235, 2) }}</td>
+                        <td class="border border-gray-300 p-2 font-semibold">06-June-2026</td>
+                        <td class="border border-gray-300 p-2">250</td>
+                        <td class="border border-gray-300 p-2 font-bold">10,500</td>
                         <td class="border border-gray-300 p-2 text-left font-bold">{{ $item->remarks ?? 'Stock Balance' }}</td>
                     </tr>
                     <tr class="text-center hover:bg-gray-50">
-                        <td class="border border-gray-300 p-2"></td>
-                        <td class="border border-gray-300 p-2"></td>
-                        <td class="border border-gray-300 p-2"></td>
-                        <td class="border border-gray-300 p-2"></td>
-                        <td class="border border-gray-300 p-2 font-semibold"></td>
-                        <td class="border border-gray-300 p-2"></td>
-                        <td class="border border-gray-300 p-2 font-bold">{{ number_format($item->placehold ?? 49235, 2) }}</td>
+                        <td class="border border-gray-300 p-2">{{ $item->item->name }} / {{ $item->item->kind->kind ?? '' }}</td>
+                        <td class="border border-gray-300 p-2">{{ $item->item->unit->unit ?? 'Pcs'}}</td>
+                        <td class="border border-gray-300 p-2">{{ $item->entry_date ?? '06-June-2026' }}</td>
+                        <td class="border border-gray-300 p-2">10,750</td>
+                        <td class="border border-gray-300 p-2 font-semibold">06-June-2026</td>
+                        <td class="border border-gray-300 p-2">250</td>
+                        <td class="border border-gray-300 p-2 font-bold">10,500</td>
                         <td class="border border-gray-300 p-2 text-left font-bold">{{ $item->remarks ?? 'Deposit Supply' }}</td>
                     </tr>
                     <tr class="text-center hover:bg-gray-50">
-                        <td class="border border-gray-300 p-2"></td>
-                        <td class="border border-gray-300 p-2"></td>
-                        <td class="border border-gray-300 p-2"></td>
-                        <td class="border border-gray-300 p-2"></td>
+                        <td class="border border-gray-300 p-2">{{ $item->item->name }} / {{ $item->item->kind->kind ?? '' }}</td>
+                        <td class="border border-gray-300 p-2">{{ $item->item->unit->unit ?? 'Pcs'}}</td>
+                        <td class="border border-gray-300 p-2">{{ $item->entry_date ?? '06-June-2026' }}</td>
+                        <td class="border border-gray-300 p-2">10,750</td>
                         <td class="border border-gray-300 p-2 font-semibold">06-June-2026</td>
-                        <td class="border border-gray-300 p-2">8,250</td>
-                        <td class="border border-gray-300 p-2 font-bold">{{ number_format($item->placehold ?? 49235, 2) }}</td>
+                        <td class="border border-gray-300 p-2">250</td>
+                        <td class="border border-gray-300 p-2 font-bold">10,500</td>
                         <td class="border border-gray-300 p-2 text-left font-bold">{{ $item->remarks ?? 'Transfer to Underground' }}</td>
                     </tr>
                     <tr class="text-center hover:bg-gray-50">
@@ -160,7 +148,7 @@
 
         <!-- Footer / Signatures Block -->
         <div class="p-6 bg-white border-t border-gray-200">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 text-xs">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 text-sm">
                 
                 <!-- Prepared By (2 columns on wide screens or stacked) -->
                 <div class="space-y-6">

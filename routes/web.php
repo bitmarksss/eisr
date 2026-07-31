@@ -109,6 +109,8 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
 
     // REPORTS
     Route::prefix('reports')->name('reports.')->group(function () {
+        Route::get('/daily', [ReportsController::class, 'daily'])->name('daily');
+
         Route::get('/movement-data', [ReportsController::class, 'movement_data'])->name('movement-data');
         
         Route::prefix('pmc-tigerway')->name('pmc-tigerway.')->group(function () {
@@ -137,12 +139,12 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
 
 
         Route::get('/', [ReportsController::class, 'index'])->name('index');
-        Route::prefix('daily')->name('daily.')->group(function () {
-            Route::get('/', [ReportsController::class, 'daily_index'])->name('index');
-        });
-        Route::prefix('weekly')->name('weekly.')->group(function () {
-            Route::get('/', [ReportsController::class, 'weekly_index'])->name('index');
-        });
+        // Route::prefix('daily')->name('daily.')->group(function () {
+        //     Route::get('/', [ReportsController::class, 'daily_index'])->name('index');
+        // });
+        // Route::prefix('weekly')->name('weekly.')->group(function () {
+        //     Route::get('/', [ReportsController::class, 'weekly_index'])->name('index');
+        // });
 
     });
 

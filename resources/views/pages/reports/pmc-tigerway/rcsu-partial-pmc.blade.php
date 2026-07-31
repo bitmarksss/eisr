@@ -1,15 +1,7 @@
 <div class="relative bg-white w-full rounded-xl shadow-lg border border-gray-200 overflow-hidden transform transition-all flex flex-col mb-6">
     
     <!-- Header Section (Placed Before Foreach) -->
-    <div class="bg-white p-6 text-center space-y-2">
-        <h2 class="text-base md:text-lg font-black uppercase tracking-wide text-gray-800">
-            EXPLOSIVES WEEKLY CONSUMPTION
-        </h2>
-        <p class="text-sm font-bold text-gray-700">
-            Period Covered : {{ request('start_date') ? \Carbon\Carbon::parse(request('start_date'))->format('F j, Y') : 'JUNE 1-7, 2026' }}
-            @if(request('end_date')) - {{ \Carbon\Carbon::parse(request('end_date'))->format('F j, Y') }} @endif
-        </p>
-    </div>
+    @include('pages.reports.pmc-tigerway.header')
 
     <!-- Scrollable Matrix Grid -->
     <div class="p-4 overflow-auto flex-1">

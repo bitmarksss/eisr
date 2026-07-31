@@ -26,13 +26,25 @@
                 <button onclick="closeMovementModal()" class="text-white/70 hover:text-white font-bold text-xl cursor-pointer p-1">✕</button>
             </div>
 
+            <div class="mt-6 px-12 space-y-0.5 text-sm">
+                <h1 class="text-center text-xl font-bold">MINE EXPLOSIVES TRANSFER/MOVEMENT</h1>
+                
+                <div class="grid grid-cols-5">
+                    <h2 class="col-span-1">Date:</h2>
+                    <h2 class="col-span-4 underline">JUNE 5, 2026</h2>
+                </div>
+                <div class="grid grid-cols-5">
+                    <h2 class="col-span-1">Purpose:</h2>
+                    <h2 class="col-span-4 underline">TRANSFER FROM MINE SURFACE SURFACE MAGAZINE TO UNDERGROUND MAGAZINE ON JUNE 6, 2026</h2>
+                </div>
+            </div>
             <!-- Scrollable Document Layout Grid -->
             <div class="p-6 overflow-y-auto grid grid-cols-1 md:grid-cols-2 gap-6 bg-gray-50/50">
                 
                 <!-- LEFT PANEL: Grand Totals Summary -->
                 <div class="bg-white p-4 rounded-xl border border-gray-300 shadow-xs space-y-3 overflow-y-auto">
                     <div class="border-b border-gray-300 pb-2 text-center">
-                        <h4 class="font-extrabold uppercase tracking-wider text-sm text-brand-navy">Total Explosives To Be Lowered</h4>
+                        <h4 class="font-bold uppercase tracking-wider text-sm text-brand-navy">Total Explosives To Be Lowered</h4>
                     </div>
 
                     <div class="space-y-3">
@@ -81,7 +93,7 @@
                 <!-- RIGHT PANEL: Level Breakdowns -->
                 <div class="bg-white p-4 rounded-xl border border-gray-300 shadow-xs space-y-3 overflow-y-auto">
                     <div class="text-center pb-1 border-b border-gray-300">
-                        <h4 class="font-extrabold uppercase tracking-wider text-sm text-brand-navy">Explosives Per Level</h4>
+                        <h4 class="font-bold uppercase tracking-wider text-sm text-brand-navy">Explosives Per Level</h4>
                     </div>
 
                     <!-- Container where level cards are dynamically added -->

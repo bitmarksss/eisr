@@ -23,10 +23,9 @@
     </div>
 </div>
 
-<!-- Reports Component -->
+<!-- Reports Component
 <div class="grid grid-cols-2 gap-4 mb-8">
     
-    <!-- Daily Report -->
     <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
         <div class="px-6 py-4 bg-gray-50 border-b border-gray-200 flex justify-between items-center">
             <h3 class="font-bold text-brand-navy">Daily Consumption Report Condensed</h3>
@@ -36,7 +35,6 @@
                     Go to reports 
                     <i class="fa-solid fa-arrow-right"></i>
                 </a>
-                <!-- <input type="text" placeholder="Search item code..." class="px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand-gold"> -->
             </div>
         </div>
         
@@ -63,7 +61,6 @@
     </div>
     
     
-    <!-- Weekly Report -->
     <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
         <div class="px-6 py-4 bg-gray-50 border-b border-gray-200 flex justify-between items-center">
             <h3 class="font-bold text-brand-navy">Weekly Consumption Report Condensed</h3>
@@ -73,7 +70,6 @@
                     Go to reports 
                     <i class="fa-solid fa-arrow-right"></i>
                 </a>
-                <!-- <input type="text" placeholder="Search item code..." class="px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand-gold"> -->
             </div>
         </div>
         
@@ -98,7 +94,7 @@
             </tbody>
         </table>
     </div>
-</div>
+</div> -->
 
 <!-- Stock Management Table Component -->
 <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">

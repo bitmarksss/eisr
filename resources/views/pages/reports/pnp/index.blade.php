@@ -42,9 +42,9 @@
                     <label class="block text-xs font-semibold">Type:</label>
                     <select name="location" onchange="this.form.submit()" 
                         class="bg-gray-50 border border-gray-300 text-brand-dark text-sm rounded-lg p-2 focus:outline-none focus:border-brand-gold">
-                        <option {{ request('type') == 'pmc' ? 'selected' : '' }}
+                        <option {{ request('location') == 'pmc' ? 'selected' : '' }}
                             value="pmc"> PMC </option>
-                        <option {{ request('type') == 'tigerway' ? 'selected' : '' }}
+                        <option {{ request('location') == 'tigerway' ? 'selected' : '' }}
                             value="tigerway"> TIGERWAY </option>
                     </select>
                 </div>

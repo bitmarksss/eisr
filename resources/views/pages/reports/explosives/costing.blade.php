@@ -34,17 +34,6 @@
                         @endforeach
                     </select>
                 </div>
-                
-                <!-- Location Filter -->
-                <div class="space-y-1">
-                    <label class="block text-xs font-semibold">Location:</label>
-                    <select name="location" onchange="this.form.submit()" 
-                        class="bg-gray-50 border border-gray-300 text-brand-dark text-sm rounded-lg p-2 focus:outline-none focus:border-brand-gold">
-                        <option value="PMC"> PMC </option>
-                        <option value="EXPLO"> EXPLO </option>
-                        <option value="TIGERWAY"> TIGERWAY </option>
-                    </select>
-                </div>
             </form>
             
             <button type="button" class="px-4 py-2 rounded-lg bg-brand-green hover:bg-brand-green-hover active:translate-y-0.5 text-white text-sm font-bold transition cursor-pointer flex items-center gap-1.5">
@@ -58,12 +47,7 @@
     <div class="relative bg-white w-full rounded-xl shadow-2xl border border-gray-200 overflow-hidden flex flex-col">
         
         <!-- Header Strip -->
-        <div class="px-6 py-4 bg-brand-green text-white flex justify-between items-center shrink-0">
-            <div>
-                <h3 class="font-bold tracking-wider uppercase text-lg">Monthly Consumption and Monthly Costing</h3>
-                <p class="text-xs text-brand-gold font-medium">MONTH OF MAY 2026</p>
-            </div>
-        </div>
+        @include('pages.reports.explosives.header')
 
         <!-- Report Content Container -->
         <div class="p-6 text-sm text-gray-800 space-y-6 overflow-auto mx-auto w-full">
@@ -248,22 +232,31 @@
                             <td class="p-2.5 text-right border-r border-gray-200 font-semibold">34,199.04</td>
                             <td class="p-2.5 text-right">267.18</td>
                         </tr>
+                        <tr class="bg-gray-100">
+                            <td class="p-2.5 border-r border-gray-200"></td>
+                            <td class="p-2.5 text-center border-r border-gray-200 font-semibold text-base" colspan="2">MONTH OF MAY 2026 COST</td>
+                            <td class="p-2.5 text-right border-r border-gray-200"></td>
+                            <td class="p-2.5 text-right border-r border-gray-200 font-semibold text-base"> ₱17,329,053.73</td>
+                            <td class="p-2.5 text-right"></td>
+                        </tr>
                     </tbody>
                 </table>
             <!-- </div> -->
 
             <!-- Grand Total Bar -->
-            <div class="bg-brand-green text-white rounded-lg p-4 flex flex-col sm:flex-row justify-between items-center gap-2 shadow-md">
+            <!-- <div class="bg-brand-green text-white rounded-lg p-4 flex flex-col sm:flex-row justify-between items-center gap-2 shadow-md">
                 <span class="font-bold tracking-wider text-sm uppercase text-brand-gold">
                     MONTH OF MAY 2026 COST
                 </span>
                 <span class="font-extrabold text-xl tracking-tight text-white">
                     ₱17,329,053.73
                 </span>
-            </div>
+            </div> -->
 
         </div>
 
+        <!-- Footer -->
+         @include('pages.reports.explosives.footer')
     </div>
 
 </div>

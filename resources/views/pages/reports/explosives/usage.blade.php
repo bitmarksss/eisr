@@ -22,7 +22,7 @@
         <div class="flex flex-wrap items-center justify-between w-full">
             
             <!-- Search and Filters -->
-            <form method="GET" action="{{ route('reports.pmc-tigerway.surface') }}" class="flex flex-wrap items-center gap-3 flex-1 w-full">
+            <form method="GET" action="{{ route('reports.explosives.index', ['type' => 'usage']) }}" class="flex flex-wrap items-center gap-3 flex-1 w-full">
 
                 <!-- Date Filter -->
                 <div class="space-y-1">
@@ -47,13 +47,8 @@
     <div class="relative bg-white w-full max-w-[98vw] rounded-xl shadow-2xl border border-gray-200 overflow-hidden">
         
         <!-- Header Strip -->
-        <div class="px-6 py-4 bg-brand-green text-white flex justify-between items-center shrink-0">
-            <div>
-                <h3 class="font-bold tracking-wider uppercase text-lg" id="reportModalTitle">RE: MOUNT ROCK POWDER EXPLOSIVES STOCK INVENTORY AS OF TODAY</h3>
-                <p class="text-sm text-brand-gold font-medium" id="reportModalDateRange">NAMELY: DYNA,OBC,SAFETY FUSE, NON-ELEC LP 2.4, ANFO & DETCORD</p>
-            </div>
-        </div>
-
+        @include('pages.reports.explosives.header')
+        
         <!-- Scrollable Matrix Grid -->
         <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
 
@@ -232,6 +227,9 @@
                     </tbody>
                 </table>
             </div>
+            
+            <!-- Footer -->
+            <!-- N/A -->
         </div>
     </div>
 
