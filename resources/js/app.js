@@ -8,6 +8,7 @@ import { initNotificationSystem } from './components/notification';
 import { initModalSystem, openModal, closeModal } from './components/modal';
 import { initModuleHeaderAnim } from './components/module_header';
 import { initModuleScripts } from './components/module_scripts';
+import {  } from './components/daily-reports';
 
 // Initialize when the DOM is ready
 document.addEventListener('DOMContentLoaded', () => {

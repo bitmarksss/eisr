@@ -109,7 +109,10 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
 
     // REPORTS
     Route::prefix('reports')->name('reports.')->group(function () {
-        Route::get('/daily', [ReportsController::class, 'daily'])->name('daily');
+        Route::prefix('daily')->name('daily.')->group(function () {
+            Route::get('/', [ReportsController::class, 'daily'])->name('index');
+            Route::get('/create', [ReportsController::class, 'create'])->name('create');
+        });
 
         Route::get('/movement-data', [ReportsController::class, 'movement_data'])->name('movement-data');
         

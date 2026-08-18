@@ -22,7 +22,7 @@
         <div class="flex flex-wrap items-center justify-between w-full">
             
             <!-- Search and Filters -->
-            <form method="GET" action="{{ route('reports.daily') }}" class="flex flex-wrap items-center gap-3 flex-1 w-full">
+            <form method="GET" action="{{ route('reports.daily.index') }}" class="flex flex-wrap items-center gap-3 flex-1 w-full">
 
                 <!-- Date Filter -->
                 <div class="space-y-1">
@@ -48,10 +48,17 @@
                 </div>
             </form>
             
-            <button type="button" class="px-4 py-2 rounded-lg bg-brand-green hover:bg-brand-green-hover active:translate-y-0.5 text-white text-sm font-bold transition cursor-pointer flex items-center gap-1.5">
-                <i class="fa-solid fa-file-excel text-white"></i>
-                Export
-            </button>
+            <div class="flex items-end space-x-2">
+                <a href="{{ route('reports.daily.create') }}" class="px-4 py-2 rounded-lg bg-brand-navy hover:bg-brand-navy-hover active:translate-y-0.5 text-white text-sm font-bold transition cursor-pointer flex items-center gap-1.5">
+                    <i class="fa-solid fa-file-excel text-white"></i>
+                    Create Daily Report
+                </a>
+                
+                <button type="button" class="px-4 py-2 rounded-lg bg-brand-green hover:bg-brand-green-hover active:translate-y-0.5 text-white text-sm font-bold transition cursor-pointer flex items-center gap-1.5">
+                    <i class="fa-solid fa-file-excel text-white"></i>
+                    Export
+                </button>
+            </div>
         </div>
     </div>
 

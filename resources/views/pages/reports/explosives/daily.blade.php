@@ -38,6 +38,11 @@
             
             <button type="button" class="px-4 py-2 rounded-lg bg-brand-green hover:bg-brand-green-hover active:translate-y-0.5 text-white text-sm font-bold transition cursor-pointer flex items-center gap-1.5">
                 <i class="fa-solid fa-file-excel text-white"></i>
+                Create Report
+            </button>
+            
+            <button type="button" class="px-4 py-2 rounded-lg bg-brand-green hover:bg-brand-green-hover active:translate-y-0.5 text-white text-sm font-bold transition cursor-pointer flex items-center gap-1.5">
+                <i class="fa-solid fa-file-excel text-white"></i>
                 Export
             </button>
         </div>

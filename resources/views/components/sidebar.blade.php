@@ -51,6 +51,11 @@
             REPORTS
         </p>
 
+        <a href="{{ route('reports.daily.index', ['type' => 'total']) }}" class="sidebar-link {{ request()->routeIs('reports.daily') ? 'selected' : '' }}">
+            <i class="fa-solid fa-scroll"></i>
+            Daily Report
+        </a>
+        
         <!-- 1. PMC and Tigerway -->
         <div class="space-y-1">
             <button type="button" onclick="toggleDropdown('dropdown-pmc', this)" class="sidebar-link w-full flex items-center justify-between text-left cursor-pointer transition-all">
@@ -240,10 +245,7 @@
             <i class="fa-solid fa-scroll"></i>
             All Reports
         </a> -->
-        <a href="{{ route('reports.daily', ['type' => 'total']) }}" class="sidebar-link {{ request()->routeIs('reports.daily') ? 'selected' : '' }}">
-            <i class="fa-solid fa-scroll"></i>
-            Daily Report
-        </a>
+
         <a href="{{ route('reports.movement-data') }}" class="sidebar-link {{ request()->routeIs('reports.movement-data') ? 'selected' : '' }}">
             <i class="fa-solid fa-scroll"></i>
             Movement Data

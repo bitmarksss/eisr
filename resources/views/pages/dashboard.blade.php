@@ -116,7 +116,7 @@
         <tbody class="divide-y divide-gray-100 text-sm text-gray-700">
             @foreach($inventory as $item)
             <!-- Row 1 (Normal Stock Level) -->
-            <tr class="hover:bg-gray-50/70 transition">
+            <tr class="hover:bg-gray-50 transition">
                 <td class="px-6 py-4 font-mono font-semibold text-brand-navy">{{ $item->item->item_code }}</td>
                 <td class="px-6 py-4 font-medium">{{ $item->item->name }}</td>
                 <td class="px-6 py-4 
@@ -127,12 +127,14 @@
                     </span>
                 </td>
 
-                {{-- <td class="px-6 py-4 text-right space-x-2">
+                <td class="px-6 py-4 text-right space-x-2">
+                {{--
                     <button class="text-brand-navy hover:underline text-xs font-medium">View</button>
                     @if(auth()->user()?->role->role == 'admin')
                         <button class="text-brand-gold hover:underline text-xs font-medium">Edit Master</button>
                     @endif
-                </td> --}}
+                --}}
+                </td> 
             </tr>
             @endforeach
         </tbody>

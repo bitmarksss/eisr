@@ -38,7 +38,7 @@
     <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div class="flex flex-wrap items-center justify-between w-full">
             <!-- Search Component -->
-            <form method="GET" action="{{ route('underground.levels.index') }}" class="flex flex-wrap items-center gap-3 flex-1 w-full">
+            <form method="GET" action="{{ route('maintenance.levels.index') }}" class="flex flex-wrap items-center gap-3 flex-1 w-full">
                 <div class="flex w-90">
                     <div class="relative min-w-70 flex-1 max-w-md">
                         <input type="text" name="search" value="{{ request('search') }}" placeholder="Search floors by name or code..." 

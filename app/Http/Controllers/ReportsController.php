@@ -109,6 +109,16 @@ class ReportsController extends Controller
         ]);
     }
 
+    public function create(Request $request)
+    {
+        $types = ['total', 'sinug-ang', 'l03', 'l7', 'l8', 'l9', 'l10', 'l11', 'l12', 'l425', 'l460', 'summary'];
+        
+        return view('pages.reports.daily.forms.daily', [
+            'months' => self::MONTHS,
+            'types' => $types,
+        ]);
+    }
+
     public function weekly_index(Request $request) 
     {
         $selectedTypeId = (int) $request->input('type', 1);
