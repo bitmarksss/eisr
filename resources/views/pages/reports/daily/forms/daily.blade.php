@@ -19,7 +19,7 @@
     
     <!-- Control Matrix Panel -->
     <div class="bg-white p-4 mb-10 rounded-xl border border-gray-200 shadow-sm flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <div class="flex flex-wrap items-center justify-between w-full">
+        <div class="flex flex-wrap items-center justify-between w-full space-x-2">
             
             <!-- Search and Filters -->
             <form class="flex flex-wrap items-center gap-3 flex-1 w-full">
@@ -91,18 +91,23 @@
                 <!-- Shift Card -->
                 <div class="bg-white p-5 rounded-xl shadow-xs border border-slate-200">
                     <div class="border-b border-slate-100 pb-3 mb-4 flex items-center justify-between space-x-4">
-                        <div class="flex items-center justify-start space-x-4">
-                            <h3 class="text-sm font-black uppercase tracking-wider text-slate-800 flex items-center gap-2">
-                                <span class="w-2 h-2 rounded-full bg-indigo-600"></span>
-                                SHIFT {{ $i }}
-                            </h3>
+                        <div class="flex items-center justify-between w-full space-x-4">
                             <div class="flex items-center space-x-2">
+                                <h3 class="text-sm font-black uppercase tracking-wider text-slate-800 flex items-center gap-2">
+                                    <span class="w-2 h-2 rounded-full bg-indigo-600"></span>
+                                    SHIFT {{ $i }}
+                                </h3>
                                 <input type="checkbox" name="shift_{{ $i }}_no_blast" id="shift_{{ $i }}_no_blast" value="1" 
                                     class="w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500">
                                 <label for="shift_{{ $i }}_no_blast" class="text-sm font-bold uppercase tracking-wider text-slate-600 cursor-pointer">
                                     NO BLAST
                                 </label>
                             </div>
+
+                            <button id="shift-{{$i}}" type="button" class="px-4 py-2 rounded-lg bg-brand-green hover:bg-brand-green-hover active:translate-y-0.5 text-white text-sm font-bold transition cursor-pointer flex items-center gap-1.5">
+                                <i class="fa-solid fa-circle-plus text-white"></i>
+                                Add Row
+                            </button>
                         </div>
                     </div> 
 
