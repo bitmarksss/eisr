@@ -13,6 +13,14 @@ return new class extends Migration
     {
         Schema::create('daily_reports_header', function (Blueprint $table) {
             $table->id();
+            $table->date('report_date');
+            $table->string('location');
+            $table->string('contractor_name');
+            $table->string('support');
+            $table->integer('drill_steel');
+            $table->string('working_place');
+            $table->foreignId('uploaded_by')->constrained('users'); // Admin user who generated it
+            $table->text('notes')->nullable();
             $table->timestamps();
         });
     }
