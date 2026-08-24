@@ -16,55 +16,12 @@
         <span class="mr-2">✓</span> {{ session('success') }}
     </div>
     @endif
-    
-    <!-- Control Matrix Panel -->
-    <div class="bg-white p-4 mb-10 rounded-xl border border-gray-200 shadow-sm flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <div class="flex flex-wrap items-center justify-between w-full space-x-2">
-            
-            <!-- Search and Filters -->
-            <form class="flex flex-wrap items-center gap-3 flex-1 w-full">
 
-                <!-- Date Filter -->
-                <div class="space-y-1">
-                    <label class="block text-xs font-semibold">Month:</label>
-                    <select name="month" onchange="this.form.submit()" 
-                        class="bg-gray-50 border border-gray-300 text-brand-dark text-sm rounded-lg p-2 focus:outline-none focus:border-brand-gold">
-                        <option value=""> Select a month </option>
-                        @foreach($months as $key => $month)
-                            <option value="{{ $key }}" {{ request('month') == $key ? 'selected' : '' }}> {{ $month }} </option>
-                        @endforeach
-                    </select>
-                </div>
-                
-                <!-- Levels Filter -->
-                <div class="space-y-1">
-                    <label class="block text-xs font-semibold">Level:</label>
-                    <select name="type" onchange="this.form.submit()" 
-                        class="bg-gray-50 border border-gray-300 text-brand-dark text-sm rounded-lg p-2 focus:outline-none focus:border-brand-gold">
-                        @foreach($types as $key => $type)
-                            <option value="{{ $type }}" {{ request('type') == $type ? 'selected' : '' }}> {{ strtoupper($type) }} </option>
-                        @endforeach
-                    </select>
-                </div>
-            </form>
-            
-            <button type="button" class="px-4 py-2 rounded-lg bg-brand-navy hover:bg-brand-navy-hover active:translate-y-0.5 text-white text-sm font-bold transition cursor-pointer flex items-center gap-1.5">
-                <i class="fa-solid fa-file-excel text-white"></i>
-                Create Daily Report
-            </button>
-            
-            <button type="button" class="px-4 py-2 rounded-lg bg-brand-green hover:bg-brand-green-hover active:translate-y-0.5 text-white text-sm font-bold transition cursor-pointer flex items-center gap-1.5">
-                <i class="fa-solid fa-file-excel text-white"></i>
-                Export
-            </button>
-        </div>
-    </div>
-
-    <div class="relative bg-slate-50 w-full rounded-2xl shadow-xl border border-slate-200 overflow-hidden flex flex-col">
+    <div class="relative bg-white w-full rounded-2xl shadow-xl border border-slate-200 overflow-hidden flex flex-col">
         <!-- Header Section -->
-        {{--
-        @include('pages.reports.explosives.header')
-        --}}
+        <div class="px-6 py-4 bg-slate-50 text-brand-navy flex justify-center items-center">
+            <p class="px-4 w-full font-bold tracking-wide text-2xl border-0 border-b border-brand-green">Daily Report Form</p>
+        </div>
 
         <!-- Form Container -->
         <form class="flex flex-col flex-1">
