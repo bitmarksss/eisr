@@ -25,6 +25,10 @@ class DatabaseSeeder extends Seeder
             InventoryStockSeeder::class, // Test
             StockSeeder::class, // Test
             StockMovementSeeder::class, // Test
+            DailyReportsHeaderSeeder::class,
+            DailyReportDetailSeeder::class,
+            DailyReportItemSeeder::class,
+            DailyReportDirectionSeeder::class,
         ]);
     }
 }

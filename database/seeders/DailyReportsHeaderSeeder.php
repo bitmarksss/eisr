@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use App\Models\DailyReportsHeader;
 
 class DailyReportsHeaderSeeder extends Seeder
 {
@@ -12,6 +13,6 @@ class DailyReportsHeaderSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        DailyReportsHeader::factory()->count(2)->create();
     }
 }

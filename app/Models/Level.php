@@ -18,6 +18,8 @@ class Level extends Model
         'is_active',
     ];
 
+    protected $table = 'locations';
+
     protected $casts = [
         'is_active' => 'boolean',
         'sort_order' => 'integer',
