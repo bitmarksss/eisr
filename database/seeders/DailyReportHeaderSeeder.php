@@ -4,15 +4,15 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use App\Models\DailyReportsHeader;
+use App\Models\DailyReportHeader;
 
-class DailyReportsHeaderSeeder extends Seeder
+class DailyReportHeaderSeeder extends Seeder
 {
     /**
      * Run the database seeds.
      */
     public function run(): void
     {
-        DailyReportsHeader::factory()->count(2)->create();
+        DailyReportHeader::factory()->count(2)->create();
     }
 }

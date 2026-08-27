@@ -2,11 +2,7 @@
 
 namespace Database\Factories;
 
-use App\Models\{
-    InventoryItem,
-    InventoryStock,
-    Level
-};
+use App\Models\InventoryStock;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -19,45 +15,39 @@ class InventoryStockFactory extends Factory
     /**
      * Define the model's default state.
      *
-     * @return array<string, mixed>
+     * The item_id and level_id are supplied by the seeder.
      */
     public function definition(): array
     {
-        $location = $this->faker->randomElement(['surface', 'underground']);
-
         return [
-            // Automatically maps the inventory item link
-            'item_id' => InventoryItem::factory(), 
-            'location' => $location,
-            
-            // Evaluates location condition to set or strip the underground level mapping
-            'level_id' => $location === 'underground' ? Level::factory() : null, 
-            
-            'quantity' => $this->faker->numberBetween(10, 500),
-            'created_at' => now(),
-            'updated_at' => now(),
+            'item_id' => null,
+            'location' => 'surface',
+            'level_id' => null,
+            'quantity' => fake()->numberBetween(10, 500),
         ];
     }
 
     /**
-     * Explicit state state modifier for testing dedicated surface stock
+     * Surface stock.
      */
-    public function surface(): static
+    public function surface(int $itemId): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state([
+            'item_id' => $itemId,
             'location' => 'surface',
             'level_id' => null,
         ]);
     }
 
     /**
-     * Explicit state modifier for testing dedicated underground level stock
+     * Underground stock for a specific level.
      */
-    public function underground(?int $levelId = null): static
+    public function underground(int $itemId, int $levelId): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state([
+            'item_id' => $itemId,
             'location' => 'underground',
-            'level_id' => $levelId ?? Level::factory(),
+            'level_id' => $levelId,
         ]);
     }
 }

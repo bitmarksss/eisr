@@ -17,11 +17,18 @@ class InventoryItem extends Model
         'item_code',
         'supplier_id',
         'name',
+        'variant',
         'kind_id',
         'cost',
         'uom',
         // 'quantity',
     ];
+
+    public function variants()
+    {
+        return $this->hasMany(InventoryItem::class, 'name', 'name')
+                    ->where('id', '!=', $this->id);
+    }
 
     public function supplier(): BelongsTo
     {

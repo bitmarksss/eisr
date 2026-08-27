@@ -5,6 +5,8 @@ namespace Database\Seeders;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
+use App\Models\InventoryItem;
+
 class DatabaseSeeder extends Seeder
 {
     /**
@@ -17,18 +19,25 @@ class DatabaseSeeder extends Seeder
             UnitOfMeasurementSeeder::class,
             SuperAdminSeeder::class,
             PermissionSeeder::class,
-            UserFactorySeeder::class, // Test
-            SupplierSeeder::class, // Test
+
+            // Test
+            UserFactorySeeder::class, 
+            SupplierSeeder::class, 
             InventoryKindSeeder::class,
-            InventoryItemSeeder::class, // Test
-            LevelSeeder::class, // Test
-            InventoryStockSeeder::class, // Test
-            StockSeeder::class, // Test
-            StockMovementSeeder::class, // Test
-            DailyReportsHeaderSeeder::class,
-            DailyReportDetailSeeder::class,
-            DailyReportItemSeeder::class,
-            DailyReportDirectionSeeder::class,
+            InventoryItemSeeder::class, 
+            LevelSeeder::class, 
+            InventoryStockSeeder::class, 
+            StockSeeder::class, 
+            StockMovementSeeder::class, 
+            // LocationSeeder::class, 
+            // DailyReportHeaderSeeder::class,
+            // DailyReportDetailSeeder::class,
+            // DailyReportItemSeeder::class,
+            // DailyReportDirectionSeeder::class,
+        ]);
+
+        dump([
+            'inventory_items' => InventoryItem::count(),
         ]);
     }
 }

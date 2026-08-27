@@ -1,6 +1,6 @@
 <?php
 namespace Database\Seeders;
-use App\Models\DailyReportsDetail;
-use App\Models\DailyReportsHeader;
+use App\Models\DailyReportDetail;
+use App\Models\DailyReportHeader;
 use Illuminate\Database\Seeder;
-class DailyReportDetailSeeder extends Seeder { public function run(): void { DailyReportsDetail::factory()->count(2)->for(DailyReportsHeader::query()->firstOrFail(), 'header')->create(); } }
+class DailyReportDetailSeeder extends Seeder { public function run(): void { DailyReportDetail::factory()->count(2)->for(DailyReportHeader::query()->firstOrFail(), 'header')->create(); } }

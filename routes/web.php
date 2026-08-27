@@ -10,6 +10,7 @@ use App\Http\Controllers\{
     InventoryController,
     LevelController,
     ReportsController,
+    DailyReportController,
     StockController,
 
     LoanController,
@@ -110,8 +111,9 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
     // REPORTS
     Route::prefix('reports')->name('reports.')->group(function () {
         Route::prefix('daily')->name('daily.')->group(function () {
-            Route::get('/', [ReportsController::class, 'daily'])->name('index');
-            Route::get('/create', [ReportsController::class, 'create'])->name('create');
+            Route::get('/', [DailyReportController::class, 'daily'])->name('index');
+            Route::get('/create', [DailyReportController::class, 'create'])->name('create');
+            Route::post('/', [DailyReportController::class, 'store'])->name('store');
         });
 
         Route::get('/movement-data', [ReportsController::class, 'movement_data'])->name('movement-data');

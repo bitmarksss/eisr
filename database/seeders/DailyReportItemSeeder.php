@@ -4,8 +4,8 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use App\Models\DailyReportsItem;
-use App\Models\DailyReportsDetail;
+use App\Models\DailyReportItem;
+use App\Models\DailyReportDetail;
 
 class DailyReportItemSeeder extends Seeder
 {
@@ -14,6 +14,6 @@ class DailyReportItemSeeder extends Seeder
      */
     public function run(): void
     {
-        DailyReportsItem::factory()->count(2)->for(DailyReportsDetail::query()->firstOrFail(), 'detail')->create();
+        DailyReportItem::factory()->count(2)->for(DailyReportDetail::query()->firstOrFail(), 'detail')->create();
     }
 }

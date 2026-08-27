@@ -16,6 +16,6 @@ class Location extends Model
 
     public function dailyReportHeaders(): HasMany
     {
-        return $this->hasMany(DailyReportsHeader::class);
+        return $this->hasMany(DailyReportHeader::class);
     }
 }

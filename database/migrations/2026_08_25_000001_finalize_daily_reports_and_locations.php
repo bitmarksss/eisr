@@ -7,7 +7,7 @@ return new class extends Migration {
     public function up(): void
     {
         if (Schema::hasTable('levels') && ! Schema::hasTable('locations')) {
-            Schema::rename('levels', 'locations');
+            // Schema::rename('levels', 'locations');
         }
     }
 

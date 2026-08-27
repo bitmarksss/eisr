@@ -11,7 +11,7 @@ return new class extends Migration {
         Schema::create('daily_report_headers', function (Blueprint $table) {
             $table->id();
             $table->date('report_date');
-            $table->foreignId('location_id')->constrained('locations');
+            $table->foreignId('level_id')->constrained('levels');
             $table->timestamps();
         });
     }

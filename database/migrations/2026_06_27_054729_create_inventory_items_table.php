@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('item_code')->unique(); // Added unique item code column
             $table->foreignId('supplier_id')->constrained('suppliers'); // Suppliers table
             $table->string('name');
+            $table->string('variant');
             // $table->string('location'); // Added location column
             $table->foreignId('kind_id')->constrained('inventory_kinds'); // Inventory kinds table
             $table->decimal('cost', 15, 2);

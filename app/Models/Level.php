@@ -18,7 +18,7 @@ class Level extends Model
         'is_active',
     ];
 
-    protected $table = 'locations';
+    protected $table = 'levels';
 
     protected $casts = [
         'is_active' => 'boolean',

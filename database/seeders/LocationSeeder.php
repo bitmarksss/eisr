@@ -2,17 +2,17 @@
 
 namespace Database\Seeders;
 
-use App\Models\Level;
+use App\Models\Location;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
-class LevelSeeder extends Seeder
+class LocationSeeder extends Seeder
 {
     /**
      * Run the database seeds.
      */
     public function run(): void
     {
-        Level::factory()->count(10)->create();
+        Location::factory()->count(25)->create();
     }
 }

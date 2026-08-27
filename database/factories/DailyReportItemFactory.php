@@ -2,22 +2,14 @@
 
 namespace Database\Factories;
 
+use App\Models\DailyReportItem;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\DailyReportItem>
- */
 class DailyReportItemFactory extends Factory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
+    protected $model = DailyReportItem::class;
     public function definition(): array
     {
-        return [
-            //
-        ];
+        return ['detail_id' => \App\Models\DailyReportDetail::factory(), 'item_id' => \App\Models\InventoryItem::factory(), 'quantity' => $this->faker->randomFloat(3, 1, 100)];
     }
 }

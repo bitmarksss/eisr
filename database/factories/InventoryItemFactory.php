@@ -17,14 +17,31 @@ class InventoryItemFactory extends Factory
     public function definition(): array
     {
         return [
-            // Generates uppercase alphanumeric formats like "EXP-DET-8423"
-            'item_code' => fake()->unique()->lexify('EXP-???-') . fake()->numerify('####'), 
+            'item_code' => fake()->unique()->lexify('EXP-???-') . fake()->numerify('####'),
             'supplier_id' => fake()->numberBetween(1, 10),
-            'name' => ucwords(fake()->words(2, true)),
+
+            'name' => fake()->randomElement([
+                'Neogel',
+                'Cordtex',
+                'Expando',
+                'Detonex',
+                'Blastpro',
+            ]),
+
+            'variant' => function (array $attributes) {
+                return match ($attributes['name']) {
+                    'Neogel' => fake()->randomElement([200, 215]),
+                    'Cordtex' => fake()->randomElement([5, 10]),
+                    'Expando' => fake()->randomElement([2.4, 3.6]),
+                    'Detonex' => fake()->randomElement([4.9, 38]),
+                    'Blastpro' => fake()->randomElement([10, 38]),
+                };
+            },
+
             'kind_id' => fake()->numberBetween(1, 5),
             'cost' => fake()->randomFloat(1, 15, 100),
             'uom' => fake()->randomElement([1, 2, 3, 4]),
-            // 'quantity' => fake()->numberBetween(0, 300), 
         ];
+
     }
 }

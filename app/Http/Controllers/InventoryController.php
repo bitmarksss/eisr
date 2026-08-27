@@ -51,7 +51,8 @@ class InventoryController extends Controller
             ->when($request->filled('search'), function ($query) use ($request) {
                 $query->where('name', 'like', '%' . $request->search . '%');
             })
-            ->with('kind')
+            ->with(['kind'])
+            ->orderBy('name', 'ASC')
             ->get();
 
         $categories = InventoryKind::get();

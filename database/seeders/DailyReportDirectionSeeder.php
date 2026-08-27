@@ -1,6 +1,13 @@
 <?php
 namespace Database\Seeders;
-use App\Models\DailyReportsDirection;
-use App\Models\DailyReportsDetail;
+use App\Models\DailyReportDirection;
+use App\Models\DailyReportDetail;
 use Illuminate\Database\Seeder;
-class DailyReportDirectionSeeder extends Seeder { public function run(): void { DailyReportsDirection::factory()->count(2)->for(DailyReportsDetail::query()->firstOrFail(), 'detail')->create(); } }
+
+class DailyReportDirectionSeeder extends Seeder { 
+    
+    public function run(): void 
+    { 
+        DailyReportDirection::factory()->count(2)->for(DailyReportDetail::query()->firstOrFail(), 'detail')->create(); 
+    } 
+}

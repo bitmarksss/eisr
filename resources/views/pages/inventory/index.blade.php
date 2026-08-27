@@ -104,6 +104,7 @@
                     <tr class="bg-gray-50 text-xs font-bold text-brand-navy uppercase tracking-wider border-b border-gray-200">
                         <!-- <th class="px-6 py-4">Item Code</th> -->
                         <th class="px-6 py-4">Item Name</th>
+                        <th class="px-6 py-4 text-center">Variant</th>
                         <th class="px-6 py-4">Supplier</th>
                         <th class="px-6 py-4">Kind</th>
                         <th class="px-6 py-4">Cost</th>
@@ -127,6 +128,11 @@
                             <!-- Name Column -->
                             <td class="px-6 py-4 font-semibold text-brand-dark">
                                 {{ $item->name }}
+                            </td>
+                            
+                            <!-- Variant Column -->
+                            <td class="px-6 py-4 font-semibold text-brand-dark text-center">
+                                {{ $item->variant }}
                             </td>
 
                             <!-- Supplier Column -->

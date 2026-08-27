@@ -12,8 +12,13 @@ class InventoryItemSeeder extends Seeder
     /**
      * Run the database seeds.
      */
+    // public function run(): void
+    // {
+    //     InventoryItem::factory()->count(10)->create();
+    // }
     public function run(): void
     {
-        InventoryItem::factory()->count(50)->create();
+        InventoryItem::factory()->count(10)->create();
     }
+
 }
