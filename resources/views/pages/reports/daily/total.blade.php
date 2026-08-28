@@ -357,8 +357,4 @@
             </div>
         </div>
     </div>
-
-    <div class="w-full">
-        asdf
-    </div>
 </div>

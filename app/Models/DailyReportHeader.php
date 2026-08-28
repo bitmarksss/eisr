@@ -11,7 +11,7 @@ class DailyReportHeader extends Model
 {
     use HasFactory, LogsActivity;
 
-    protected $fillable = ['report_date', 'level_id'];
+    protected $fillable = ['report_date', 'level_id', 'prepared_by'];
     protected $casts = ['report_date' => 'date'];
 
     public function level(): BelongsTo { 
@@ -20,5 +20,9 @@ class DailyReportHeader extends Model
     
     public function details(): HasMany { 
         return $this->hasMany(DailyReportDetail::class, 'header_id'); 
+    }
+    
+    public function owner(): BelongsTo { 
+        return $this->belongsTo(User::class, 'prepared_by'); 
     }
 }

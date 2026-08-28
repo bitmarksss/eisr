@@ -12,6 +12,7 @@ return new class extends Migration {
             $table->id();
             $table->date('report_date');
             $table->foreignId('level_id')->constrained('levels');
+            $table->foreignId('prepared_by')->constrained('users');
             $table->timestamps();
         });
     }

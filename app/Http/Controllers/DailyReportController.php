@@ -4,11 +4,13 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 use App\Models\{
     DailyReportHeader,
     InventoryItem, 
     Level,
     Location};
+use Illuminate\Support\Facades\Validator;
 
 class DailyReportController extends Controller
 {
@@ -35,11 +37,16 @@ class DailyReportController extends Controller
             'level',
             'details.items.item',
             'details.directions',
+            'owner'
         ];
 
         $reports = DailyReportHeader::with($reportRelations)
+            ->when($request->filled('date'), fn ($query) =>
+                $query->whereDate('report_date', $request->input('date')))
             ->when($request->filled('month'), fn ($query) =>
                 $query->whereMonth('report_date', $request->integer('month')))
+            ->when($request->filled('level_id'), fn ($query) =>
+                $query->where('level_id', $request->integer('level_id')))
             ->latest('report_date')
             ->latest('id')
             ->paginate(10)
@@ -52,6 +59,7 @@ class DailyReportController extends Controller
         return view('pages.reports.daily.index', [
             'months' => self::MONTHS,
             'types' => self::TYPES,
+            'levels' => Level::where('is_active', true)->orderBy('sort_order')->orderBy('name')->get(),
             'reports' => $reports,
             'selectedReport' => $selectedReport,
         ]);
@@ -83,8 +91,13 @@ class DailyReportController extends Controller
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'report_date' => ['required', 'date'],
+        $validator = Validator::make($request->all(), [
+            'report_date' => [
+                'required',
+                'date',
+                Rule::unique('daily_report_headers', 'report_date')
+                    ->where(fn ($query) => $query->where('level_id', $request->input('location_id'))),
+            ],
             'location_id' => ['required', 'exists:levels,id'],
             'shifts' => ['required', 'array'],
             'shifts.*.no_blast' => ['nullable', 'boolean'],
@@ -98,12 +111,28 @@ class DailyReportController extends Controller
             'shifts.*.rows.*.directions.*.sb' => ['nullable', 'integer', 'min:0'],
         ]);
 
-        // dd($validated);
+        if ($validator->fails()) {
+            return back()
+                ->with('error', 'Failed to save daily report.')
+                ->withErrors($validator)
+                ->withInput();
+        }
+
+        $validated = $validator->validated();
 
         DB::transaction(function () use ($validated) {
+            if (DailyReportHeader::where('report_date', $validated['report_date'])
+                ->where('level_id', $validated['location_id'])
+                ->exists()) {
+                throw \Illuminate\Validation\ValidationException::withMessages([
+                    'report_date' => 'A daily report already exists for this date and level.',
+                ]);
+            }
+
             $header = DailyReportHeader::create([
                 'report_date' => $validated['report_date'],
                 'level_id' => $validated['location_id'],
+                'prepared_by' => auth()->user()->id
             ]);
 
             foreach ($validated['shifts'] as $shift) {

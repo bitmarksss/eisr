@@ -5,7 +5,25 @@
 @endsection
 
 @section('content')
+
+<div class="mb-4">
+    <a href="{{ route('reports.daily.index', ['type' => 'total']) }}" onclick="window.history.back()" 
+       class="inline-flex items-center text-sm font-bold cursor-pointer space-x-2 hover:underline">
+        <i class="fa-solid fa-arrow-left-long"></i>
+        &nbsp; BACK
+    </a>
+</div>
+
+
+<!-- Flash Messages -->
+@if(session('error'))
+<div class="bg-red-100 border border-red-700 text-red-700 p-4 mt-4 mb-8 rounded-xl text-sm font-semibold flex items-center shadow-xs">
+    <span class="mr-2">✗</span> {{ session('error') }}
+</div>
+@endif
+
 <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xl">
+
     <div class="flex items-center justify-between bg-slate-50 px-6 py-4">
         <h1 class="text-2xl font-bold text-brand-navy">Daily Report Form</h1>
         <!-- <span class="text-xs font-semibold uppercase text-slate-500">Rows can be added per shift</span> -->
@@ -37,7 +55,7 @@
                                 name="shifts[{{ $shift }}][no_blast]" value="1"> 
                             No blast
                         </label>
-                        <button type="button" data-add-row="{{ $shift }}" class="rounded-lg bg-brand-green px-3 py-2 text-xs font-bold text-white disabled:cursor-not-allowed disabled:opacity-50">
+                        <button type="button" data-add-row="{{ $shift }}" class="rounded-lg bg-brand-green px-3 py-2 text-xs font-bold text-white cursor-pointer disabled:cursor-not-allowed disabled:opacity-50">
                             + Add row
                         </button>
                     </div>
@@ -92,7 +110,7 @@
             </section>
             @endfor
         </div>
-        <div class="flex justify-end gap-3 border-t px-6 py-4"><button type="reset" class="rounded-lg bg-slate-100 px-4 py-2 text-xs font-bold uppercase">Clear form</button><button type="submit" class="rounded-lg bg-indigo-600 px-6 py-2 text-xs font-bold uppercase text-white">Save daily report</button></div>
+        <div class="flex justify-end gap-3 border-t px-6 py-4"><button type="reset" class="rounded-lg bg-slate-100 px-4 py-2 text-xs font-bold cursor-pointer uppercase">Clear form</button><button type="submit" class="rounded-lg bg-brand-navy px-6 py-2 text-xs font-bold uppercase text-white cursor-pointer">Save daily report</button></div>
     </form>
 </div>
 @endsection
