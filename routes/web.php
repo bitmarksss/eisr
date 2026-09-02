@@ -114,6 +114,8 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
             Route::get('/', [DailyReportController::class, 'daily'])->name('index');
             Route::get('/create', [DailyReportController::class, 'create'])->name('create');
             Route::post('/', [DailyReportController::class, 'store'])->name('store');
+            
+            Route::get('/{header_id}', [DailyReportController::class, 'loadReport'])->name('load');
         });
 
         Route::get('/movement-data', [ReportsController::class, 'movement_data'])->name('movement-data');

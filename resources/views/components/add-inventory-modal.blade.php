@@ -17,12 +17,14 @@
         <form action="{{ route('surface.inventory.store') }}" method="POST" class="p-6 space-y-4">
             @csrf
             
-            <!-- 1. Name Field (Updated to name="name") -->
+            <!-- 1. Name Field -->
             <div>
-                <label for="add-item-name" class="block text-xs font-bold text-brand-dark uppercase tracking-wider mb-1">Item Title / Descriptor</label>
-                <input type="text" id="add-item-name" name="name" value="{{ old('item_name') }}" required placeholder="e.g., Heavy Duty Machine Bolts"
-                    class="w-full bg-gray-50 border @error('item_name') border-red-500 @else border-gray-300 @enderror rounded-lg px-3 py-2 text-sm focus:border-brand-gold focus:outline-none transition focus:ring-2 focus:ring-brand-gold/20">
-                @error('item_name') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                <label for="add-name" class="block text-xs font-bold text-brand-dark uppercase tracking-wider mb-1">Item Title / Descriptor</label>
+                <input type="text" id="add-name" name="name" value="{{ old('name') }}" required placeholder="e.g., Heavy Duty Machine Bolts"
+                    class="w-full bg-gray-50 border @error('name') border-red-500 @else border-gray-300 @enderror rounded-lg px-3 py-2 text-sm focus:border-brand-gold focus:outline-none transition focus:ring-2 focus:ring-brand-gold/20">
+                @error('name') 
+                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p> 
+                @enderror
             </div>
 
             <!-- 2. Supplier field -->
@@ -35,30 +37,23 @@
                         <option value="{{ $supplier->id }}" {{ old('supplier_id') == $supplier->id ? 'selected' : '' }}>{{ $supplier->name }}</option>
                     @endforeach
                 </select>
-                @error('supplier_id') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                @error('supplier_id') 
+                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p> 
+                @enderror
             </div>
 
-            <!-- 3. item_code Field (Mapped to name="item_code") -->
-            <!-- <div>
-                <label for="add-item_code" class="block text-xs font-bold text-brand-dark uppercase tracking-wider mb-1">Item Code Barcode Reference</label>
+            <!-- 3. Item Code Field -->
+            <div>
+                <label for="add-item_code" class="block text-xs font-bold text-brand-dark uppercase tracking-wider mb-1">Item Code</label>
                 <input type="text" id="add-item_code" name="item_code" value="{{ old('item_code') }}" required placeholder="e.g., PMC-MCH-552"
                     class="w-full bg-gray-50 border @error('item_code') border-red-500 @else border-gray-300 @enderror rounded-lg px-3 py-2 text-sm focus:border-brand-gold focus:outline-none transition">
-                @error('item_code') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
-            </div> -->
-            
-            <!-- <div>
-                <label for="add-category" class="block text-xs font-bold text-brand-dark uppercase tracking-wider mb-1">Category</label>
-                <select id="add-category" name="category" required
-                    class="w-full bg-gray-50 border @error('category') border-red-500 @else border-gray-300 @enderror rounded-lg p-2 text-sm focus:border-brand-gold focus:outline-none transition">
-                    <option value="" disabled selected>Select Category</option>
-                    @foreach($categories as $category)
-                        <option value="{{ $category->id }}" {{ old('category') == $category->id ? 'selected' : '' }}>{{ $category->kind }}</option>
-                    @endforeach
-                </select>
-                @error('category') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
-            </div> -->
+                @error('item_code') 
+                <p class="text-red-500 text-xs mt-1">{{ $message }}</p> 
+                @enderror
+            </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <!-- 4. Category Field -->
                 <div>
                     <label for="add-category" class="block text-xs font-bold text-brand-dark uppercase tracking-wider mb-1">Category</label>
                     <select id="add-category" name="category" required
@@ -68,35 +63,75 @@
                             <option value="{{ $category->id }}" {{ old('category') == $category->id ? 'selected' : '' }}>{{ $category->kind }}</option>
                         @endforeach
                     </select>
-                    @error('category') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                    @error('category') 
+                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p> 
+                    @enderror
                 </div>
 
-                <!-- 3. Category Field (New Field Mapped to name="category") -->
+                 <!-- 5. Variant Field  -->
                 <div>
-                    <label for="add-cost" class="block text-xs font-bold text-brand-dark uppercase tracking-wider mb-1">Cost</label>
-                    <div class="flex">
-                        <p class="bg-gray-50 border text-gray-700 border-gray-300 rounded-l-lg px-3 py-2 text-sm">
-                            PHP
-                        </p>
-                        <input type="text" id="add-cost" name="cost" value="{{ old('cost') }}" required placeholder="e.g., 12.34" class="w-full bg-gray-50 border @error('cost') border-red-500 @else border-gray-300 @enderror rounded-r-lg px-3 py-2 text-sm focus:border-brand-gold focus:outline-none transition">
-                        @error('cost') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
-                    </div>
-                </div>
+                    <label for="add-variant"
+                        class="block text-xs font-bold text-brand-dark uppercase tracking-wider mb-1">
+                        Variant
+                    </label>
 
-                <!-- 4. Quantity Field -->
-                <!-- <div>
-                    <label for="add-quantity" class="block text-xs font-bold text-brand-dark uppercase tracking-wider mb-1">Initial Unit Count</label>
-                    <div class="flex">
-                        <input type="number" id="add-quantity" name="quantity" value="{{ old('quantity', '') }}" min="0" placeholder="0"
-                            class="w-full bg-gray-50 border @error('quantity') border-red-500 @else border-gray-300 @enderror rounded-tl-lg rounded-bl-lg px-3 py-2 text-sm focus:border-brand-gold focus:outline-none transition">
-                        @error('quantity') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
-                    <select class="bg-gray-50 border border-l-transparent border-gray-300 rounded-tr-lg rounded-br-lg px-3 py-2 text-sm focus:border-brand-gold focus:outline-none transition">
-                        @foreach($uoms as $key => $unit)
-                            <option value="{{ $unit->id }}" {{ old('uom') == $unit->id ? 'selected' : '' }}>{{ $unit->unit }}</option>
+                    <input type="text"
+                        id="add-variant" name="variant"
+                        value="{{ old('variant') }}" placeholder="e.g., 2.4, 3.6, 5"
+                        class="w-full bg-gray-50 border 
+                            @error('variant') border-red-500 
+                            @else border-gray-300 @enderror rounded-lg px-3 py-2 text-sm focus:border-brand-gold focus:outline-none transition"
+                        required
+                    >
+
+                    @error('variant')
+                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <!-- 6. Unit Field -->
+                    <div>
+                    <label for="add-unit" class="block text-xs font-bold text-brand-dark uppercase tracking-wider mb-1">Unit</label>
+                    <select id="add-unit" name="unit" required
+                        class="w-full bg-gray-50 border @error('unit') border-red-500 @else border-gray-300 @enderror rounded-lg p-2 text-sm focus:border-brand-gold focus:outline-none transition">
+                        <option value="" disabled selected>Select Unit</option>
+                        @foreach($uoms as $unit)
+                            <option value="{{ $unit->id }}" {{ old('unit') == $unit->id ? 'selected' : '' }}>
+                                {{ $unit->unit }}
+                            </option>
                         @endforeach
                     </select>
+                    @error('unit') 
+                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p> 
+                    @enderror
+                </div>
+
+                <!-- 7. Category Field (New Field Mapped to name="category") -->
+                <div>
+                    <label for="add-cost"
+                        class="block text-xs font-bold text-brand-dark uppercase tracking-wider mb-1">
+                        Cost
+                    </label>
+
+                    <div class="flex">
+                        <span class="bg-gray-50 border border-gray-300 rounded-l-lg px-3 py-2 text-sm text-gray-700">
+                            PHP
+                        </span>
+
+                        <input type="number" step="0.01" min="0"
+                            id="add-cost" name="cost"
+                            value="{{ old('cost') }}" placeholder="e.g., 12.34"
+                            class="w-full bg-gray-50 border @error('cost') border-red-500 @else border-gray-300 @enderror rounded-r-lg px-3 py-2 text-sm focus:border-brand-gold focus:outline-none transition"
+                            required
+                        >
                     </div>
-                </div> -->
+
+                    @error('cost')
+                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
             </div>
 
             <!-- Footer Bottom Section -->

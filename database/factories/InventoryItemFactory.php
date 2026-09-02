@@ -16,27 +16,21 @@ class InventoryItemFactory extends Factory
      */
     public function definition(): array
     {
+        // `unique()` must apply to the pair, not to name or variant separately.
+        $pair = fake()->randomElement([
+            'Neogel|200', 'Neogel|215',
+            'Cordtex|5', 'Cordtex|10',
+            'Expando|2.4', 'Expando|3.6',
+            'Detonex|4.9', 'Detonex|38',
+            'Blastpro|10', 'Blastpro|38',
+        ]);
+        [$name, $variant] = explode('|', $pair, 2);
+
         return [
             'item_code' => fake()->unique()->lexify('EXP-???-') . fake()->numerify('####'),
             'supplier_id' => fake()->numberBetween(1, 10),
-
-            'name' => fake()->randomElement([
-                'Neogel',
-                'Cordtex',
-                'Expando',
-                'Detonex',
-                'Blastpro',
-            ]),
-
-            'variant' => function (array $attributes) {
-                return match ($attributes['name']) {
-                    'Neogel' => fake()->randomElement([200, 215]),
-                    'Cordtex' => fake()->randomElement([5, 10]),
-                    'Expando' => fake()->randomElement([2.4, 3.6]),
-                    'Detonex' => fake()->randomElement([4.9, 38]),
-                    'Blastpro' => fake()->randomElement([10, 38]),
-                };
-            },
+            'name' => $name,
+            'variant' => $variant,
 
             'kind_id' => fake()->numberBetween(1, 5),
             'cost' => fake()->randomFloat(1, 15, 100),

@@ -30,14 +30,14 @@ class DatabaseSeeder extends Seeder
             StockSeeder::class, 
             StockMovementSeeder::class, 
             // LocationSeeder::class, 
-            // DailyReportHeaderSeeder::class,
-            // DailyReportDetailSeeder::class,
-            // DailyReportItemSeeder::class,
-            // DailyReportDirectionSeeder::class,
+            DailyReportHeaderSeeder::class,
+            DailyReportDetailSeeder::class,
+            DailyReportItemSeeder::class,
+            DailyReportDirectionSeeder::class,
         ]);
 
-        dump([
-            'inventory_items' => InventoryItem::count(),
-        ]);
+        // dump([
+        //     'inventory_items' => InventoryItem::count(),
+        // ]);
     }
 }

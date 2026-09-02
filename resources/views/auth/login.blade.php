@@ -16,8 +16,8 @@
               Replace the placeholder below with your actual image asset:
               <img class="mx-auto h-16 w-auto" src="{{ asset('images/logow.png') }}" alt="PMC Logo">
             -->
-            <div class="mx-auto h-16 w-16 bg-brand-green text-brand-gold font-black text-2xl flex items-center justify-center rounded-xl shadow-inner tracking-wider">
-                PMC
+            <div class="mx-auto h-32 w-32 flex items-center justify-center">
+                <img src="{{ asset('assets/images/pmc-logo.png') }}"/>
             </div>
             
             <h2 class="mt-6 text-2xl font-bold tracking-tight text-brand-navy">

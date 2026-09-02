@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
 use App\Models\{
     DailyReportHeader,
@@ -40,6 +41,10 @@ class DailyReportController extends Controller
             'owner'
         ];
 
+        $materials = InventoryItem::with(['unit', 'variants'])->get();
+        $levels = Level::where('is_active', true)->orderBy('sort_order')->orderBy('name')->get();
+        $directions = ['stope','robbing','horizontal','raise','winze','shaft_chamber_orepass'];
+        
         $reports = DailyReportHeader::with($reportRelations)
             ->when($request->filled('date'), fn ($query) =>
                 $query->whereDate('report_date', $request->input('date')))
@@ -59,7 +64,10 @@ class DailyReportController extends Controller
         return view('pages.reports.daily.index', [
             'months' => self::MONTHS,
             'types' => self::TYPES,
-            'levels' => Level::where('is_active', true)->orderBy('sort_order')->orderBy('name')->get(),
+            'materials' => $materials,
+            'directions'=> $directions,
+            'sub_direction'=> ['PB', 'SB'],
+            'levels' => $levels,
             'reports' => $reports,
             'selectedReport' => $selectedReport,
         ]);
@@ -168,4 +176,38 @@ class DailyReportController extends Controller
         return redirect()->route('reports.daily.index')
             ->with('success', 'Daily report saved successfully.');
     }
+
+    public function loadReport(int $header_id)
+    {
+        try {
+            $report = DailyReportHeader::with([
+                    'level','owner',
+                    'details',
+                    'details.items',
+                    'details.directions',
+                ])
+                ->where('id', $header_id)
+                ->first();
+
+            return response()->json([
+                'status' => 'success',
+                'data' => $report,
+                'message' => 'Report loaded successfully'
+            ], 200);
+
+        } catch (\Exception $e) {
+            Log::error('FAILED TO LOAD REPORT TABLE', [
+                'location' => class_basename($this),
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            return response()->json([
+                'status' => 'error',
+                'data' => [],
+                'message' => 'Failed to load report'
+            ], 500);
+        }
+    }
+
 }

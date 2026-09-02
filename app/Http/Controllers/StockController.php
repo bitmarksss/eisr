@@ -29,7 +29,6 @@ class StockController extends Controller
     public function index(Request $request)
     {
         $location = $request->segment(1) ?? null; // Default to 'empty' if not provided
-        // dd($request);
 
         $stocks = InventoryStock::query()
 
@@ -63,7 +62,6 @@ class StockController extends Controller
         $levels = Level::get();
         $suppliers = Supplier::get();
         $uoms = UnitOfMeasurement::get();
-        // dd($stocks);
 
         return view('pages.stock.index', compact('stocks' ,'categories', 'levels', 'suppliers', 'uoms', 'location'));
     }
@@ -73,14 +71,23 @@ class StockController extends Controller
      */
     public function receive()
     {
-        $stocks = InventoryStock::with(['item', 'level'])->get();
+        $stocks = InventoryStock::with(['level',
+                'item',
+                'item.kind',
+                'item.variants',
+                'item.unit'
+            ])
+            ->get();
+
+        $items = InventoryItem::with(['kind', 'unit', 'supplier'])->get();
+        // dd($stocks);
 
         $categories = InventoryKind::get();
         $suppliers = Supplier::get();
         $levels = Level::get();
         $uoms = UnitOfMeasurement::get();
 
-        return view('pages.stock.receiving', compact('categories', 'levels', 'stocks', 'suppliers', 'uoms'));
+        return view('pages.stock.receiving', compact('items', 'categories', 'levels', 'stocks', 'suppliers', 'uoms'));
     }
 
     /**

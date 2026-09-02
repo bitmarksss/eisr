@@ -44,6 +44,7 @@
                 </div>
                 
                 <!-- Level Filter -->
+                {{--
                 <div class="space-y-1">
                     <label class="block text-xs font-semibold">Level:</label>
                     <select name="level_id" onchange="this.form.submit()" 
@@ -56,6 +57,7 @@
                         @endforeach
                     </select>
                 </div>
+                --}}
 
                 <div class="space-y-1">
                     <label class="block text-xs font-semibold">Report view:</label>
@@ -118,6 +120,7 @@
                                 <td class="px-5 py-3">{{ $report->owner->username }}</td>
                                 <td class="px-5 py-3 text-right">
                                     <button type="button" data-show-report
+                                        data-report-url="{{ route('reports.daily.load', ['header_id' => $report->id]) }}"
                                         class="mt-2 inline-block text-xs font-bold text-brand-green cursor-pointer hover:underline">
                                         Show report
                                     </button>
@@ -140,13 +143,15 @@
         <div class="mx-auto flex h-full max-w-[98vw] flex-col overflow-hidden rounded-xl border border-gray-200 bg-white shadow-2xl">
             <div class="flex items-center justify-end border-b border-slate-200 bg-slate-50 px-5 py-3">
                 <!-- <h2 id="daily-report-modal-title" class="font-black text-brand-navy">Daily report</h2> -->
-                <button type="button" data-close-report-modal class="rounded-lg px-3 py-1 text-xl font-bold text-slate-500 cursor-pointer hover:bg-slate-200" aria-label="Close report">&times;</button>
+                <button type="button" data-close-report-modal class="rounded-lg px-1.5 py-1 text-xl font-bold text-slate-500 cursor-pointer hover:bg-slate-200" aria-label="Close report">
+                    <i class="fa-solid fa-xmark text-brand-navy"></i>
+                </button>
             </div>
             <div class="min-h-0 flex-1 overflow-auto">
                 <div class="flex flex-col h-full bg-white">
                     @php($type = request()->input('type') ?? 'total')
                     @if($type && in_array($type, $types, true))
-                        @include('pages.reports.daily.' . $type)
+                        @include('pages.reports.daily.report-table')
                     @else
                         <h1 class="p-4 border-b border-gray-200">404 NOT FOUND</h1>
                     @endif
@@ -178,9 +183,49 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     document.querySelectorAll('[data-show-report]').forEach(button => {
-        button.addEventListener('click', () => {
+        button.addEventListener('click', async () => {
             modal.classList.remove('hidden');
             document.body.classList.add('overflow-hidden');
+
+            try {
+                const response = await fetch(button.dataset.reportUrl, {
+                    headers: {
+                        'Accept': 'application/json',
+                    },
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Failed to load report (${response.status})`);
+                }
+
+                // The response is intentionally not rendered yet.
+                let result = await response.json();
+                let data = result.data;
+
+                console.log('REPORT DATA');
+                console.log(data);
+
+                // =============
+                // REPORT DATE
+                // =============
+                let rawDate = new Date(data.report_date);
+                let reportDate = rawDate.toLocaleDateString("en-US", {
+                    month: "long",
+                    day: "2-digit",
+                    year: "numeric",
+                });
+                modal.querySelector('#modal-report-date').textContent = reportDate;
+                
+                // ==============
+                // Report Level
+                // ==============
+                let levelName = data.level.name;
+                modal.querySelector('#modal-report-level').textContent = levelName;
+
+                
+            } catch (error) {
+                console.error('Failed to load daily report:', error);
+            }
         });
     });
 

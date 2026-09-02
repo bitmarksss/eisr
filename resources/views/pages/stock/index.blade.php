@@ -222,21 +222,32 @@
                         <!-- Protected Actions Triggering adjustments -->
                         @if(auth()->user()?->role->role == 'admin')
                         <td class="px-6 py-4 text-right whitespace-nowrap space-x-3">
-                            
+
                             <!-- Update & Record -->
                             @if(request()->routeIs('surface.*'))
-                            <button type="button" 
+                            <x-tooltip text="View Stock Card"
+                                bg_color="bg brand navy"
+                                text_color="text-white"
+                            >
+                                <button type="button" 
                                     onclick="stockCardModal('{{ $item->id }}')"
-                                    class="text-brand-navy hover:underline text-xs font-bold cursor-pointer">
-                                View Stock Card
-                            </button>
+                                    class="py-2 px-2.5 bg-brand-navy text-white rounded-lg hover:underline text-xs font-bold cursor-pointer">
+                                    <i class="fa-solid fa-eye"></i>
+                                </button>
+                            </x-tooltip>
                             @endif
 
                             <!-- Edit -->
-                            <button onclick="editStock('{{ $item->id }}', '{{ $item->supplier->name }}', '{{ addslashes($item->name) }}', '{{ $item->kind->kind }}', '{{ $item->quantity }}')" 
-                                class="text-brand-gold hover:underline text-xs font-bold cursor-pointer">
-                                Edit
-                            </button>
+                            <x-tooltip text="Edit Inventory Stock"
+                                bg_color="bg brand navy"
+                                text_color="text-white"
+                            >
+                                <button onclick="editStock('{{ $item->id }}', '{{ $item->supplier->name }}', '{{ addslashes($item->name) }}', '{{ $item->kind->kind }}', '{{ $item->quantity }}')" 
+                                    class="py-2 px-2.5 bg-amber-400 text-white rounded-lg hover:underline text-xs font-bold cursor-pointer">
+                                    <i class="fa-solid fa-pen-to-square"></i>
+                                </button>
+                            </x-tooltip>
+
                         </td>
                         @endif
                     </tr>

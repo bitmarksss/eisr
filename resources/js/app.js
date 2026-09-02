@@ -45,13 +45,13 @@ document.addEventListener('DOMContentLoaded', () => {
     initModalSystem();
     window.openModal = openModal;
     window.closeModal = closeModal;
-    window.openEditInventoryModal = function (id, supplierId, name, category, cost, quantity = null) {
+    window.openEditInventoryModal = function (id, supplierId, itemCode, name, category, cost, variant, unit, quantity = null) {
         
         const modal = document.getElementById('editInventoryModal');
         const form = document.getElementById('editInventoryForm');
 
         // Set item name
-        document.getElementById('edit-item-name').value = name;
+        document.getElementById('edit-item_code').value = itemCode;
 
         // Select supplier value
         const supplierEl = document.getElementById('edit-supplier');
@@ -67,6 +67,9 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error("Element #edit-supplier-id not found in the DOM.");
         }
         
+        // Set item code
+        document.getElementById('edit-name').value = name;
+
         // Set category value
         const categoryEl = document.getElementById('edit-category');
         if (categoryEl && categoryEl.options) {
@@ -81,6 +84,23 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error("Element #edit-supplier-id not found in the DOM.");
         }
 
+        // Set variant
+        document.getElementById('edit-variant').value = variant;
+
+        // Set category value
+        const unitEl = document.getElementById('edit-unit');
+        if (unitEl && unitEl.options) {
+            const targetOption = Array.from(unitEl.options).find(option => option.value.trim() === unit);
+
+            if (targetOption) {
+                unitEl.value = targetOption.value;
+            } else {
+                console.warn(`Supplier option matching "${unit}" not found.`);
+            }
+        } else {
+            console.error("Element #edit-supplier-id not found in the DOM.");
+        }
+
         // Set cost
         document.getElementById('edit-cost').value = cost;
 
@@ -89,11 +109,8 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('edit-quantity').value = quantity;
         }
 
-        // Set the target endpoint update route dynamically (e.g., /inventory/22)
-        form.action = `/inventory/${id}`;
-        
         // Dynamically update the form action URL to point to your update route endpoint (e.g., /inventory/5)
-        form.action = `/inventory/${id}`;
+        form.action = `/maintenance/inventory/${id}`;
         
         // Remove Tailwind v4 display guards
         window.openModal('editInventoryModal');
@@ -219,7 +236,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const rowHtml = `
             <tr class="text-center max-h-9" data-index="${index}">
                 <!-- Quantity -->
-                <td class="border-box border h-full border-gray-200 p-1">
+                <td class="w-[10%] border-box border h-full border-gray-200 p-1">
                     <input type="number" placeholder="0" 
                         name="items[${index}][quantity]"
                         class="w-full h-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-brand-navy text-xs rounded-lg"/>
@@ -260,9 +277,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 </td>
 
                 <!-- Remove Button -->
-                <td class="border border-gray-200 p-1">
+                <td class="w-[1%] border border-gray-200 p-1">
                     <button type="button" onclick="removeRow('${modalPrefix}', ${index});" 
-                        class="bg-red-500 hover:bg-red-600 active:translate-y-0.5 rounded-lg p-2 cursor-pointer transition">
+                        class="w-full bg-red-500 hover:bg-red-600 active:translate-y-0.5 rounded-lg p-2 cursor-pointer transition">
                         <i class="fa-solid fa-circle-minus fa-lg text-white"></i>
                     </button>
                 </td>
@@ -278,6 +295,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // Unified remove function accepting target container configuration
     window.removeRow = function(modalPrefix, index) {
         const inputsWrapper = document.getElementById(`${modalPrefix}FormInputs`);
+        console.log('modalPrefix:', modalPrefix);
+        console.log('inputsWrapper:', inputsWrapper);
         if (!inputsWrapper) return;
         
         const row = inputsWrapper.querySelector(`tr[data-index="${index}"]`);

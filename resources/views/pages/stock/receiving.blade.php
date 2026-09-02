@@ -26,7 +26,8 @@
 
 
         <!-- Master Update Submission Form Layout -->
-        <form action="" method="POST" class="p-6 space-y-4 w-full">
+        <form action="" method="POST" 
+            id="receiving-form" class="p-6 space-y-4 w-full">
             @csrf
             @method('POST')
             
@@ -37,7 +38,7 @@
                     <label for="receiving-no" class="block text-xs font-bold text-brand-dark uppercase tracking-wider mb-1">Receipt No.</label>
                     <input type="text" id="receiving-no" name="receiving_no" required placeholder="e.g., 1234"
                         class="w-full bg-gray-50 border @error('receiving_no') border-red-500 @else border-gray-300 @enderror rounded-lg px-3 py-2 text-sm focus:border-brand-gold focus:outline-none transition focus:ring-2 focus:ring-brand-gold/20">
-                    @error('name') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                    @error('receiving_no') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                 </div>    
 
                 <!-- Supplier -->
@@ -66,19 +67,26 @@
                 <table class="w-full text-left border border-gray-200 rounded-xl text-xs uppercase font-medium text-gray-600">
                     <thead class="bg-gray-50 text-center select-none sticky top-0 z-10">
                         <tr>
-                            <th rowspan="1" class="border border-gray-200 p-2 text-brand-navy">Quantity</th>
-                            <th rowspan="2" class="border border-gray-200 p-2 text-brand-navy">Item Name</th>
-                            <th rowspan="2" class="border border-gray-200 p-2 text-brand-navy">Category</th>
-                            <th rowspan="2" class="border border-gray-200 p-2 text-brand-navy">UoM</th>
-                            <th rowspan="3" class="border border-gray-200 p-2 text-brand-navy">Remarks</th>
-                            <th rowspan="1" class="border border-gray-200 p-2 text-brand-navy"></th>
+                            <th class="w-[10%] border border-gray-200 p-2 text-brand-navy">Quantity</th>
+                            <th class="border border-gray-200 p-2 text-brand-navy">Item Name</th>
+                            <th class="border border-gray-200 p-2 text-brand-navy">Category</th>
+                            <th class="border border-gray-200 p-2 text-brand-navy">UoM</th>
+                            <th class="border border-gray-200 p-2 text-brand-navy">Remarks</th>
+                            <th class="w-[1%] border border-gray-200 p-2 text-brand-navy">
+                                <button type="button" 
+                                    onclick="addRow('receiving');"
+                                    class="px-5 py-2 rounded-lg bg-brand-green hover:bg-brand-green-hover text-white text-sm font-bold shadow-xs transition cursor-pointer text-nowrap"> 
+                                    <i class="fa-solid fa-circle-plus"></i>
+                                    Add Row
+                                </button>
+                            </th>
                         </tr>
                     </thead>
                     <tbody id="receivingFormInputs" class="bg-white divide-y divide-gray-200">
                         @foreach([0,1,2] as $index)
                         <tr class="text-center max-h-9" data-index="{{ $index }}">
                             <!-- Quantity -->
-                            <td class="border-box border h-full border-gray-200 p-1">
+                            <td class="w-[10%] border-box border h-full border-gray-200 p-1">
                                 <input type="number" 
                                     name="items[{{ $index }}][quantity]" placeholder="0"
                                     class="w-full bg-gray-50 border-gray-300 border rounded-lg px-3 py-2 text-sm focus:border-brand-gold focus:outline-none transition">
@@ -86,20 +94,23 @@
 
                             <!-- Item Name -->
                             <td class="border border-gray-200 p-1">
-                                <select id="receiving-item-name"
-                                    name="items[{{ $index }}][item_name]" required
+                                <select name="items[{{ $index }}][item_name]" required
                                     class="w-full bg-gray-50 border-gray-300 border rounded-lg p-2 text-sm focus:border-brand-gold focus:outline-none transition">
                                     <option value="" disabled selected>Select Item</option>
-                                    @foreach($stocks as $item)
-                                        <option value="{{ $item->id }}" {{ old('item_name') == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
+                                    @foreach($items as $item)
+                                        <option value="{{ $item->id }}" {{ old('item_name') == $item->id ? 'selected' : '' }}
+                                            data-category="{{ $item->kind_id }}"
+                                            data-uom="{{ $item->unit_id }}"
+                                        >
+                                            {{ $item->name }} / {{ $item->variant }}
+                                        </option>
                                     @endforeach
                                 </select>
                             </td>
 
                             <!-- Category -->
                             <td class="border border-gray-200 p-1">
-                                <select id="receiving-item-name" 
-                                    name="items[{{ $index }}][category]" required
+                                <select name="items[{{ $index }}][category]" required
                                     class="w-full bg-gray-50 border-gray-300 border rounded-lg p-2 text-sm focus:border-brand-gold focus:outline-none transition">
                                     <option value="" disabled selected>Select Category</option>
                                     @foreach($categories as $category)
@@ -110,12 +121,11 @@
 
                             <!-- UoM -->
                             <td class="border border-gray-200 p-1">
-                                <select id="receiving-item-name" 
-                                    name="items[{{ $index }}][uom]" required
+                                <select name="items[{{ $index }}][uom]" required
                                     class="w-full bg-gray-50 border-gray-300 border rounded-lg p-2 text-sm focus:border-brand-gold focus:outline-none transition">
                                     <option value="" disabled selected>Select UoM</option>
                                     @foreach($uoms as $uom)
-                                        <option value="{{ $uom->id }}" {{ old('category') == $uom->id ? 'selected' : '' }}>{{ $uom->unit }}</option>
+                                        <option value="{{ $uom->id }}" {{ old('uom') == $uom->id ? 'selected' : '' }}>{{ $uom->unit }}</option>
                                     @endforeach
                                 </select>
                             </td>
@@ -129,9 +139,9 @@
 
                             <!-- Remove Button -->
                             @if($index != 0)
-                            <td class="border border-gray-200 p-1">
-                                <button type="button" onclick="removeRow('${modalPrefix}', {{ $index }});" 
-                                    class="bg-red-500 hover:bg-red-600 active:translate-y-0.5 rounded-lg p-2 cursor-pointer transition">
+                            <td class="w-[1%] border border-gray-200 p-1">
+                                <button type="button" onclick="removeRow(`receiving`, {{ $index }});" 
+                                    class="w-full bg-red-500 hover:bg-red-600 active:translate-y-0.5 rounded-lg p-2 cursor-pointer transition">
                                     <i class="fa-solid fa-circle-minus fa-lg text-white"></i>
                                 </button>
                             </td>
@@ -145,15 +155,7 @@
             </div>
 
             <!-- Footer Bottom Section -->
-            <div class="pt-4 flex justify-between space-x-3 border-t border-gray-100">
-                <div>
-                    <button type="button" 
-                        onclick="addRow('receiving');"
-                        class="px-5 py-2 rounded-lg bg-brand-green hover:bg-brand-green-hover text-white text-sm font-bold shadow-xs transition cursor-pointer">
-                        + Add Row
-                    </button>
-                </div>
-
+            <div class="pt-4 flex justify-end space-x-3 border-t border-gray-100">
                 <div>
                     <button type="button" onclick="window.history.back()" class="px-4 py-2 text-sm font-semibold text-gray-500 hover:text-gray-700 transition cursor-pointer">
                         Cancel
@@ -172,10 +174,36 @@
 @push('scripts')
 <script type="module">
 window.modalData = {
-    inventoryItems: @json($stocks),
+    inventoryItems: @json($items),
     categories: @json($categories),
     uoms: @json($uoms)
 };
+
+const receivingForm = document.getElementById('receiving-form');
+const itemSelects = receivingForm.querySelectorAll('select[name^="items"][name$="[item_name]"]');
+
+receivingForm.addEventListener('click', function(event) {
+
+    if (event.target.matches('select[name^="items"][name$="[item_name]"]')) {
+        const selectedItemId = event.target.value;
+        const selectedItem = window.modalData.inventoryItems.find(item => item.id == selectedItemId);
+
+        if (selectedItem) {
+            const row = event.target.closest('tr');
+            const categorySelect = row.querySelector('select[name^="items"][name$="[category]"]');
+            const uomSelect = row.querySelector('select[name^="items"][name$="[uom]"]');
+
+            if (categorySelect) {
+                categorySelect.value = selectedItem.kind_id;
+            }
+            if (uomSelect) {
+                uomSelect.value = selectedItem.uom;
+            }
+        }
+    }
+
+});
+
 </script>
 @endpush
 

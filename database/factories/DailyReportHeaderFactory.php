@@ -19,6 +19,10 @@ class DailyReportHeaderFactory extends Factory
      */
     public function definition(): array
     {
-        return ['report_date' => $this->faker->date(), 'level_id' => Level::inRandomOrder()->value('id')];
+        return [
+            'report_date' => $this->faker->date(), 
+            'level_id' => Level::inRandomOrder()->value('id'),
+            'prepared_by' => 1,  
+        ];
     }
 }

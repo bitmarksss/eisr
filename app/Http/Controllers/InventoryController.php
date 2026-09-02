@@ -33,13 +33,6 @@ class InventoryController extends Controller
         // Start building the query without executing it yet
         $inventory_items = InventoryItem::query()
 
-            // If location is selected for filtering
-            // ->when(($request->filled('location') && $location != 'list'), function ($query) use ($location) {
-            //     $query->whereHas('stock', function($q) use ($location) {
-            //         $q->where('location', $location);
-            //     });
-            // })
-
             // If category is selected for filtering
             ->when($request->filled('category_filter'), function ($query) use ($request) {
                 $query->whereHas('kind', function ($q) use ($request) {
@@ -58,6 +51,7 @@ class InventoryController extends Controller
         $categories = InventoryKind::get();
         $suppliers = Supplier::get();
         $uoms = UnitOfMeasurement::get();
+        // dd($uoms);
 
         return view('pages.inventory.index', compact('inventory_items' ,'categories', 'suppliers', 'uoms', 'location'));
     }
@@ -66,44 +60,47 @@ class InventoryController extends Controller
     {
         $data = $request->all();
         $categories = InventoryKind::pluck('id')->toArray();
+        // dd($data);
         
         // 1. Validate fields against incoming modal input names
         $validated_data = Validator::make($data, [
-            // 'item_code'     => 'required|string|max:255|unique:inventory,item_code',
             'supplier_id'   => 'required|exists:suppliers,id',
-            'name'     => 'required|string|max:255',
-            'category' => [
+            'name'          => 'required|string|max:255',
+            'item_code'     => 'required|string|max:255',
+            'category'      => [
                 'required', 
                 'integer', 
                 Rule::in($categories),
             ],
-            'cost'     => 'required|numeric|decimal:2',
-            'quantity' => 'required|integer|min:0',
+            'variant'       => 'required|string|max:255',
+            'cost'          => 'required|numeric|decimal:0,2',
+            'unit'          => 'required|exists:uoms,id',
         ]);
 
-        if($validated_data->fails()) {
+        if ($validated_data->fails()) {
             return back()
                 ->with('notification', [
                     'status'   => 'error',
                     'title'    => 'Validation Error',
                     'messages' => $validated_data->errors()->messages(),
                 ])
-                ->with('errors', $validated_data->errors()->all())
+                ->withErrors($validated_data)
                 ->withInput();
         }
 
-
         // 2. Persist data via Mass Assignment using your fillable array
         InventoryItem::create([
-            // 'item_code' => $request->item_code,
-            'name'      => $request->name,
-            'category'  => $request->category,
-            'cost'      => $request->cost,
-            'quantity'  => $request->quantity,
+            'item_code'     => $request->item_code,
+            'supplier_id'   => $request->supplier_id,
+            'name'          => $request->name,
+            'variant'       => $request->variant,
+            'kind_id'       => $request->category,
+            'cost'          => $request->cost,
+            'uom'           => $request->unit,
         ]);
 
         // 3. Redirect back to the index with a clean success message flash
-        return redirect()->route('inventory.index')
+        return redirect()->route('maintenance.inventory.index')
             ->with('success', "Inventory record [{$request->item_code}] created successfully!");
     }
 
@@ -112,25 +109,47 @@ class InventoryController extends Controller
         // 1. Locate the item or throw a 404 if it doesn't exist
         $item = InventoryItem::findOrFail($id);
 
-        // 2. Validate fields, ensuring the unique item_code rule ignores this specific item's ID
-        $request->validate([
-            // 'item_code'=> 'required|string|max:255|unique:inventory,item_code,' . $item->id,
-            'name'     => 'required|string|max:255',
-            'category' => 'required|string',
-            'cost'     => 'required|numeric|decimal:2',
-            'quantity' => 'required|integer|min:0',
+        // 2. Validate fields against incoming modal input names
+        $data = $request->all();
+        $categories = InventoryKind::pluck('id')->toArray();
+        
+        $validated_data = Validator::make($data, [
+            'supplier_id'   => 'required|exists:suppliers,id',
+            'name'          => 'required|string|max:255',
+            'item_code'     => 'required|string|max:255',
+            'category'      => [
+                'required', 
+                'integer', 
+                Rule::in($categories),
+            ],
+            'variant'       => 'required|string|max:255',
+            'cost'          => 'required|numeric|decimal:0,2',
+            'unit'          => 'required|exists:uoms,id',
         ]);
+
+        if ($validated_data->fails()) {
+            return back()
+                ->with('notification', [
+                    'status'   => 'error',
+                    'title'    => 'Validation Error',
+                    'messages' => $validated_data->errors()->messages(),
+                ])
+                ->withErrors($validated_data)
+                ->withInput();
+        }
 
         // 3. Update the fields safely
         $item->update([
-            // 'item_code' => $request->item_code,
-            'name'      => $request->name,
-            'category'  => $request->category,
-            'cost'      => $request->cost,
-            'quantity'  => $request->quantity,
+            'item_code'     => $request->item_code,
+            'supplier_id'   => $request->supplier_id,
+            'name'          => $request->name,
+            'variant'       => $request->variant,
+            'kind_id'       => $request->category,
+            'cost'          => $request->cost,
+            'uom'           => $request->unit,
         ]);
 
-        return redirect()->route('inventory.index')
+        return redirect()->route('maintenance.inventory.index')
             ->with('success', "Inventory item [{$request->item_code}] has been successfully updated!");
     }
 
@@ -185,8 +204,12 @@ class InventoryController extends Controller
         // If you prefer a distinct page view instead of a modal:
         $item = InventoryItem::with('kind')->findOrFail($item_id);
         
+        $categories = InventoryKind::get();
+        $suppliers = Supplier::get();
+        $uoms = UnitOfMeasurement::get();
+        
         // Pass along whatever data your layout expects (like $location, $categories, etc.)
-        return view('inventory.update-record', compact('item'));
+        return view('inventory.update-record', compact('item', 'categories', 'suppliers', 'uoms'));
     }
 
     // Submit your tabular records here

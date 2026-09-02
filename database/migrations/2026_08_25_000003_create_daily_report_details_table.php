@@ -10,6 +10,7 @@ return new class extends Migration {
         Schema::create('daily_report_details', function (Blueprint $table) {
             $table->id();
             $table->foreignId('header_id')->constrained('daily_report_headers')->cascadeOnDelete();
+            $table->integer('shift_no');
             $table->string('contractor_name');
             $table->string('support');
             $table->integer('drill_steel');

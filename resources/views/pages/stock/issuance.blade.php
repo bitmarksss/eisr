@@ -1,161 +1,39 @@
 @extends('layouts.app')
 
 @section('page-title', 'Surface Stock')
-
-@section('sidebar')
-    @include('components.sidebar')
-@endsection
+@section('sidebar') @include('components.sidebar') @endsection
 
 @section('content')
 <div class="space-y-6">
-
-    <!-- Flash Messages -->
     @if(session('success'))
-        <div class="bg-green-100 border border-brand-green/30 text-brand-green p-4 rounded-xl text-sm font-semibold flex items-center shadow-xs">
-            <span class="mr-2">✓</span> {{ session('success') }}
-        </div>
+        <div class="bg-green-100 border border-brand-green/30 text-brand-green p-4 rounded-xl text-sm font-semibold flex items-center shadow-xs"><span class="mr-2">✓</span> {{ session('success') }}</div>
     @endif
-
-    <!-- Receiving Form -->
     <div class="bg-white w-full rounded-2xl border-0 overflow-hidden">
-        
-        <!-- Header Strip -->
-        <div class="px-6 py-4 bg-white text-brand-navy flex justify-center items-center">
-            <p class="px-4 w-full font-bold tracking-wide text-2xl border-0 border-b border-brand-green">Item Issuance Form</p>
-        </div>
-
-
-        <!-- Master Update Submission Form Layout -->
+        <div class="px-6 py-4 bg-white text-brand-navy flex justify-between items-center"><h3 class="px-4 w-full font-bold tracking-wide text-2xl border-0 border-b border-brand-green">Item Issuance Form</h3></div>
         <form action="" method="POST" class="p-6 space-y-4 w-full">
             @csrf
-            @method('POST')
-            
-            <div class="flex items-center justify-center space-x-2">
-                <label for="item-level" class="block text-lg font-bold text-brand-dark uppercase tracking-wider mb-1">Level No.</label>
-                <select id="edit-supplier-id" name="supplier_id" required
-                    class="w-[25%] bg-gray-50 border @error('supplier_id') border-red-500 @else border-gray-300 @enderror rounded-lg p-2 text-sm focus:border-brand-gold focus:outline-none transition">
-                    <option value="" disabled selected>Select Level</option>
-                    @foreach($levels as $level)
-                        <option value="{{ $level->id }}" {{ old('supplier_id') == $level->id ? 'selected' : '' }}>{{ $level->name }}</option>
-                    @endforeach
-                </select>
-            </div>
-
             <div class="overflow-auto flex-1">
                 <table class="w-full text-left border border-gray-200 rounded-xl text-xs uppercase font-medium text-gray-600">
-                    <thead class="bg-gray-50 text-center select-none sticky top-0 z-10">
-                        <tr>
-                            <th rowspan="1" class="border border-gray-200 p-2 text-brand-navy">Quantity</th>
-                            <th rowspan="2" class="border border-gray-200 p-2 text-brand-navy">Item Name</th>
-                            <th rowspan="2" class="border border-gray-200 p-2 text-brand-navy">Category</th>
-                            <th rowspan="2" class="border border-gray-200 p-2 text-brand-navy">UoM</th>
-                            <th rowspan="3" class="border border-gray-200 p-2 text-brand-navy">Remarks</th>
-                            <th rowspan="1" class="border border-gray-200 p-2 text-brand-navy"></th>
-                        </tr>
-                    </thead>
-                    <tbody id="receivingFormInputs" class="bg-white divide-y divide-gray-200">
-                        @foreach([0,1,2] as $index)
+                    <thead class="bg-gray-50 text-center select-none sticky top-0 z-10"><tr>
+                        <th class="w-[10%] border border-gray-200 p-2 text-brand-navy">Quantity</th><th class="border border-gray-200 p-2 text-brand-navy">Item Name</th><th class="border border-gray-200 p-2 text-brand-navy">Level No.</th><th class="border border-gray-200 p-2 text-brand-navy">Remarks</th>
+                        <th class="w-[1%] border border-gray-200 p-2 text-brand-navy"><button type="button" onclick="addRow('issuance');" class="px-5 py-2 rounded-lg bg-brand-green hover:bg-brand-green-hover text-white text-sm font-bold shadow-xs transition cursor-pointer text-nowrap"><i class="fa-solid fa-circle-plus"></i> Add Row</button></th>
+                    </tr></thead>
+                    <tbody id="issuanceFormInputs" class="bg-white divide-y divide-gray-200">
+                    @foreach([0,1,2] as $index)
                         <tr class="text-center max-h-9" data-index="{{ $index }}">
-                            <!-- Quantity -->
-                            <td class="border-box border h-full border-gray-200 p-1">
-                                <input type="number" 
-                                    name="items[{{ $index }}][quantity]" placeholder="0"
-                                    class="w-full bg-gray-50 border-gray-300 border rounded-lg px-3 py-2 text-sm focus:border-brand-gold focus:outline-none transition">
-                            </td>
-
-                            <!-- Item Name -->
-                            <td class="border border-gray-200 p-1">
-                                <select id="receiving-item-name"
-                                    name="items[{{ $index }}][item_name]" required
-                                    class="w-full bg-gray-50 border-gray-300 border rounded-lg p-2 text-sm focus:border-brand-gold focus:outline-none transition">
-                                    <option value="" disabled selected>Select Item</option>
-                                    @foreach($stocks as $item)
-                                        <option value="{{ $item->id }}" {{ old('item_name') == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
-                                    @endforeach
-                                </select>
-                            </td>
-
-                            <!-- Category -->
-                            <td class="border border-gray-200 p-1">
-                                <select id="receiving-item-name" 
-                                    name="items[{{ $index }}][category]" required
-                                    class="w-full bg-gray-50 border-gray-300 border rounded-lg p-2 text-sm focus:border-brand-gold focus:outline-none transition">
-                                    <option value="" disabled selected>Select Category</option>
-                                    @foreach($categories as $category)
-                                        <option value="{{ $category->id }}" {{ old('category') == $category->id ? 'selected' : '' }}>{{ $category->kind }}</option>
-                                    @endforeach
-                                </select>
-                            </td>
-
-                            <!-- UoM -->
-                            <td class="border border-gray-200 p-1">
-                                <select id="receiving-item-name" 
-                                    name="items[{{ $index }}][uom]" required
-                                    class="w-full bg-gray-50 border-gray-300 border rounded-lg p-2 text-sm focus:border-brand-gold focus:outline-none transition">
-                                    <option value="" disabled selected>Select UoM</option>
-                                    @foreach($uoms as $uom)
-                                        <option value="{{ $uom->id }}" {{ old('category') == $uom->id ? 'selected' : '' }}>{{ $uom->unit }}</option>
-                                    @endforeach
-                                </select>
-                            </td>
-
-                            <!-- Remarks -->
-                            <td class="border border-gray-200 p-1">
-                                <input type="text" 
-                                    name="items[{{ $index }}][remarks]" placeholder="Any additional details..."
-                                    class="w-full bg-gray-50 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:border-brand-gold focus:outline-none transition">
-                            </td>
-
-                            <!-- Remove Button -->
-                            @if($index != 0)
-                            <td class="border border-gray-200 p-1">
-                                <button type="button" onclick="removeRow('${modalPrefix}', {{ $index }});" 
-                                    class="bg-red-500 hover:bg-red-600 active:translate-y-0.5 rounded-lg p-2 cursor-pointer transition">
-                                    <i class="fa-solid fa-circle-minus fa-lg text-white"></i>
-                                </button>
-                            </td>
-                            @else
-                            <td></td>
-                            @endif
+                            <td class="w-[10%] border border-gray-200 p-1"><input type="number" name="items[{{ $index }}][quantity]" value="{{ old("items.$index.quantity") }}" placeholder="0" min="1" required class="w-full bg-gray-50 border-gray-300 border rounded-lg px-3 py-2 text-sm focus:border-brand-gold focus:outline-none transition"></td>
+                            <td class="border border-gray-200 p-1"><select name="items[{{ $index }}][item_name]" required class="w-full bg-gray-50 border-gray-300 border rounded-lg p-2 text-sm focus:border-brand-gold focus:outline-none transition"><option value="" disabled {{ old("items.$index.item_name") ? '' : 'selected' }}>Select Item</option>@foreach($stocks as $stock)<option value="{{ $stock->item_id }}" {{ old("items.$index.item_name") == $stock->item_id ? 'selected' : '' }}>{{ $stock->item->name }} / {{ $stock->item->variant }}</option>@endforeach</select></td>
+                            <td class="border border-gray-200 p-1"><select name="items[{{ $index }}][level_id]" required class="w-full bg-gray-50 border-gray-300 border rounded-lg p-2 text-sm focus:border-brand-gold focus:outline-none transition"><option value="" disabled {{ old("items.$index.level_id") ? '' : 'selected' }}>Select Level</option>@foreach($levels as $level)<option value="{{ $level->id }}" {{ old("items.$index.level_id") == $level->id ? 'selected' : '' }}>{{ $level->name }}</option>@endforeach</select></td>
+                            <td class="border border-gray-200 p-1"><input type="text" name="items[{{ $index }}][remarks]" value="{{ old("items.$index.remarks") }}" placeholder="Any additional details..." class="w-full bg-gray-50 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:border-brand-gold focus:outline-none transition"></td>
+                            @if($index !== 0)<td class="w-[1%] border border-gray-200 p-1"><button type="button" onclick="removeRow('issuance', {{ $index }});" class="w-full bg-red-500 hover:bg-red-600 active:translate-y-0.5 rounded-lg p-2 cursor-pointer transition"><i class="fa-solid fa-circle-minus fa-lg text-white"></i></button></td>@else<td></td>@endif
                         </tr>
-                        @endforeach
+                    @endforeach
                     </tbody>
                 </table>
             </div>
-
-            <!-- Footer Bottom Section -->
-            <div class="pt-4 flex justify-between space-x-3 border-t border-gray-100">
-                <div>
-                    <button type="button" 
-                        onclick="addRow('receiving');"
-                        class="px-5 py-2 rounded-lg bg-brand-green hover:bg-brand-green-hover text-white text-sm font-bold shadow-xs transition cursor-pointer">
-                        + Add Row
-                    </button>
-                </div>
-
-                <div>
-                    <button type="button" onclick="window.history.back()" class="px-4 py-2 text-sm font-semibold text-gray-500 hover:text-gray-700 transition cursor-pointer">
-                        Cancel
-                    </button>
-                    <button type="submit" class="px-5 py-2 rounded-lg bg-brand-gold hover:bg-brand-gold-hover text-white text-sm font-bold shadow-xs transition cursor-pointer">
-                        Confirm
-                    </button>
-                </div>
-            </div>
+            <div class="pt-4 flex justify-end space-x-3 border-t border-gray-100"><button type="button" onclick="window.history.back()" class="px-4 py-2 text-sm font-semibold text-gray-500 hover:text-gray-700 transition cursor-pointer">Cancel</button><button type="submit" class="px-5 py-2 rounded-lg bg-brand-gold hover:bg-brand-gold-hover text-white text-sm font-bold shadow-xs transition cursor-pointer">Confirm</button></div>
         </form>
     </div>
 </div>
-
-
-
-@push('scripts')
-<script type="module">
-window.modalData = {
-    inventoryItems: @json($stocks),
-    categories: @json($categories),
-    uoms: @json($uoms)
-};
-</script>
-@endpush
-
+@push('scripts')<script type="module">window.modalData = { inventoryItems: @json($stocks), levels: @json($levels) };</script>@endpush
 @endsection

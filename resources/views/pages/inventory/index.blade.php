@@ -158,6 +158,7 @@
                             @if(auth()->user()?->role->role == 'admin')
                                 <td class="px-6 py-4 text-right whitespace-nowrap space-x-3">
                                     
+                                    <!-- DEPRECATED -->
                                     <!-- Update & Record -->
                                     @if(request()->routeIs('surface.inventory.*'))
                                     <button type="button" 
@@ -166,12 +167,19 @@
                                         View Stock Card
                                     </button>
                                     @endif
+                                    <!-- DEPRECATED -->
 
                                     <!-- Edit -->
-                                    <button onclick="openEditInventoryModal('{{ $item->id }}', '{{ $item->supplier->id }}', '{{ addslashes($item->name) }}', '{{ $item->kind->id }}', '{{ $item->cost }}', '{{ $item->quantity }}')" 
-                                       class="text-brand-gold hover:underline text-xs font-bold cursor-pointer">
-                                        Edit
-                                    </button>
+                                    <x-tooltip text="Edit"
+                                        bg_color="bg brand navy"
+                                        text_color="text-white"
+                                    >
+                                        <button onclick="openEditInventoryModal('{{ $item->id }}', '{{ $item->supplier->id }}', '{{ $item->item_code }}', '{{ addslashes($item->name) }}', '{{ $item->kind->id }}', '{{ $item->cost }}', '{{ $item->variant }}', '{{ $item->uom }}', '{{ $item->quantity }}')" 
+                                            class="rounded-lg bg-amber-500 py-2 px-2.5 text-white hover:underline text-xs font-bold cursor-pointer">
+                                            <i class="fa-solid fa-pen-to-square"></i>
+                                        </button>
+
+                                    </x-tooltip>
                                 </td>
                             @endif
                         </tr>

@@ -44,7 +44,7 @@
                     <tr class="bg-gray-50 text-xs font-bold text-brand-navy uppercase tracking-wider border-b border-gray-200">
                         <th class="px-6 py-4">Timestamp (UTC)</th>
                         <th class="px-6 py-4">Module</th>
-                        <th class="px-6 py-4">ID</th>
+                        <th class="px-6 py-4 text-center">ID</th>
                         <th class="px-6 py-4">User</th>
                         <th class="px-6 py-4">Action</th>
                         <th class="px-6 py-4">Location</th>
@@ -113,7 +113,7 @@
                                             <div class="mt-1 space-y-1 font-mono text-[11px] bg-gray-50 p-2 rounded border border-gray-100">
                                                 @foreach($log->new_values as $key => $newValue)
                                                     <div>
-                                                        <span class="text-gray-400 font-sans">{{ text_transform($key) }}:</span> 
+                                                        <span class="text-gray-400 font-sans">{{ mb_strtoupper($key) }}:</span> 
                                                         <span class="text-red-600 line-through mr-1">{{ $log->old_values[$key] ?? 'empty' }}</span> 
                                                         <i class="fa-solid fa-arrow-right text-gray-400 text-[9px] mx-1"></i>
                                                         <span class="text-brand-green font-semibold">{{ $newValue }}</span>

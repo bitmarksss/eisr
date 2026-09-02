@@ -11,7 +11,7 @@ class DailyReportDetail extends Model
 {
     use HasFactory, LogsActivity;
 
-    protected $fillable = ['header_id', 'contractor_name', 'support', 'drill_steel', 'working_place'];
+    protected $fillable = ['header_id', 'shift_no', 'contractor_name', 'support', 'drill_steel', 'working_place'];
     protected $casts = ['drill_steel' => 'integer'];
 
     public function header(): BelongsTo { return $this->belongsTo(DailyReportHeader::class, 'header_id'); }

@@ -10,6 +10,10 @@ class DailyReportItemFactory extends Factory
     protected $model = DailyReportItem::class;
     public function definition(): array
     {
-        return ['detail_id' => \App\Models\DailyReportDetail::factory(), 'item_id' => \App\Models\InventoryItem::factory(), 'quantity' => $this->faker->randomFloat(3, 1, 100)];
+        return [
+            'detail_id' => \App\Models\DailyReportDetail::factory(),
+            'item_id' => \App\Models\InventoryItem::query()->inRandomOrder()->value('id'),
+            'quantity' => $this->faker->randomFloat(3, 1, 100),
+        ];
     }
 }
