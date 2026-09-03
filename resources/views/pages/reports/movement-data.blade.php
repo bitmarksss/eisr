@@ -275,12 +275,14 @@ function viewMovementDetails(movement) {
     });
 
     // Populate Left Panel (Summary Table)
-    const summaryBody = document.getElementById('modalSummaryBody');
-    summaryBody.innerHTML = '';
+   const summaryBody = document.getElementById('modalSummaryBody');
+    if (!summaryBody) return;
+
+    let summaryHtml = '';
     let summaryIndex = 1;
 
     for (const [particular, data] of Object.entries(summaryMap)) {
-        summaryBody.innerHTML += `
+        summaryHtml += `
             <tr class="hover:bg-gray-50/50 text-gray-800">
                 <td class="border border-gray-300 p-2 text-center font-bold">${summaryIndex++}</td>
                 <td class="border border-gray-300 p-2 font-semibold">${particular}</td>
@@ -290,9 +292,11 @@ function viewMovementDetails(movement) {
         `;
     }
 
+    summaryBody.setHTML(summaryHtml);
+
     // Populate Right Panel (Per Level Tables)
     const levelsContainer = document.getElementById('modalLevelsContainer');
-    levelsContainer.innerHTML = '';
+    levelsContainer.setHTML('');
 
     const sortedLevelsMap = Object.fromEntries(
         Object.entries(levelsMap).sort(([a], [b]) => {
@@ -301,6 +305,7 @@ function viewMovementDetails(movement) {
             return levelA - levelB;
         })
     ); 
+
     for (const [levelName, levelItems] of Object.entries(sortedLevelsMap)) {
         let levelRowsHtml = '';
         levelItems.forEach((lvlItem, idx) => {
@@ -314,7 +319,7 @@ function viewMovementDetails(movement) {
             `;
         });
 
-        levelsContainer.innerHTML += `
+        levelsContainer.setHTML += `
             <div class="bg-white border border-gray-300 rounded-lg overflow-hidden shadow-2xs">
                 <div class="bg-gray-200 px-3 py-1.5 border-b border-gray-300 text-center font-extrabold text-xs text-brand-navy uppercase tracking-wider">
                     ${levelName}

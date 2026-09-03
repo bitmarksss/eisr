@@ -12,6 +12,7 @@ use App\Http\Controllers\{
     ReportsController,
     DailyReportController,
     StockController,
+    SupplierController,
 
     LoanController,
     GroceryController,
@@ -41,6 +42,11 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
 
     // MAINTENANCE
     Route::prefix('maintenance')->name('maintenance.')->group(function () {
+    
+        // SUPPLIERS
+        Route::prefix('SUPPLIER')->name('inventory.')->group(function () {
+            Route::get('/{supplier}/items', [SupplierController::class, 'supplierItems'])->name('suppliers.items');
+        });
         
         // ITEMS
         Route::prefix('inventory')->name('inventory.')->group(function () {

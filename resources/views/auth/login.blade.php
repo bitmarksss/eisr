@@ -51,7 +51,7 @@
             <div class="space-y-4 rounded-md shadow-xs">
                 <!-- Email/Username Input -->
                 <div>
-                    <label for="username" class="block text-sm font-semibold text-brand-dark mb-1">Email Address or Username</label>
+                    <label for="username" class="block text-sm font-semibold text-brand-dark mb-1">Username</label>
                     <input id="username" name="username" type="username" autocomplete="username" required 
                         value="{{ old('username') }}"
                         class="block w-full rounded-lg border border-gray-300 px-3 py-2.5 text-brand-dark placeholder-gray-400 focus:border-brand-gold focus:outline-none focus:ring-2 focus:ring-brand-gold/20 sm:text-sm transition" 

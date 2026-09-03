@@ -147,7 +147,7 @@ document.addEventListener('DOMContentLoaded', function () {
             </td>`).join('');
 
         row.classList.add('text-center')
-        row.innerHTML = `
+        row.setHTML = `
             <td class="border p-2">
                 <input required name="shifts[${shift}][rows][${i}][contractor_name]" class="${text}" placeholder="Contractor">
             </td>

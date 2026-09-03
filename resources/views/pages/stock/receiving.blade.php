@@ -102,7 +102,7 @@
                                             data-category="{{ $item->kind_id }}"
                                             data-uom="{{ $item->unit_id }}"
                                         >
-                                            {{ $item->name }} / {{ $item->variant }}
+                                            {{ $item->name }} {{ $item->variant }}
                                         </option>
                                     @endforeach
                                 </select>
@@ -174,13 +174,27 @@
 @push('scripts')
 <script type="module">
 window.modalData = {
-    inventoryItems: @json($items),
+    inventoryItems: [],
     categories: @json($categories),
     uoms: @json($uoms)
 };
 
 const receivingForm = document.getElementById('receiving-form');
 const itemSelects = receivingForm.querySelectorAll('select[name^="items"][name$="[item_name]"]');
+
+
+const supplierSelect = document.getElementById('edit-supplier-id');
+
+supplierSelect.addEventListener('change', async function () {
+    const supplierId = this.value;
+
+    if (!supplierId) return;
+
+    // Fetch items...
+    const response = await fetch(`/suppliers/${supplierId}/items`);
+    const items = await response.json();    
+    window.modalData.inventoryItems = items;
+});
 
 receivingForm.addEventListener('click', function(event) {
 
@@ -203,7 +217,6 @@ receivingForm.addEventListener('click', function(event) {
     }
 
 });
-
 </script>
 @endpush
 
