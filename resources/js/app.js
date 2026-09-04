@@ -10,12 +10,12 @@ import { initModuleHeaderAnim } from './components/module_header';
 import { initModuleScripts } from './components/module_scripts';
 import {  } from './components/daily-reports';
 
+// Stock Module Functions
 import * as stockModule from './components/module_stocks';
-Object.assign(window, stockModule, updateSelects);
+Object.assign(window, stockModule);
 
 // Initialize when the DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
-
     // Initialize notification system
     initNotificationSystem();
 

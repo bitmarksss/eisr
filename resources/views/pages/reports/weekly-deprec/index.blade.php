@@ -112,7 +112,7 @@ window.consumptionModal = function(reportType, itemData) {
     const titleSpan = document.getElementById('consumptionModalTitle');
     
     titleSpan.textContent = reportType || 'Report';
-    tbody.setHTML = '';
+    tbody.innerHTML = '';
 
     modal.querySelector('#itemName').textContent = itemData.name;
 
@@ -181,7 +181,7 @@ window.consumptionModal = function(reportType, itemData) {
         </tr>
     `;
 
-    tbody.setHTML = rowsHtml;
+    tbody.innerHTML = rowsHtml;
 
     // Show Modal
     modal.classList.remove('opacity-0', 'pointer-events-none');

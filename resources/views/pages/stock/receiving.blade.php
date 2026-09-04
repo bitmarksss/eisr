@@ -15,6 +15,11 @@
             <span class="mr-2">✓</span> {{ session('success') }}
         </div>
     @endif
+    @if(session('errors'))
+        <div class="bg-red-100 border border-red-300 text-red-600 p-4 rounded-xl text-sm font-semibold flex items-center shadow-xs">
+            <span class="mr-2">✗</span> {{ session('errors') }}
+        </div>
+    @endif
 
     <!-- Receiving Form -->
     <div class="bg-white w-full rounded-2xl border-0 overflow-hidden">
@@ -26,7 +31,7 @@
 
 
         <!-- Master Update Submission Form Layout -->
-        <form action="" method="POST" 
+        <form action="{{ route('surface.stock.store') }}" method="POST" 
             id="receiving-form" class="p-6 space-y-4 w-full">
             @csrf
             @method('POST')
@@ -57,7 +62,7 @@
                 <!-- Date Received -->
                 <div>
                     <label for="receiving-date" class="block text-xs font-bold text-brand-dark uppercase tracking-wider mb-1">Receiving Date</label>
-                    <input type="date" id="receiving-date" name="receiving_date" required 
+                    <input type="date" id="receiving-date" name="receiving_date" required
                         class="w-full bg-gray-50 border @error('receiving_date') border-red-500 @else border-gray-300 @enderror rounded-lg px-3 py-2 text-sm focus:border-brand-gold focus:outline-none transition focus:ring-2 focus:ring-brand-gold/20">
                     @error('name') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                 </div>   
@@ -179,10 +184,11 @@ window.modalData = {
     uoms: @json($uoms)
 };
 
+document.addEventListener('DOMContentLoaded',() => {
+    document.getElementById('receiving-date').value = new Date().toISOString().split('T')[0];
+});
+
 const receivingForm = document.getElementById('receiving-form');
-const itemSelects = receivingForm.querySelectorAll('select[name^="items"][name$="[item_name]"]');
-
-
 const supplierSelect = document.getElementById('edit-supplier-id');
 
 supplierSelect.addEventListener('change', async function () {
@@ -190,18 +196,41 @@ supplierSelect.addEventListener('change', async function () {
 
     if (!supplierId) return;
 
+    resetReceivingRows();
+    setReceivingRowsLoading(true);
+
     // Fetch items...
-    const response = await fetch(`/suppliers/${supplierId}/items`);
-    const items = await response.json();    
-    window.modalData.inventoryItems = items;
+    try {
+        const response = await fetch('/maintenance/supplier/' + supplierId + '/items', {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        });
+
+        if (!response.ok) throw new Error('Unable to load supplier items.');
+
+        const items = await response.json();
+        window.modalData.inventoryItems = items;
+        receivingForm.querySelectorAll('select[name^="items"][name$="[item_name]"]')
+            .forEach(select => populateItemSelect(select, items));
+        refreshSelectedItemOptions();
+    } catch (error) {
+        window.modalData.inventoryItems = [];
+        receivingForm.querySelectorAll('select[name^="items"][name$="[item_name]"]')
+            .forEach(select => populateItemSelect(select, []));
+        console.error(error);
+    } finally {
+        setReceivingRowsLoading(false);
+    }
 });
 
-receivingForm.addEventListener('click', function(event) {
+receivingForm.addEventListener('change', function(event) {
 
     if (event.target.matches('select[name^="items"][name$="[item_name]"]')) {
         const selectedItemId = event.target.value;
         const selectedItem = window.modalData.inventoryItems.find(item => item.id == selectedItemId);
-
         if (selectedItem) {
             const row = event.target.closest('tr');
             const categorySelect = row.querySelector('select[name^="items"][name$="[category]"]');
@@ -211,12 +240,80 @@ receivingForm.addEventListener('click', function(event) {
                 categorySelect.value = selectedItem.kind_id;
             }
             if (uomSelect) {
-                uomSelect.value = selectedItem.uom;
+                uomSelect.value = selectedItem.uom ?? selectedItem.unit_id;
             }
+
+            refreshSelectedItemOptions();
         }
     }
 
 });
+
+function populateItemSelect(select, items) {
+    select.replaceChildren(new Option('Select Item', '', true, true));
+    select.options[0].disabled = true;
+    items.forEach(item => {
+        const option = new Option(
+            (item.name + ' ' + (item.variant || '')).trim(),
+            item.id
+        );
+        option.dataset.category = item.kind_id;
+        option.dataset.uom = item.uom ?? item.unit_id;
+        select.add(option);
+    });
+}
+
+function refreshSelectedItemOptions() {
+    const selects = [...receivingForm.querySelectorAll(
+        'select[name^="items"][name$="[item_name]"]'
+    )];
+    const selectedValues = selects
+        .map(select => select.value)
+        .filter(value => value !== '');
+
+    selects.forEach(select => {
+        [...select.options].forEach(option => {
+            option.disabled =
+                option.value !== '' &&
+                option.value !== select.value &&
+                selectedValues.includes(option.value);
+        });
+    });
+}
+
+function resetReceivingRows() {
+    const rows = receivingForm.querySelectorAll('#receivingFormInputs tr');
+
+    rows.forEach((row, index) => {
+        if (index >= 3) {
+            row.remove();
+            return;
+        }
+
+        row.querySelector('input[name$="[quantity]"]').value = '';
+        row.querySelector('select[name$="[category]"]').value = '';
+        row.querySelector('select[name$="[uom]"]').value = '';
+        row.querySelector('select[name$="[item_name]"]').value = '';
+    });
+}
+
+function setReceivingRowsLoading(isLoading) {
+    receivingForm.querySelectorAll('#receivingFormInputs tr').forEach(row => {
+        row.classList.toggle('animate-pulse', isLoading);
+        row.classList.toggle('opacity-60', isLoading);
+
+        row.querySelectorAll('input, select').forEach(field => {
+            field.disabled = isLoading;
+        });
+
+        row.querySelectorAll('select[name$="[item_name]"]').forEach(select => {
+            if (isLoading) {
+                select.replaceChildren(new Option('Loading items...', '', true, true));
+                select.options[0].disabled = true;
+            }
+        });
+    });
+}
 </script>
 @endpush
 

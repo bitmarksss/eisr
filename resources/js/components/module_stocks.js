@@ -1,5 +1,4 @@
-// For RECEIVING and ISSUANCE modal
-
+// For Stock Module
 import { availableIndex } from '../components/helpers';
 
 // Global function to add a row to ANY table container
@@ -47,7 +46,7 @@ export function updateItemSelects(items) {
     selects.forEach(select => {
         populateItemSelect(select, items);
     });
-}
+};
 
 
 // Create the complete table row using DOM APIs

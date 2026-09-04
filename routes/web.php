@@ -44,7 +44,7 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
     Route::prefix('maintenance')->name('maintenance.')->group(function () {
     
         // SUPPLIERS
-        Route::prefix('SUPPLIER')->name('inventory.')->group(function () {
+        Route::prefix('supplier')->name('supplier.')->group(function () {
             Route::get('/{supplier}/items', [SupplierController::class, 'supplierItems'])->name('suppliers.items');
         });
         

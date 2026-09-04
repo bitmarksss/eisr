@@ -29,14 +29,14 @@ export default function loadDatatable(dataTableID, {
     const thead = table.querySelector('thead');
     const tbody = table.querySelector('tbody');
 
-    thead.setHTML('');
-    tbody.setHTML('');
+    thead.innerHTML = '';
+    tbody.innerHTML = '';
 
     // Build dynamic header
     const headerRow = document.createElement('tr');
     headers.forEach(header => {
         const th = document.createElement('th');
-        th.setHTML(`<span class="flex items-center">${header}</span>`);
+        th.innerHTML = `<span class="flex items-center">${header}</span>`;
         headerRow.appendChild(th);
     });
     thead.appendChild(headerRow);

@@ -60,7 +60,6 @@ class InventoryController extends Controller
     {
         $data = $request->all();
         $categories = InventoryKind::pluck('id')->toArray();
-        // dd($data);
         
         // 1. Validate fields against incoming modal input names
         $validated_data = Validator::make($data, [

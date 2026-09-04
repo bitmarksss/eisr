@@ -292,11 +292,11 @@ function viewMovementDetails(movement) {
         `;
     }
 
-    summaryBody.setHTML(summaryHtml);
+    summaryBody.innerHTML = summaryHtml;
 
     // Populate Right Panel (Per Level Tables)
     const levelsContainer = document.getElementById('modalLevelsContainer');
-    levelsContainer.setHTML('');
+    levelsContainer.innerHTML = '';
 
     const sortedLevelsMap = Object.fromEntries(
         Object.entries(levelsMap).sort(([a], [b]) => {
@@ -319,7 +319,7 @@ function viewMovementDetails(movement) {
             `;
         });
 
-        levelsContainer.setHTML += `
+        levelsContainer.innerHTML += `
             <div class="bg-white border border-gray-300 rounded-lg overflow-hidden shadow-2xs">
                 <div class="bg-gray-200 px-3 py-1.5 border-b border-gray-300 text-center font-extrabold text-xs text-brand-navy uppercase tracking-wider">
                     ${levelName}

@@ -18,8 +18,10 @@ use App\Models\{
 };
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Str;
 
 class StockController extends Controller
 {
@@ -80,8 +82,6 @@ class StockController extends Controller
             ->get();
 
         $items = InventoryItem::with(['kind', 'unit', 'supplier'])->get();
-        // dd($stocks);
-
         $categories = InventoryKind::get();
         $suppliers = Supplier::get();
         $levels = Level::get();
@@ -110,7 +110,77 @@ class StockController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'receiving_no' => [
+                'required',
+                'string',
+                'max:100',
+                Rule::unique('stock_movements', 'reference_no'),
+            ],
+            'supplier_id' => ['required', 'integer', 'exists:suppliers,id'],
+            'receiving_date' => ['required', 'date'],
+            'items' => ['required', 'array', 'min:1'],
+            'items.*.quantity' => ['required', 'integer', 'min:1'],
+            'items.*.item_name' => ['required', 'integer', 'exists:inventory_items,id'],
+            'items.*.category' => ['required', 'integer', 'exists:inventory_kinds,id'],
+            'items.*.uom' => ['required', 'integer', 'exists:uoms,id'],
+            'items.*.remarks' => ['nullable', 'string', 'max:1000'],
+        ]);
+        if ($validator->fails()) {
+            return back()
+                ->with('notification', [
+                    'status'   => 'error',
+                    'title'    => 'Input Error',
+                    'messages' => $validator->errors()->all(),
+                ])
+                ->withErrors($validator)
+                ->withInput();
+        }
+
+        $data = $validator->validated();
+    
+        DB::transaction(function () use ($data) {
+            $movement = StockMovement::create([
+                'reference_no' => $data['receiving_no'],
+                'type' => 'adjustment',
+                'user_id' => auth()->id(),
+                'notes' => json_encode([
+                    'transaction' => 'receiving',
+                    'supplier_id' => $data['supplier_id'],
+                    'receiving_date' => $data['receiving_date'],
+                ]),
+            ]);
+
+            foreach ($data['items'] as $line) {
+                $stock = InventoryStock::where('item_id', $line['item_name'])
+                    ->where('location', 'surface')
+                    ->whereNull('level_id')
+                    ->lockForUpdate()
+                    ->first();
+
+                if ($stock) {
+                    $stock->increment('quantity', $line['quantity']);
+                } else {
+                    InventoryStock::create([
+                        'item_id' => $line['item_name'],
+                        'location' => 'surface',
+                        'level_id' => null,
+                        'quantity' => $line['quantity'],
+                    ]);
+                }
+
+                $movement->items()->create([
+                    'item_id' => $line['item_name'],
+                    'source_location' => 'surface',
+                    'destination_location' => 'surface',
+                    'quantity' => $line['quantity'],
+                    'remarks' => $line['remarks'] ?? null,
+                ]);
+            }
+        });
+
+        return redirect()->route('surface.stock.index')
+            ->with('success', 'Stock received and inventory updated successfully.');
     }
 
     /**
