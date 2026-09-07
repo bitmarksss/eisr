@@ -31,7 +31,7 @@
 
 
         <!-- Master Update Submission Form Layout -->
-        <form action="{{ route('surface.stock.store') }}" method="POST" 
+        <form action="{{ route('surface.stock.receive.store') }}" method="POST" 
             id="receiving-form" class="p-6 space-y-4 w-full">
             @csrf
             @method('POST')
@@ -102,19 +102,16 @@
                                 <select name="items[{{ $index }}][item_name]" required
                                     class="w-full bg-gray-50 border-gray-300 border rounded-lg p-2 text-sm focus:border-brand-gold focus:outline-none transition">
                                     <option value="" disabled selected>Select Item</option>
-                                    @foreach($items as $item)
-                                        <option value="{{ $item->id }}" {{ old('item_name') == $item->id ? 'selected' : '' }}
-                                            data-category="{{ $item->kind_id }}"
-                                            data-uom="{{ $item->unit_id }}"
-                                        >
-                                            {{ $item->name }} {{ $item->variant }}
-                                        </option>
-                                    @endforeach
                                 </select>
                             </td>
 
                             <!-- Category -->
                             <td class="border border-gray-200 p-1">
+                                <input type="text" readonly
+                                    name="items[{{ $index }}][category]" placeholder="Item category..."
+                                    class="w-full bg-gray-50 border-gray-300 border rounded-lg px-3 py-2 text-sm focus:border-brand-gold focus:outline-none transition">
+                          
+                                {{--
                                 <select name="items[{{ $index }}][category]" required
                                     class="w-full bg-gray-50 border-gray-300 border rounded-lg p-2 text-sm focus:border-brand-gold focus:outline-none transition">
                                     <option value="" disabled selected>Select Category</option>
@@ -122,10 +119,16 @@
                                         <option value="{{ $category->id }}" {{ old('category') == $category->id ? 'selected' : '' }}>{{ $category->kind }}</option>
                                     @endforeach
                                 </select>
+                                --}}
                             </td>
 
                             <!-- UoM -->
                             <td class="border border-gray-200 p-1">
+                                <input type="text" readonly
+                                    name="items[{{ $index }}][uom]" placeholder="Item unit..."
+                                    class="w-full bg-gray-50 border-gray-300 border rounded-lg px-3 py-2 text-sm focus:border-brand-gold focus:outline-none transition">
+                          
+                                {{--
                                 <select name="items[{{ $index }}][uom]" required
                                     class="w-full bg-gray-50 border-gray-300 border rounded-lg p-2 text-sm focus:border-brand-gold focus:outline-none transition">
                                     <option value="" disabled selected>Select UoM</option>
@@ -133,6 +136,7 @@
                                         <option value="{{ $uom->id }}" {{ old('uom') == $uom->id ? 'selected' : '' }}>{{ $uom->unit }}</option>
                                     @endforeach
                                 </select>
+                                --}}
                             </td>
 
                             <!-- Remarks -->
@@ -173,8 +177,7 @@
         </form>
     </div>
 </div>
-
-
+@endsection
 
 @push('scripts')
 <script type="module">
@@ -227,20 +230,30 @@ supplierSelect.addEventListener('change', async function () {
 });
 
 receivingForm.addEventListener('change', function(event) {
-
     if (event.target.matches('select[name^="items"][name$="[item_name]"]')) {
         const selectedItemId = event.target.value;
         const selectedItem = window.modalData.inventoryItems.find(item => item.id == selectedItemId);
+        
+        console.log('selectedItem', selectedItem);
         if (selectedItem) {
             const row = event.target.closest('tr');
-            const categorySelect = row.querySelector('select[name^="items"][name$="[category]"]');
-            const uomSelect = row.querySelector('select[name^="items"][name$="[uom]"]');
 
-            if (categorySelect) {
-                categorySelect.value = selectedItem.kind_id;
+            // const categorySelect = row.querySelector('select[name^="items"][name$="[category]"]');
+            // const uomSelect = row.querySelector('select[name^="items"][name$="[uom]"]');
+            // if (categorySelect) {
+            //     categorySelect.value = selectedItem.kind_id;
+            // }
+            // if (uomSelect) {
+            //     uomSelect.value = selectedItem.uom ?? selectedItem.unit_id;
+            // }
+            
+            const categoryInput = row.querySelector('input[name^="items"][name$="[category]"]');
+            const uomInput = row.querySelector('input[name^="items"][name$="[uom]"]');
+            if (categoryInput) {
+                categoryInput.value = selectedItem.kind;
             }
-            if (uomSelect) {
-                uomSelect.value = selectedItem.uom ?? selectedItem.unit_id;
+            if (uomInput) {
+                uomInput.value = selectedItem.unit ?? selectedItem.unit;
             }
 
             refreshSelectedItemOptions();
@@ -257,8 +270,8 @@ function populateItemSelect(select, items) {
             (item.name + ' ' + (item.variant || '')).trim(),
             item.id
         );
-        option.dataset.category = item.kind_id;
-        option.dataset.uom = item.uom ?? item.unit_id;
+        option.dataset.category = item.kind;
+        option.dataset.uom = item.uom ?? item.unit;
         select.add(option);
     });
 }
@@ -291,8 +304,10 @@ function resetReceivingRows() {
         }
 
         row.querySelector('input[name$="[quantity]"]').value = '';
-        row.querySelector('select[name$="[category]"]').value = '';
-        row.querySelector('select[name$="[uom]"]').value = '';
+        // row.querySelector('select[name$="[category]"]').value = '';
+        // row.querySelector('select[name$="[uom]"]').value = '';
+        row.querySelector('input[name$="[category]"]').value = '';
+        row.querySelector('input[name$="[uom]"]').value = '';
         row.querySelector('select[name$="[item_name]"]').value = '';
     });
 }
@@ -316,5 +331,3 @@ function setReceivingRowsLoading(isLoading) {
 }
 </script>
 @endpush
-
-@endsection

@@ -50,59 +50,7 @@
                 </thead>
                 <tbody id="stockFormRows" class="bg-white divide-y divide-gray-200 text-gray-700">
                     
-                    <!-- Row 1 -->
-                    <tr class="text-center hover:bg-gray-50 transition-colors">
-                        <td class="border border-gray-200 p-2.5 font-semibold">2026-07-10</td>
-                        <td class="border border-gray-200 p-2.5">150</td>
-                        <td class="border border-gray-200 p-2.5 text-green-600 font-semibold">+500</td>
-                        <td class="border border-gray-200 p-2.5 text-gray-400">0</td>
-                        <td class="border border-gray-200 p-2.5 font-bold text-brand-dark">650</td>
-                        <td class="border border-gray-200 p-2.5 lowercase text-gray-500">pcs</td>
-                        <!-- <td class="border border-gray-200 p-2.5 normal-case">J. Doe</td>
-                        <td class="border border-gray-200 p-2.5 normal-case">A. Smith</td>
-                        <td class="border border-gray-200 p-2.5 normal-case">Sgt. Reyes</td>
-                        <td class="border border-gray-200 p-2.5 normal-case">Insp. Santos</td>
-                        <td class="border border-gray-200 p-2.5 normal-case">Lt. Garcia</td>
-                        <td class="border border-gray-200 p-2.5 text-center">
-                            <button type="button" class="px-2 py-1 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded text-[10px] transition">View</button>
-                        </td> -->
-                    </tr>
-
-                    <!-- Row 2 -->
-                    <tr class="text-center hover:bg-gray-50 transition-colors">
-                        <td class="border border-gray-200 p-2.5 font-semibold">2026-07-12</td>
-                        <td class="border border-gray-200 p-2.5">650</td>
-                        <td class="border border-gray-200 p-2.5 text-gray-400">0</td>
-                        <td class="border border-gray-200 p-2.5 text-red-600 font-semibold">-120</td>
-                        <td class="border border-gray-200 p-2.5 font-bold text-brand-dark">530</td>
-                        <td class="border border-gray-200 p-2.5 lowercase text-gray-500">pcs</td>
-                        <!-- <td class="border border-gray-200 p-2.5 normal-case">J. Doe</td>
-                        <td class="border border-gray-200 p-2.5 normal-case">M. Ramos</td>
-                        <td class="border border-gray-200 p-2.5 normal-case">Sgt. Reyes</td>
-                        <td class="border border-gray-200 p-2.5 normal-case">Insp. Santos</td>
-                        <td class="border border-gray-200 p-2.5 normal-case">Lt. Garcia</td>
-                        <td class="border border-gray-200 p-2.5 text-center">
-                            <button type="button" class="px-2 py-1 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded text-[10px] transition">View</button>
-                        </td> -->
-                    </tr>
-
-                    <!-- Row 3 -->
-                    <tr class="text-center hover:bg-gray-50 transition-colors">
-                        <td class="border border-gray-200 p-2.5 font-semibold">2026-07-14</td>
-                        <td class="border border-gray-200 p-2.5">530</td>
-                        <td class="border border-gray-200 p-2.5 text-gray-400">0</td>
-                        <td class="border border-gray-200 p-2.5 text-red-600 font-semibold">-30</td>
-                        <td class="border border-gray-200 p-2.5 font-bold text-brand-dark">500</td>
-                        <td class="border border-gray-200 p-2.5 lowercase text-gray-500">pcs</td>
-                        <!-- <td class="border border-gray-200 p-2.5 normal-case">J. Doe</td>
-                        <td class="border border-gray-200 p-2.5 normal-case">M. Ramos</td>
-                        <td class="border border-gray-200 p-2.5 normal-case">Sgt. Reyes</td>
-                        <td class="border border-gray-200 p-2.5 normal-case">Insp. Santos</td>
-                        <td class="border border-gray-200 p-2.5 normal-case">Lt. Garcia</td>
-                        <td class="border border-gray-200 p-2.5 text-center">
-                            <button type="button" class="px-2 py-1 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded text-[10px] transition">View</button>
-                        </td> -->
-                    </tr>
+                    <!-- Rows are populated when the stock card is opened. -->
 
                 </tbody>
             </table>

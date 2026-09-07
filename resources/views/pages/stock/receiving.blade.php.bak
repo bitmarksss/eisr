@@ -26,13 +26,13 @@
         
         <!-- Header Strip -->
         <div class="px-6 py-4 bg-white text-brand-navy flex justify-between items-center">
-            <h3 class="px-4 w-full font-bold tracking-wide text-2xl border-0 border-b border-brand-green">Item Issuance Form</h3>
+            <h3 class="px-4 w-full font-bold tracking-wide text-2xl border-0 border-b border-brand-green">Item Receiving Form</h3>
         </div>
 
 
         <!-- Master Update Submission Form Layout -->
-        <form action="{{ route('surface.stock.issuance.store') }}" method="POST" 
-            id="issuance-form" class="p-6 space-y-4 w-full">
+        <form action="{{ route('surface.stock.receive.store') }}" method="POST" 
+            id="receiving-form" class="p-6 space-y-4 w-full">
             @csrf
             @method('POST')
             
@@ -40,31 +40,31 @@
 
                 <!-- Receipt No. -->
                 <div>
-                    <label for="issuance-no" class="block text-xs font-bold text-brand-dark uppercase tracking-wider mb-1">Issuance No.</label>
-                    <input type="text" id="issuance-no" name="issuance_no" value="{{ old('issuance_no') }}" required placeholder="e.g., ISS-0001"
-                        class="w-full bg-gray-50 border @error('issuance_no') border-red-500 @else border-gray-300 @enderror rounded-lg px-3 py-2 text-sm focus:border-brand-gold focus:outline-none transition focus:ring-2 focus:ring-brand-gold/20">
-                    @error('issuance_no') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                    <label for="receiving-no" class="block text-xs font-bold text-brand-dark uppercase tracking-wider mb-1">Receipt No.</label>
+                    <input type="text" id="receiving-no" name="receiving_no" required placeholder="e.g., 1234"
+                        class="w-full bg-gray-50 border @error('receiving_no') border-red-500 @else border-gray-300 @enderror rounded-lg px-3 py-2 text-sm focus:border-brand-gold focus:outline-none transition focus:ring-2 focus:ring-brand-gold/20">
+                    @error('receiving_no') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                 </div>    
 
-                <!-- Level -->
+                <!-- Supplier -->
                 <div class="col-span-2">
-                    <label for="edit-level-id" class="block text-xs font-bold text-brand-dark uppercase tracking-wider mb-1">Destination Level</label>
-                    <select id="edit-level-id" name="level_id" required
-                        class="w-full bg-gray-50 border @error('level_id') border-red-500 @else border-gray-300 @enderror rounded-lg p-2 text-sm focus:border-brand-gold focus:outline-none transition">
-                        <option value="" disabled selected>Select Level</option>
-                        @foreach($levels as $level)
-                            <option value="{{ $level->id }}" {{ old('level_id') == $level->id ? 'selected' : '' }}>{{ $level->name }}</option>
+                    <label for="edit-supplier-id" class="block text-xs font-bold text-brand-dark uppercase tracking-wider mb-1">Supplier</label>
+                    <select id="edit-supplier-id" name="supplier_id" required
+                        class="w-full bg-gray-50 border @error('supplier_id') border-red-500 @else border-gray-300 @enderror rounded-lg p-2 text-sm focus:border-brand-gold focus:outline-none transition">
+                        <option value="" disabled selected>Select Supplier</option>
+                        @foreach($suppliers as $supplier)
+                            <option value="{{ $supplier->id }}" {{ old('supplier_id') == $supplier->id ? 'selected' : '' }}>{{ $supplier->name }}</option>
                         @endforeach
                     </select>
-                    @error('level_id') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                    @error('supplier_id') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                 </div>
-                
+
                 <!-- Date Received -->
                 <div>
-                    <label for="receiving-date" class="block text-xs font-bold text-brand-dark uppercase tracking-wider mb-1">Issuance Date</label>
-                    <input type="date" id="receiving-date" name="issuance_date" value="{{ old('issuance_date') }}" required
-                        class="w-full bg-gray-50 border @error('issuance_date') border-red-500 @else border-gray-300 @enderror rounded-lg px-3 py-2 text-sm focus:border-brand-gold focus:outline-none transition focus:ring-2 focus:ring-brand-gold/20">
-                    @error('issuance_date') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                    <label for="receiving-date" class="block text-xs font-bold text-brand-dark uppercase tracking-wider mb-1">Receiving Date</label>
+                    <input type="date" id="receiving-date" name="receiving_date" required
+                        class="w-full bg-gray-50 border @error('receiving_date') border-red-500 @else border-gray-300 @enderror rounded-lg px-3 py-2 text-sm focus:border-brand-gold focus:outline-none transition focus:ring-2 focus:ring-brand-gold/20">
+                    @error('name') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                 </div>   
             </div>
 
@@ -92,7 +92,7 @@
                         <tr class="text-center max-h-9" data-index="{{ $index }}">
                             <!-- Quantity -->
                             <td class="w-[10%] border-box border h-full border-gray-200 p-1">
-                                <input type="number" required
+                                <input type="number" 
                                     name="items[{{ $index }}][quantity]" placeholder="0"
                                     class="w-full bg-gray-50 border-gray-300 border rounded-lg px-3 py-2 text-sm focus:border-brand-gold focus:outline-none transition">
                             </td>
@@ -194,11 +194,8 @@ document.addEventListener('DOMContentLoaded',() => {
 
 const receivingForm = document.getElementById('receiving-form');
 const supplierSelect = document.getElementById('edit-supplier-id');
-window.modalData.inventoryItems = @json($items);
-receivingForm.querySelectorAll('select[name^="items"][name$="[item_name]"]')
-    .forEach(select => populateItemSelect(select, window.modalData.inventoryItems));
 
-if (supplierSelect) supplierSelect.addEventListener('change', async function () {
+supplierSelect.addEventListener('change', async function () {
     const supplierId = this.value;
 
     if (!supplierId) return;

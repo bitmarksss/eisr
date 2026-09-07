@@ -28,8 +28,9 @@ class StockMovementSeeder extends Seeder
         // 2. Create 5 multi-item movement batches
         foreach (range(1, 5) as $i) {
             $movement = StockMovement::factory()->create([
-                'type' => 'issuance',
+                'type' => $i % 2 === 0 ? 'issuance' : 'receive',
                 'notes' => 'Explosives Daily Transfer Batch #' . $i,
+                'movement_date' => now(),
             ]);
 
             // Create 8-15 line items distributed across levels

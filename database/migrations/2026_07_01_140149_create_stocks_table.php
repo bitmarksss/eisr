@@ -20,13 +20,13 @@ return new class extends Migration
             $table->foreignId('uom_id')->constrained('uoms'); 
             $table->foreignId('user_id')->constrained('users'); 
             $table->text('remarks')->nullable();
-            $table->foreignId('prepared_by')->nullable()->constrained('users');
-            $table->foreignId('reviewed_by')->nullable()->constrained('users');
-            $table->foreignId('noted_by')->nullable()->constrained('users');
-            $table->foreignId('endorsed_by')->nullable()->constrained('users');
-            $table->foreignId('approved_by')->nullable()->constrained('users');
-            $table->foreignId('noted_by_2')->nullable()->constrained('users');
-            $table->foreignId('approved_by_2')->nullable()->constrained('users');
+            // $table->foreignId('prepared_by')->nullable()->constrained('users');
+            // $table->foreignId('reviewed_by')->nullable()->constrained('users');
+            // $table->foreignId('noted_by')->nullable()->constrained('users');
+            // $table->foreignId('endorsed_by')->nullable()->constrained('users');
+            // $table->foreignId('approved_by')->nullable()->constrained('users');
+            // $table->foreignId('noted_by_2')->nullable()->constrained('users');
+            // $table->foreignId('approved_by_2')->nullable()->constrained('users');
             $table->timestamps();
         });
     }

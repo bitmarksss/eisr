@@ -23,8 +23,9 @@ class StockMovementFactory extends Factory
     {
         return [
             'reference_no' => 'ISS-' . strtoupper(Str::random(6)),
-            'type'         => $this->faker->randomElement(['issuance', 'return', 'adjustment', 'transfer']),
-            'user_id'      => User::factory(),
+            'movement_date'=> $this->faker->date(),
+            'type'         => $this->faker->randomElement(['receive', 'issuance', 'return', 'adjustment', 'transfer']),
+            'user_id'      => 1,
             'notes'        => $this->faker->optional(0.7)->sentence(),
             'created_at'   => now(),
             'updated_at'   => now(),

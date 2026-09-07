@@ -73,21 +73,74 @@ class StockController extends Controller
      */
     public function receive()
     {
-        $stocks = InventoryStock::with(['level',
-                'item',
-                'item.kind',
-                'item.variants',
-                'item.unit'
-            ])
-            ->get();
-
         $items = InventoryItem::with(['kind', 'unit', 'supplier'])->get();
         $categories = InventoryKind::get();
         $suppliers = Supplier::get();
         $levels = Level::get();
         $uoms = UnitOfMeasurement::get();
 
-        return view('pages.stock.receiving', compact('items', 'categories', 'levels', 'stocks', 'suppliers', 'uoms'));
+        return view('pages.stock.receiving', compact('items', 'categories', 'levels', 'suppliers', 'uoms'));
+    }
+
+    public function receivingIndex()
+    {
+        $movements = StockMovement::with(['user', 'items.item', 'approvals.user'])
+            ->where('type', 'receive')->latest('movement_date')->latest('id')->paginate(15);
+        return view('pages.stock.movements.index', ['movements' => $movements, 'movementType' => 'receive']);
+    }
+
+    public function issuanceIndex()
+    {
+        $movements = StockMovement::with(['user', 'items.item', 'items.destinationLevel', 'approvals.user'])
+            ->where('type', 'issuance')->latest('movement_date')->latest('id')->paginate(15);
+        return view('pages.stock.movements.index', ['movements' => $movements, 'movementType' => 'issuance']);
+    }
+
+    public function updateMovement(Request $request, StockMovement $movement)
+    {
+        abort_unless($movement->status === 'pending_approval', 403, 'Approved movements cannot be edited.');
+
+        $data = $request->validate([
+            'movement_date' => ['required', 'date'],
+            'notes' => ['nullable', 'string'],
+            'items' => ['required', 'array', 'min:1'],
+            'items.*.quantity' => ['required', 'integer', 'min:1'],
+            'items.*.remarks' => ['nullable', 'string', 'max:1000'],
+        ]);
+
+        DB::transaction(function () use ($movement, $data) {
+            $oldItems = $movement->items()->get();
+            foreach ($oldItems as $item) {
+                $surface = InventoryStock::where('item_id', $item->item_id)
+                    ->where('location', 'surface')->whereNull('level_id')->lockForUpdate()->first();
+                if ($movement->type === 'receive') {
+                    $surface?->decrement('quantity', $item->quantity);
+                } else {
+                    $surface?->increment('quantity', $item->quantity);
+                    InventoryStock::where('item_id', $item->item_id)->where('location', 'underground')
+                        ->where('level_id', $item->destination_level_id)->lockForUpdate()->first()?->decrement('quantity', $item->quantity);
+                }
+            }
+
+            $movement->update(['movement_date' => $data['movement_date'], 'notes' => $data['notes'] ?? null]);
+            foreach ($oldItems as $index => $item) {
+                if (!isset($data['items'][$index])) continue;
+                $line = $data['items'][$index];
+                $item->update($line);
+                $surface = InventoryStock::where('item_id', $item->item_id)->where('location', 'surface')
+                    ->whereNull('level_id')->lockForUpdate()->firstOrFail();
+                if ($movement->type === 'receive') {
+                    $surface->increment('quantity', $line['quantity']);
+                } else {
+                    if ($surface->quantity < $line['quantity']) throw new \Exception('Insufficient surface stock.');
+                    $surface->decrement('quantity', $line['quantity']);
+                    InventoryStock::firstOrCreate([
+                        'item_id' => $item->item_id, 'location' => 'underground', 'level_id' => $item->destination_level_id,
+                    ], ['quantity' => 0])->increment('quantity', $line['quantity']);
+                }
+            }
+        });
+        return back()->with('success', 'Movement updated successfully.');
     }
 
     /**
@@ -95,35 +148,35 @@ class StockController extends Controller
      */
     public function issuance()
     {
-        $stocks = InventoryStock::with(['item', 'level'])->get();
 
+        $items = InventoryItem::with(['kind', 'unit', 'supplier'])->get();
         $categories = InventoryKind::get();
         $suppliers = Supplier::get();
         $levels = Level::get();
         $uoms = UnitOfMeasurement::get();
 
-        return view('pages.stock.issuance', compact('categories', 'levels', 'stocks', 'suppliers', 'uoms'));
+        return view('pages.stock.issuance', compact('items', 'categories', 'levels', 'suppliers', 'uoms'));
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function storeReceiving(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'receiving_no' => [
                 'required',
                 'string',
                 'max:100',
-                Rule::unique('stock_movements', 'reference_no'),
+                Rule::unique('stock_movement_headers', 'reference_no'),
             ],
             'supplier_id' => ['required', 'integer', 'exists:suppliers,id'],
             'receiving_date' => ['required', 'date'],
             'items' => ['required', 'array', 'min:1'],
             'items.*.quantity' => ['required', 'integer', 'min:1'],
             'items.*.item_name' => ['required', 'integer', 'exists:inventory_items,id'],
-            'items.*.category' => ['required', 'integer', 'exists:inventory_kinds,id'],
-            'items.*.uom' => ['required', 'integer', 'exists:uoms,id'],
+            // 'items.*.category' => ['required', 'integer', 'exists:inventory_kinds,id'],
+            // 'items.*.uom' => ['required', 'integer', 'exists:uoms,id'],
             'items.*.remarks' => ['nullable', 'string', 'max:1000'],
         ]);
         if ($validator->fails()) {
@@ -142,7 +195,8 @@ class StockController extends Controller
         DB::transaction(function () use ($data) {
             $movement = StockMovement::create([
                 'reference_no' => $data['receiving_no'],
-                'type' => 'adjustment',
+                'movement_date' => $data['receiving_date'],
+                'type' => 'receive',
                 'user_id' => auth()->id(),
                 'notes' => json_encode([
                     'transaction' => 'receiving',
@@ -181,38 +235,6 @@ class StockController extends Controller
 
         return redirect()->route('surface.stock.index')
             ->with('success', 'Stock received and inventory updated successfully.');
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
     }
 
     public function logs(Request $request)
@@ -258,71 +280,40 @@ class StockController extends Controller
         return view('pages.stock.withdrawal');
     }
 
-    // public function issuance(Request $request) {
-    //     $location = $request->query('location', null); // Default to 'empty' if not provided
-
-    //     if (!$location) {
-    //         return view('pages.maintenance.error');
-    //     }
-    //     // Start building the query without executing it yet
-    //     $inventory_items = InventoryItem::query()
-
-    //         ->when(($request->filled('location') && $location != 'list'), function ($query) use ($location) {
-    //             $query->whereHas('stock', function($q) use ($location) {
-    //                 $q->where('location', $location);
-    //             });
-    //         })
-            
-    //         ->when($request->filled('category_filter'), function ($query) use ($request) {
-    //             // Assuming 'category_id' is the column name in your database
-    //             $query->whereHas('kind', function ($q) use ($request) {
-    //                 $q->where('id', $request->category_filter);
-    //             });
-    //         })
-
-    //         ->when($request->filled('search'), function ($query) use ($request) {
-    //             // Assuming you want to search by item name or description
-    //             $query->where('name', 'like', '%' . $request->search . '%');
-    //         })
-
-    //         ->with('kind')
-    //         ->get();
-        
-    //     $categories = InventoryKind::get();
-    //     $suppliers = Supplier::get();
-    //     $uoms = UnitOfMeasurement::get();
-
-    //     return view('pages.stock.issuance', compact('inventory_items' ,'categories', 'suppliers', 'uoms', 'location'));
-    // }
-
     public function storeIssuance(Request $request)
     {
         // 1. Validate Form Input
         $validated = $request->validate([
+            'issuance_no' => ['required', 'string', 'max:100', Rule::unique('stock_movement_headers', 'reference_no')],
+            'issuance_date' => ['required', 'date'],
+            'level_id' => ['required', 'integer', 'exists:levels,id'],
             'items' => 'required|array',
             'items.*.item_name' => 'required|exists:inventory_items,id',
-            'items.*.level_id'  => 'required|exists:levels,id',
             'items.*.quantity'  => 'required|integer|min:1',
-            'items.*.remarks'   => 'nullable|string',
+            'items.*.remarks'   => 'nullable|string|max:1000',
         ]);
 
         DB::transaction(function () use ($validated, $request) {
             // 2. Create Header Movement Entry
             $movement = StockMovement::create([
-                'reference_no' => 'ISS-' . strtoupper(Str::random(6)),
+                'reference_no' => $validated['issuance_no'],
                 'type' => 'issuance',
+                'movement_date' => $validated['issuance_date'],
+                'level_id' => $validated['level_id'],
                 'user_id' => auth()->id(),
                 'notes' => $request->notes ?? 'Surface to Underground Issuance',
             ]);
 
             foreach ($validated['items'] as $line) {
                 $itemId  = $line['item_name'];
-                $levelId = $line['level_id'];
+                $levelId = $validated['level_id'];
                 $qty     = $line['quantity'];
 
                 // A. Deduct Qty from Surface Stock
                 $surfaceStock = InventoryStock::where('item_id', $itemId)
                     ->where('location', 'surface')
+                    ->whereNull('level_id')
+                    ->lockForUpdate()
                     ->firstOrFail();
 
                 if ($surfaceStock->quantity < $qty) {
@@ -357,5 +348,71 @@ class StockController extends Controller
         });
 
         return redirect()->back()->with('success', 'Underground issuance logged and stock updated successfully!');
+    }
+    
+    public function loadStockCard(string $id)
+    {
+        $stock = InventoryStock::with(['item', 'level'])->findOrFail($id);
+
+        $movements = StockMovementItem::query()
+            ->with(['movement', 'item.unit', 'item.kind'])
+            ->where('item_id', $stock->item_id)
+            ->where(function ($query) use ($stock) {
+                $query->where(function ($q) use ($stock) {
+                    $q->where('source_location', $stock->location)
+                        ->where('source_level_id', $stock->level_id);
+                })->orWhere(function ($q) use ($stock) {
+                    $q->where('destination_location', $stock->location)
+                        ->where('destination_level_id', $stock->level_id);
+                });
+            })
+            ->get()
+            ->sortBy(fn ($line) => [$line->movement->movement_date, $line->movement->id]);
+
+        $entries = $movements->map(function ($line) use ($stock) {
+            $isDestination = $line->destination_location === $stock->location
+                && $line->destination_level_id == $stock->level_id;
+            $isSource = $line->source_location === $stock->location
+                && $line->source_level_id == $stock->level_id;
+            // Receiving records use surface for both source and destination;
+            // their header type identifies them as incoming stock.
+            $incoming = ($isDestination && (!$isSource || $line->movement->type !== 'issuance'))
+                ? (int) $line->quantity : 0;
+            $outgoing = ($isSource && (!$isDestination || $line->movement->type === 'issuance'))
+                ? (int) $line->quantity : 0;
+
+            return [
+                'date' => $line->movement->movement_date,
+                'reference' => $line->movement->reference_no,
+                'type' => $line->movement->type,
+                'notes' => $line->remarks ?: $line->movement->notes,
+                'incoming' => $incoming,
+                'outgoing' => $outgoing,
+                'uom' => $line->item?->unit?->unit,
+            ];
+        })->values();
+
+        $opening = (int) $stock->quantity - $entries->sum('incoming') + $entries->sum('outgoing');
+        $balance = $opening;
+        $rows = $entries->groupBy('date')->map(function ($dayEntries, $date) use (&$balance) {
+            $beginning = $balance;
+            $incoming = $dayEntries->sum('incoming');
+            $outgoing = $dayEntries->sum('outgoing');
+            $balance += $incoming - $outgoing;
+
+            return [
+                'date' => $date,
+                'beginning' => $beginning,
+                'incoming' => $incoming,
+                'outgoing' => $outgoing,
+                'ending' => $balance,
+                'uom' => $dayEntries->first()['uom'],
+            ];
+        })->values();
+
+        return response()->json([
+            'stock' => $stock,
+            'stock_card' => $rows,
+        ]);
     }
 }

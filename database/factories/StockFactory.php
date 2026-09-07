@@ -29,13 +29,13 @@ class StockFactory extends Factory
             'uom_id' => UnitOfMeasurement::inRandomOrder()->first()?->id ?? UnitOfMeasurement::factory(),
             'user_id' => User::inRandomOrder()->first()?->id ?? User::factory(),
             'remarks' => $this->faker->optional(0.7)->sentence(),
-            'prepared_by' => null,
-            'reviewed_by' => null,
-            'noted_by' => null,
-            'endorsed_by' => null,
-            'approved_by' => null,
-            'noted_by_2' => null,
-            'approved_by_2' => null,
+            // 'prepared_by' => null,
+            // 'reviewed_by' => null,
+            // 'noted_by' => null,
+            // 'endorsed_by' => null,
+            // 'approved_by' => null,
+            // 'noted_by_2' => null,
+            // 'approved_by_2' => null,
         ];
     }
 

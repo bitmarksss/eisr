@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('stock_movement_items', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('stock_movement_id')->constrained('stock_movements')->onDelete('cascade');
+            $table->foreignId('stock_movement_id')->constrained('stock_movement_headers')->onDelete('cascade');
             $table->foreignId('item_id')->constrained('inventory_items');
             
             // Source & Destination tracking

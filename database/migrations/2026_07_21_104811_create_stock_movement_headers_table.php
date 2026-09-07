@@ -11,11 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('stock_movements', function (Blueprint $table) {
+        Schema::create('stock_movement_headers', function (Blueprint $table) {
             $table->id();
             $table->string('reference_no')->unique(); // e.g., ISS-2026-0001
-            $table->enum('type', ['issuance', 'return', 'adjustment', 'transfer']);
-            $table->foreignId('user_id')->nullable()->constrained('users'); // Who created the issuance
+            $table->date('movement_date');
+            $table->enum('type', ['receive', 'issuance', 'return', 'adjustment', 'transfer']);
+            $table->foreignId('level_id')->nullable()->constrained('levels'); // Where the stock is issued
+            $table->foreignId('user_id')->nullable()->constrained('users'); 
             $table->text('notes')->nullable();
             $table->timestamps();
         });
@@ -26,6 +28,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('stock_movements_header');
+        Schema::dropIfExists('stock_movements'); // removes old stock_movements_table
+        Schema::dropIfExists('stock_movement_headers');
     }
 };

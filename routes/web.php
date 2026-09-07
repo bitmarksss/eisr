@@ -18,6 +18,7 @@ use App\Http\Controllers\{
     GroceryController,
     PaymentsController,
     UserController
+    ,StockMovementApprovalController
 };
 
 /*
@@ -62,6 +63,8 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
             Route::get('/store', [LevelController::class, 'store'])->name('store');
             Route::get('/update', [LevelController::class, 'update'])->name('update');
         });
+        Route::get('/stock-approvers', [StockMovementApprovalController::class, 'index'])->name('stock-approvers.index');
+        Route::put('/stock-approvers', [StockMovementApprovalController::class, 'update'])->name('stock-approvers.update');
     });
 
     // SURFACE
@@ -76,14 +79,19 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
         Route::prefix('stock')->name('stock.')->group(function () {
             // Route::get('/', [InventoryController::class, 'warehouse_index'])->name('index');
             Route::get('/', [StockController::class, 'index'])->name('index');
-            Route::post('/store', [StockController::class, 'store'])->name('store');
             Route::put('/{id}', [StockController::class, 'update'])->name('update');
             Route::post('/upload', [StockController::class, 'upload'])->name('upload');
 
             Route::get('/receive', [StockController::class, 'receive'])->name('receive');
+            Route::get('/receiving', [StockController::class, 'receivingIndex'])->name('receiving.index');
+            Route::post('/receive/store', [StockController::class, 'storeReceiving'])->name('receive.store');
+            
             Route::get('/issuance', [StockController::class, 'issuance'])->name('issuance');
+            Route::get('/issuances', [StockController::class, 'issuanceIndex'])->name('issuances.index');
+            Route::post('/issuance/store', [StockController::class, 'storeIssuance'])->name('issuance.store');
+            Route::put('/movements/{movement}', [StockController::class, 'updateMovement'])->name('movements.update');
 
-            // Route::get('/issuance', [StockController::class, 'issuance'])->name('issuance');
+            Route::get('/load-stock/{id}', [StockController::class, 'loadStockCard'])->name('stock-card');
 
             Route::get('/logs', [StockController::class, 'logs'])->name('logs');
 

@@ -16,9 +16,15 @@ class StockMovement extends Model
      *
      * @var array<int, string>
      */
+    
+    protected $table = 'stock_movement_headers';
+
     protected $fillable = [
         'reference_no',
+        'movement_date',
         'type',
+        'level_id',
+        'status',
         'user_id',
         'notes',
     ];
@@ -37,5 +43,10 @@ class StockMovement extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function approvals(): HasMany
+    {
+        return $this->hasMany(StockMovementApproval::class);
     }
 }

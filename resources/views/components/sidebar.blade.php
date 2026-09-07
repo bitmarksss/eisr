@@ -26,6 +26,8 @@
             <i class="fa-solid fa-boxes-stacked"></i>
             Inventory Stock
         </a>
+        <a href="{{ route('surface.stock.receiving.index') }}" class="sidebar-link {{ request()->routeIs('surface.stock.receiving.*') ? 'selected' : '' }}">Receiving Records</a>
+        <a href="{{ route('surface.stock.issuances.index') }}" class="sidebar-link {{ request()->routeIs('surface.stock.issuances.*') ? 'selected' : '' }}">Issuance Records</a>
         <a href="{{ route('surface.stock.logs') }}" class="sidebar-link {{ request()->routeIs('surface.stock.logs') ? 'selected' : '' }}">
             <i class="fa-solid fa-file-lines"></i>
             Stock Logs
@@ -263,6 +265,10 @@
         <a href="{{ route('maintenance.levels.index') }}" class="sidebar-link {{ request()->routeIs('maintenance.levels.index') ? 'selected' : '' }}">
             <i class="fa-solid fa-bars-staggered"></i>
             Levels
+        </a>
+        <a href="{{ route('maintenance.stock-approvers.index') }}" class="sidebar-link {{ request()->routeIs('maintenance.stock-approvers.*') ? 'selected' : '' }}">
+            <i class="fa-solid fa-user-check"></i>
+            Stock Approvers
         </a>
         <br>
 

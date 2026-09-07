@@ -26,13 +26,13 @@
         
         <!-- Header Strip -->
         <div class="px-6 py-4 bg-white text-brand-navy flex justify-between items-center">
-            <h3 class="px-4 w-full font-bold tracking-wide text-2xl border-0 border-b border-brand-green">Item Issuance Form</h3>
+            <h3 class="px-4 w-full font-bold tracking-wide text-2xl border-0 border-b border-brand-green">Explosive Issuance Form</h3>
         </div>
 
 
         <!-- Master Update Submission Form Layout -->
         <form action="{{ route('surface.stock.issuance.store') }}" method="POST" 
-            id="issuance-form" class="p-6 space-y-4 w-full">
+            id="receiving-form" class="p-6 space-y-4 w-full">
             @csrf
             @method('POST')
             
@@ -40,15 +40,15 @@
 
                 <!-- Receipt No. -->
                 <div>
-                    <label for="issuance-no" class="block text-xs font-bold text-brand-dark uppercase tracking-wider mb-1">Issuance No.</label>
-                    <input type="text" id="issuance-no" name="issuance_no" value="{{ old('issuance_no') }}" required placeholder="e.g., ISS-0001"
-                        class="w-full bg-gray-50 border @error('issuance_no') border-red-500 @else border-gray-300 @enderror rounded-lg px-3 py-2 text-sm focus:border-brand-gold focus:outline-none transition focus:ring-2 focus:ring-brand-gold/20">
-                    @error('issuance_no') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                    <label for="receiving-no" class="block text-xs font-bold text-brand-dark uppercase tracking-wider mb-1">Receipt No.</label>
+                    <input type="text" id="receiving-no" name="receiving_no" required placeholder="e.g., 1234"
+                        class="w-full bg-gray-50 border @error('receiving_no') border-red-500 @else border-gray-300 @enderror rounded-lg px-3 py-2 text-sm focus:border-brand-gold focus:outline-none transition focus:ring-2 focus:ring-brand-gold/20">
+                    @error('receiving_no') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                 </div>    
 
                 <!-- Level -->
                 <div class="col-span-2">
-                    <label for="edit-level-id" class="block text-xs font-bold text-brand-dark uppercase tracking-wider mb-1">Destination Level</label>
+                    <label for="edit-level-id" class="block text-xs font-bold text-brand-dark uppercase tracking-wider mb-1">Level</label>
                     <select id="edit-level-id" name="level_id" required
                         class="w-full bg-gray-50 border @error('level_id') border-red-500 @else border-gray-300 @enderror rounded-lg p-2 text-sm focus:border-brand-gold focus:outline-none transition">
                         <option value="" disabled selected>Select Level</option>
@@ -58,13 +58,13 @@
                     </select>
                     @error('level_id') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                 </div>
-                
+
                 <!-- Date Received -->
                 <div>
-                    <label for="receiving-date" class="block text-xs font-bold text-brand-dark uppercase tracking-wider mb-1">Issuance Date</label>
-                    <input type="date" id="receiving-date" name="issuance_date" value="{{ old('issuance_date') }}" required
-                        class="w-full bg-gray-50 border @error('issuance_date') border-red-500 @else border-gray-300 @enderror rounded-lg px-3 py-2 text-sm focus:border-brand-gold focus:outline-none transition focus:ring-2 focus:ring-brand-gold/20">
-                    @error('issuance_date') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                    <label for="issuing-date" class="block text-xs font-bold text-brand-dark uppercase tracking-wider mb-1">Issuing Date</label>
+                    <input type="date" id="issuing-date" name="issuing_date" required
+                        class="w-full bg-gray-50 border @error('issuing_date') border-red-500 @else border-gray-300 @enderror rounded-lg px-3 py-2 text-sm focus:border-brand-gold focus:outline-none transition focus:ring-2 focus:ring-brand-gold/20">
+                    @error('issuing_date') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                 </div>   
             </div>
 
@@ -92,7 +92,7 @@
                         <tr class="text-center max-h-9" data-index="{{ $index }}">
                             <!-- Quantity -->
                             <td class="w-[10%] border-box border h-full border-gray-200 p-1">
-                                <input type="number" required
+                                <input type="number" 
                                     name="items[{{ $index }}][quantity]" placeholder="0"
                                     class="w-full bg-gray-50 border-gray-300 border rounded-lg px-3 py-2 text-sm focus:border-brand-gold focus:outline-none transition">
                             </td>
@@ -102,16 +102,19 @@
                                 <select name="items[{{ $index }}][item_name]" required
                                     class="w-full bg-gray-50 border-gray-300 border rounded-lg p-2 text-sm focus:border-brand-gold focus:outline-none transition">
                                     <option value="" disabled selected>Select Item</option>
+                                    @foreach($items as $item)
+                                        <option value="{{ $item->id }}" {{ old('item_name') == $item->id ? 'selected' : '' }}
+                                            data-category="{{ $item->kind_id }}"
+                                            data-uom="{{ $item->unit_id }}"
+                                        >
+                                            {{ $item->name }} {{ $item->variant }}
+                                        </option>
+                                    @endforeach
                                 </select>
                             </td>
 
                             <!-- Category -->
                             <td class="border border-gray-200 p-1">
-                                <input type="text" readonly
-                                    name="items[{{ $index }}][category]" placeholder="Item category..."
-                                    class="w-full bg-gray-50 border-gray-300 border rounded-lg px-3 py-2 text-sm focus:border-brand-gold focus:outline-none transition">
-                          
-                                {{--
                                 <select name="items[{{ $index }}][category]" required
                                     class="w-full bg-gray-50 border-gray-300 border rounded-lg p-2 text-sm focus:border-brand-gold focus:outline-none transition">
                                     <option value="" disabled selected>Select Category</option>
@@ -119,16 +122,10 @@
                                         <option value="{{ $category->id }}" {{ old('category') == $category->id ? 'selected' : '' }}>{{ $category->kind }}</option>
                                     @endforeach
                                 </select>
-                                --}}
                             </td>
 
                             <!-- UoM -->
                             <td class="border border-gray-200 p-1">
-                                <input type="text" readonly
-                                    name="items[{{ $index }}][uom]" placeholder="Item unit..."
-                                    class="w-full bg-gray-50 border-gray-300 border rounded-lg px-3 py-2 text-sm focus:border-brand-gold focus:outline-none transition">
-                          
-                                {{--
                                 <select name="items[{{ $index }}][uom]" required
                                     class="w-full bg-gray-50 border-gray-300 border rounded-lg p-2 text-sm focus:border-brand-gold focus:outline-none transition">
                                     <option value="" disabled selected>Select UoM</option>
@@ -136,7 +133,6 @@
                                         <option value="{{ $uom->id }}" {{ old('uom') == $uom->id ? 'selected' : '' }}>{{ $uom->unit }}</option>
                                     @endforeach
                                 </select>
-                                --}}
                             </td>
 
                             <!-- Remarks -->
@@ -194,11 +190,8 @@ document.addEventListener('DOMContentLoaded',() => {
 
 const receivingForm = document.getElementById('receiving-form');
 const supplierSelect = document.getElementById('edit-supplier-id');
-window.modalData.inventoryItems = @json($items);
-receivingForm.querySelectorAll('select[name^="items"][name$="[item_name]"]')
-    .forEach(select => populateItemSelect(select, window.modalData.inventoryItems));
 
-if (supplierSelect) supplierSelect.addEventListener('change', async function () {
+supplierSelect.addEventListener('change', async function () {
     const supplierId = this.value;
 
     if (!supplierId) return;
@@ -237,27 +230,16 @@ receivingForm.addEventListener('change', function(event) {
     if (event.target.matches('select[name^="items"][name$="[item_name]"]')) {
         const selectedItemId = event.target.value;
         const selectedItem = window.modalData.inventoryItems.find(item => item.id == selectedItemId);
-        
-        console.log('selectedItem', selectedItem);
         if (selectedItem) {
             const row = event.target.closest('tr');
+            const categorySelect = row.querySelector('select[name^="items"][name$="[category]"]');
+            const uomSelect = row.querySelector('select[name^="items"][name$="[uom]"]');
 
-            // const categorySelect = row.querySelector('select[name^="items"][name$="[category]"]');
-            // const uomSelect = row.querySelector('select[name^="items"][name$="[uom]"]');
-            // if (categorySelect) {
-            //     categorySelect.value = selectedItem.kind_id;
-            // }
-            // if (uomSelect) {
-            //     uomSelect.value = selectedItem.uom ?? selectedItem.unit_id;
-            // }
-            
-            const categoryInput = row.querySelector('input[name^="items"][name$="[category]"]');
-            const uomInput = row.querySelector('input[name^="items"][name$="[uom]"]');
-            if (categoryInput) {
-                categoryInput.value = selectedItem.kind;
+            if (categorySelect) {
+                categorySelect.value = selectedItem.kind_id;
             }
-            if (uomInput) {
-                uomInput.value = selectedItem.unit ?? selectedItem.unit;
+            if (uomSelect) {
+                uomSelect.value = selectedItem.uom ?? selectedItem.unit_id;
             }
 
             refreshSelectedItemOptions();
@@ -274,8 +256,8 @@ function populateItemSelect(select, items) {
             (item.name + ' ' + (item.variant || '')).trim(),
             item.id
         );
-        option.dataset.category = item.kind;
-        option.dataset.uom = item.uom ?? item.unit;
+        option.dataset.category = item.kind_id;
+        option.dataset.uom = item.uom ?? item.unit_id;
         select.add(option);
     });
 }
@@ -308,10 +290,8 @@ function resetReceivingRows() {
         }
 
         row.querySelector('input[name$="[quantity]"]').value = '';
-        // row.querySelector('select[name$="[category]"]').value = '';
-        // row.querySelector('select[name$="[uom]"]').value = '';
-        row.querySelector('input[name$="[category]"]').value = '';
-        row.querySelector('input[name$="[uom]"]').value = '';
+        row.querySelector('select[name$="[category]"]').value = '';
+        row.querySelector('select[name$="[uom]"]').value = '';
         row.querySelector('select[name$="[item_name]"]').value = '';
     });
 }

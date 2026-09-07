@@ -147,6 +147,7 @@
                         @if(request()->routeIs('underground.*'))
                             <th class="px-6 py-4">Level</th>
                         @endif
+                        <th class="px-6 py-4">Variant</th>
                         <th class="px-6 py-4">Supplier</th>
                         <th class="px-6 py-4">Kind</th>
                         <th class="px-6 py-4">Cost</th>
@@ -181,6 +182,11 @@
                             </span>
                         </td>
                         @endif
+
+                        <!-- Supplier Column -->
+                        <td class="px-6 py-4 font-semibold text-brand-dark">
+                            {{ $item->item->variant ?? 'Unassigned' }}
+                        </td>
 
                         <!-- Supplier Column -->
                         <td class="px-6 py-4 font-semibold text-brand-dark">
@@ -273,3 +279,73 @@
 
 </div>
 @endsection
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    window.modal = document.getElementById('stockCardModal');
+});
+
+function stockCardModal(id, type, kind, quantity, status) {
+    if (!modal) return;
+    
+    loadStockCard(id);
+
+    window.openModal('stockCardModal');
+}
+
+async function loadStockCard(stockId) {
+    try {
+        const response = await fetch('/surface/stock/load-stock/' + stockId, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        });
+
+        if (!response.ok) throw new Error('Unable to load supplier items.');
+
+        const data = await response.json();
+
+        populateStockCard(data);
+    } catch (error) {
+        console.error('Error loading stock card:', error);
+        alert('An error occurred while loading the stock card. Please try again later.');
+    } finally {
+        // resetStockCard();
+    }
+}
+
+function populateStockCard(data) {
+    console.log('data', data)
+    const nameEl = document.getElementById('modal_item_name');
+    if (nameEl) {
+        const nameText = data.stock.item.name;
+        const variantText = data.stock.item.variant ? ` (${data.stock.item.variant})` : '';
+        nameEl.innerHTML = `${nameText} ${variantText}`;
+    }
+    
+    const kindEl = document.getElementById('modal_item_kind');
+    if (kindEl) {
+        const kindText = data.stock.item.kind?.kind ?? '';
+        kindEl.innerHTML = kindText;
+    }
+
+    const rowsEl = document.getElementById('stockFormRows');
+    rowsEl.innerHTML = data.stock_card.length ? data.stock_card.map(row => `
+        <tr class="text-center hover:bg-gray-50 transition-colors">
+            <td class="border border-gray-200 p-2.5 font-semibold">${row.date}</td>
+            <td class="border border-gray-200 p-2.5">${Number(row.beginning).toLocaleString()}</td>
+            <td class="border border-gray-200 p-2.5 text-green-600 font-semibold">${Number(row.incoming).toLocaleString()}</td>
+            <td class="border border-gray-200 p-2.5 text-red-600 font-semibold">${Number(row.outgoing).toLocaleString()}</td>
+            <td class="border border-gray-200 p-2.5 font-bold text-brand-dark">${Number(row.ending).toLocaleString()}</td>
+            <td class="border border-gray-200 p-2.5 lowercase text-gray-500">${row.uom ?? ''}</td>
+        </tr>`).join('') : '<tr><td colspan="6" class="p-6 text-center text-gray-400">No movements recorded.</td></tr>';
+}
+
+function resetStockCard() {
+
+}
+</script>
+@endpush

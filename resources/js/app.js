@@ -152,12 +152,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    window.stockCardModal = function stockCardModal(id, type, kind, quantity, status) {
-        const modal = document.getElementById('stockCardModal');
-
-        window.openModal('stockCardModal');
-    }
-
     window.updateAndRecordModal = function updateAndRecordModal(id, type, kind, quantity, status) {
         const modal = document.getElementById('updateAndRecordModal');
         const kindInput = modal.querySelector('#modal-item-kind');
