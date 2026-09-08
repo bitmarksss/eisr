@@ -69,9 +69,23 @@ class StockController extends Controller
     }
 
     /**
-     * Show the form for receiving a inventory stocks.
+     * RECEIVE
      */
-    public function receive()
+    public function receivingIndex()
+    {
+        $movements = StockMovement::with(['user', 'items.item', 'approvals.user'])
+            ->where('type', 'receive')
+            ->latest('movement_date')
+            ->latest('id')
+            ->paginate(15);
+
+        return view('pages.stock.movements.index', [
+            'movements' => $movements, 
+            'movementType' => 'receive'
+        ]);
+    }
+
+    public function receiveForm()
     {
         $items = InventoryItem::with(['kind', 'unit', 'supplier'])->get();
         $categories = InventoryKind::get();
@@ -82,86 +96,7 @@ class StockController extends Controller
         return view('pages.stock.receiving', compact('items', 'categories', 'levels', 'suppliers', 'uoms'));
     }
 
-    public function receivingIndex()
-    {
-        $movements = StockMovement::with(['user', 'items.item', 'approvals.user'])
-            ->where('type', 'receive')->latest('movement_date')->latest('id')->paginate(15);
-        return view('pages.stock.movements.index', ['movements' => $movements, 'movementType' => 'receive']);
-    }
-
-    public function issuanceIndex()
-    {
-        $movements = StockMovement::with(['user', 'items.item', 'items.destinationLevel', 'approvals.user'])
-            ->where('type', 'issuance')->latest('movement_date')->latest('id')->paginate(15);
-        return view('pages.stock.movements.index', ['movements' => $movements, 'movementType' => 'issuance']);
-    }
-
-    public function updateMovement(Request $request, StockMovement $movement)
-    {
-        abort_unless($movement->status === 'pending_approval', 403, 'Approved movements cannot be edited.');
-
-        $data = $request->validate([
-            'movement_date' => ['required', 'date'],
-            'notes' => ['nullable', 'string'],
-            'items' => ['required', 'array', 'min:1'],
-            'items.*.quantity' => ['required', 'integer', 'min:1'],
-            'items.*.remarks' => ['nullable', 'string', 'max:1000'],
-        ]);
-
-        DB::transaction(function () use ($movement, $data) {
-            $oldItems = $movement->items()->get();
-            foreach ($oldItems as $item) {
-                $surface = InventoryStock::where('item_id', $item->item_id)
-                    ->where('location', 'surface')->whereNull('level_id')->lockForUpdate()->first();
-                if ($movement->type === 'receive') {
-                    $surface?->decrement('quantity', $item->quantity);
-                } else {
-                    $surface?->increment('quantity', $item->quantity);
-                    InventoryStock::where('item_id', $item->item_id)->where('location', 'underground')
-                        ->where('level_id', $item->destination_level_id)->lockForUpdate()->first()?->decrement('quantity', $item->quantity);
-                }
-            }
-
-            $movement->update(['movement_date' => $data['movement_date'], 'notes' => $data['notes'] ?? null]);
-            foreach ($oldItems as $index => $item) {
-                if (!isset($data['items'][$index])) continue;
-                $line = $data['items'][$index];
-                $item->update($line);
-                $surface = InventoryStock::where('item_id', $item->item_id)->where('location', 'surface')
-                    ->whereNull('level_id')->lockForUpdate()->firstOrFail();
-                if ($movement->type === 'receive') {
-                    $surface->increment('quantity', $line['quantity']);
-                } else {
-                    if ($surface->quantity < $line['quantity']) throw new \Exception('Insufficient surface stock.');
-                    $surface->decrement('quantity', $line['quantity']);
-                    InventoryStock::firstOrCreate([
-                        'item_id' => $item->item_id, 'location' => 'underground', 'level_id' => $item->destination_level_id,
-                    ], ['quantity' => 0])->increment('quantity', $line['quantity']);
-                }
-            }
-        });
-        return back()->with('success', 'Movement updated successfully.');
-    }
-
-    /**
-     * Show the form for issuing a inventory stocks to underground levels.
-     */
-    public function issuance()
-    {
-
-        $items = InventoryItem::with(['kind', 'unit', 'supplier'])->get();
-        $categories = InventoryKind::get();
-        $suppliers = Supplier::get();
-        $levels = Level::get();
-        $uoms = UnitOfMeasurement::get();
-
-        return view('pages.stock.issuance', compact('items', 'categories', 'levels', 'suppliers', 'uoms'));
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function storeReceiving(Request $request)
+    public function receivingStore(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'receiving_no' => [
@@ -237,50 +172,39 @@ class StockController extends Controller
             ->with('success', 'Stock received and inventory updated successfully.');
     }
 
-    public function logs(Request $request)
+
+    /**
+     * ISSUANCE
+     */
+
+    public function issuanceIndex()
     {
-        $location = $request->segment(1) ?? null; // Default to 'empty' if not provided
+        $movements = StockMovement::with([
+                'user', 
+                'items.item', 'items.destinationLevel', 
+                'approvals.user'
+            ])
+            ->where('type', 'issuance')
+            ->latest('movement_date')
+            ->latest('id')
+            ->paginate(15);
 
-        // 1. Start with base query scoped tightly to our target model type
-        $query = ActivityLog::with('user')
-            // ->where('auditable_type', InventoryStock::class)
-            ->latest('id'); // Order by newest logs first
-
-        // 2. Filter by specific action (created, updated, deleted) if provided
-        if ($request->filled('action_filter')) {
-            $query->where('action', $request->action_filter);
-        }
-
-        // 3. Search filter handling (Checks user names, actions, or specific record IDs)
-        if ($request->filled('search')) {
-            $searchTerm = $request->search;
-            
-            $query->where(function ($q) use ($searchTerm) {
-                $q->where('action', 'like', "%{$searchTerm}%")
-                  ->orWhere('auditable_id', $searchTerm) // Exact numeric match for stock IDs
-                  ->orWhere('ip_address', 'like', "%{$searchTerm}%")
-                  ->orWhereHas('user', function ($userQuery) use ($searchTerm) {
-                      $userQuery->where('name', 'like', "%{$searchTerm}%");
-                  });
-            });
-        }
-
-        // 4. Paginate results while preserving current query parameters
-        $logs = $query->paginate(15)->withQueryString();
-
-        // 5. Return the view with the required variables
-        return view('pages.stock.logs', [
-            'logs'     => $logs,
-            'location' => $location,
-        ]);
+        return view('pages.stock.movements.index', ['movements' => $movements, 'movementType' => 'issuance']);
     }
 
-    public function withdrawal() {
+    public function issuanceForm()
+    {
 
-        return view('pages.stock.withdrawal');
+        $items = InventoryItem::with(['kind', 'unit', 'supplier'])->get();
+        $categories = InventoryKind::get();
+        $suppliers = Supplier::get();
+        $levels = Level::get();
+        $uoms = UnitOfMeasurement::get();
+
+        return view('pages.stock.issuance', compact('items', 'categories', 'levels', 'suppliers', 'uoms'));
     }
 
-    public function storeIssuance(Request $request)
+    public function issuanceStore(Request $request)
     {
         // 1. Validate Form Input
         $validated = $request->validate([
@@ -350,6 +274,64 @@ class StockController extends Controller
         return redirect()->back()->with('success', 'Underground issuance logged and stock updated successfully!');
     }
     
+    /**
+     * MOVEMENT
+     */
+    public function updateMovement(Request $request, StockMovement $movement)
+    {
+        abort_unless($movement->status === 'pending_approval', 403, 'Approved movements cannot be edited.');
+
+        $data = $request->validate([
+            'movement_date' => ['required', 'date'],
+            'notes' => ['nullable', 'string'],
+            'items' => ['required', 'array', 'min:1'],
+            'items.*.quantity' => ['required', 'integer', 'min:1'],
+            'items.*.remarks' => ['nullable', 'string', 'max:1000'],
+        ]);
+
+        DB::transaction(function () use ($movement, $data) {
+            $oldItems = $movement->items()->get();
+            foreach ($oldItems as $item) {
+                $surface = InventoryStock::where('item_id', $item->item_id)
+                    ->where('location', 'surface')->whereNull('level_id')->lockForUpdate()->first();
+                if ($movement->type === 'receive') {
+                    $surface?->decrement('quantity', $item->quantity);
+                } else {
+                    $surface?->increment('quantity', $item->quantity);
+                    InventoryStock::where('item_id', $item->item_id)->where('location', 'underground')
+                        ->where('level_id', $item->destination_level_id)->lockForUpdate()->first()?->decrement('quantity', $item->quantity);
+                }
+            }
+
+            $movement->update(['movement_date' => $data['movement_date'], 'notes' => $data['notes'] ?? null]);
+            foreach ($oldItems as $index => $item) {
+                if (!isset($data['items'][$index])) continue;
+                $line = $data['items'][$index];
+                $item->update($line);
+                $surface = InventoryStock::where('item_id', $item->item_id)->where('location', 'surface')
+                    ->whereNull('level_id')->lockForUpdate()->firstOrFail();
+                if ($movement->type === 'receive') {
+                    $surface->increment('quantity', $line['quantity']);
+                } else {
+                    if ($surface->quantity < $line['quantity']) throw new \Exception('Insufficient surface stock.');
+                    $surface->decrement('quantity', $line['quantity']);
+                    InventoryStock::firstOrCreate([
+                        'item_id' => $item->item_id, 'location' => 'underground', 'level_id' => $item->destination_level_id,
+                    ], ['quantity' => 0])->increment('quantity', $line['quantity']);
+                }
+            }
+        });
+        return back()->with('success', 'Movement updated successfully.');
+    }
+
+    /**
+     * WITHDRAWAL
+     */
+    public function withdrawal() {
+
+        return view('pages.stock.withdrawal');
+    }
+    
     public function loadStockCard(string $id)
     {
         $stock = InventoryStock::with(['item', 'level'])->findOrFail($id);
@@ -413,6 +395,44 @@ class StockController extends Controller
         return response()->json([
             'stock' => $stock,
             'stock_card' => $rows,
+        ]);
+    }
+
+    public function logs(Request $request)
+    {
+        $location = $request->segment(1) ?? null; // Default to 'empty' if not provided
+
+        // 1. Start with base query scoped tightly to our target model type
+        $query = ActivityLog::with('user')
+            // ->where('auditable_type', InventoryStock::class)
+            ->latest('id'); // Order by newest logs first
+
+        // 2. Filter by specific action (created, updated, deleted) if provided
+        if ($request->filled('action_filter')) {
+            $query->where('action', $request->action_filter);
+        }
+
+        // 3. Search filter handling (Checks user names, actions, or specific record IDs)
+        if ($request->filled('search')) {
+            $searchTerm = $request->search;
+            
+            $query->where(function ($q) use ($searchTerm) {
+                $q->where('action', 'like', "%{$searchTerm}%")
+                  ->orWhere('auditable_id', $searchTerm) // Exact numeric match for stock IDs
+                  ->orWhere('ip_address', 'like', "%{$searchTerm}%")
+                  ->orWhereHas('user', function ($userQuery) use ($searchTerm) {
+                      $userQuery->where('name', 'like', "%{$searchTerm}%");
+                  });
+            });
+        }
+
+        // 4. Paginate results while preserving current query parameters
+        $logs = $query->paginate(15)->withQueryString();
+
+        // 5. Return the view with the required variables
+        return view('pages.stock.logs', [
+            'logs'     => $logs,
+            'location' => $location,
         ]);
     }
 }

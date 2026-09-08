@@ -28,7 +28,7 @@
 
     <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         
-        <form method="GET" action="{{ route('users.index') }}" class="flex flex-1 items-center space-x-3 w-full sm:w-auto">
+        <form method="GET" action="{{ route('admin.users.index') }}" class="flex flex-1 items-center space-x-3 w-full sm:w-auto">
             <div class="flex items-center space-x-2">
                 <label for="perPage" class="text-xs font-semibold text-gray-500 whitespace-nowrap">Show</label>
                 <select name="perPage" id="perPage" onchange="this.form.submit()" 
@@ -53,9 +53,6 @@
                 </button>
             </div>
         </form>
-
-        <!-- <a href="{{ route('users.index', ['action' => 'create']) }}"  -->
-        </a>
 
         <button onclick="window.openModal('addUserModal')" 
             class="bg-brand-gold hover:bg-brand-gold-hover text-white font-bold px-5 py-2.5 rounded-lg shadow-sm text-sm transition text-center flex items-center justify-center space-x-2 cursor-pointer active:translate-y-0.5">

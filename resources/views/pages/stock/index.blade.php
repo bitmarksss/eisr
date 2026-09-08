@@ -44,12 +44,18 @@
     @endif
 
     <!-- Control Matrix Panel -->
-    <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+    <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+        <div>
+            <p class="text-xs font-bold text-gray-500 uppercase tracking-wider text-nowrap">{{ ucfirst($location) }} Magazine</p>
+            <h2 class="text-xl font-bold text-brand-navy mt-1 text-nowrap">
+            Inventory Stocks
+            </h2>
+        </div>
         
-        
-        <div class="flex flex-wrap items-center justify-between w-full">
+        <div class="flex flex-wrap items-center justify-end gap-6 w-full">
             <!-- Search and Filters -->
-            <form method="GET" action="{{ route($location . '.stock.index') }}" class="flex flex-wrap items-center gap-3 flex-1 w-full">
+            <form method="GET" action="{{ route($location . '.stock.index') }}" 
+                class="flex flex-wrap items-center justify-end gap-3 flex-1 w-full">
 
                 @if(request()->routeIs('underground.*'))
                 <!-- Level Filter -->
@@ -93,13 +99,13 @@
 
                 <!-- Receive Items from Supplier -->
                 @if(request()->routeIs('surface.stock.index')) <!-- limited receiving to SURFACE -->
-                <a href="{{ route('surface.stock.receive') }}" class="bg-brand-green border-0  hover:bg-brand-green-hover text-white font-semibold px-4 py-2 space-x-1 rounded-lg shadow transition text-sm cursor-pointer active:translate-y-0.5">
+                <a href="{{ route('surface.stock.receive.index') }}" class="bg-brand-green border-0  hover:bg-brand-green-hover text-white font-semibold px-4 py-2 space-x-1 rounded-lg shadow transition text-sm cursor-pointer active:translate-y-0.5">
                     <i class="fa-solid fa-truck-ramp-box"></i>
                     <span>Receive Items</span>
                 </a>
                 
                 <!-- Issue Items to Underground -->
-                <a href="{{ route('surface.stock.issuance') }}" class="bg-brand-navy border-0  hover:bg-brand-navy-hover text-white font-semibold px-4 py-2 space-x-1 rounded-lg shadow transition text-sm cursor-pointer active:translate-y-0.5">
+                <a href="{{ route('surface.stock.issuance.index') }}" class="bg-brand-navy border-0  hover:bg-brand-navy-hover text-white font-semibold px-4 py-2 space-x-1 rounded-lg shadow transition text-sm cursor-pointer active:translate-y-0.5">
                     <i class="fa-solid fa-dolly"></i>
                     <span>Issue Items</span>
                 </a>

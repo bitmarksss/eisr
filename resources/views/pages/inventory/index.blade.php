@@ -33,11 +33,16 @@
 
     <!-- Control Matrix Panel -->
     <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div>
+            <p class="text-xs font-bold text-gray-500 uppercase tracking-wider">Maintenance</p>
+            <h2 class="text-xl font-bold text-brand-navy mt-1 text-nowrap">
+            Inventory Items
+            </h2>
+        </div>
         
-        
-        <div class="flex flex-wrap items-center justify-between w-full">
+        <div class="flex flex-wrap items-center justify-end gap-6 w-full">
             <!-- Search and Filters -->
-            <form method="GET" action="{{ route('maintenance.inventory.index') }}" class="flex flex-wrap items-center gap-3 flex-1 w-full">
+            <form method="GET" action="{{ route('maintenance.inventory.index') }}" class="flex flex-wrap items-center justify-end gap-3 flex-1 w-full">
                 <div class="flex w-90">
                     <div class="relative min-w-70 flex-1 max-w-md">
                         <input type="text" name="search" value="{{ request('search') }}" placeholder="Search by name, item code, or category..." 

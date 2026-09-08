@@ -151,3 +151,41 @@
         px-4
         text-xs
 }
+
+/* Horizontal navigation used by components/topbar.blade.php */
+.topbar-link {
+    @apply inline-flex items-center rounded-lg px-3 py-2 font-medium whitespace-nowrap cursor-pointer transition-all;
+}
+
+.topbar-link:hover,
+.topbar-link.selected {
+    @apply bg-brand-green text-brand-light;
+}
+
+.topbar-menu {
+    @apply relative;
+}
+
+.topbar-dropdown {
+    @apply invisible absolute left-0 top-full z-200 min-w-52 rounded-lg border border-gray-200 bg-white py-2 opacity-0 shadow-xl transition-all duration-150;
+}
+
+.topbar-menu:hover .topbar-dropdown
+/* ,.topbar-menu:focus-within .topbar-dropdown  */
+{
+    @apply visible opacity-100;
+}
+
+.topbar-menu:hover > .topbar-link 
+/* ,.topbar-menu:focus-within > .topbar-link */
+{
+    @apply bg-brand-green text-brand-light;
+}
+
+.topbar-dropdown a {
+    @apply block px-4 py-2 text-sm text-brand-navy whitespace-nowrap transition-colors;
+}
+
+.topbar-dropdown a:hover {
+    @apply bg-brand-green/10 text-brand-green;
+}

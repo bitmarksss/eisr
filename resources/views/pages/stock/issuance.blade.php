@@ -31,7 +31,7 @@
 
 
         <!-- Master Update Submission Form Layout -->
-        <form action="{{ route('surface.stock.issuance.store') }}" method="POST" 
+        <form action="{{ route('surface.stock.issuance.record') }}" method="POST" 
             id="issuance-form" class="p-6 space-y-4 w-full">
             @csrf
             @method('POST')

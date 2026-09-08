@@ -78,17 +78,25 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
 
         Route::prefix('stock')->name('stock.')->group(function () {
             // Route::get('/', [InventoryController::class, 'warehouse_index'])->name('index');
+            
             Route::get('/', [StockController::class, 'index'])->name('index');
             Route::put('/{id}', [StockController::class, 'update'])->name('update');
             Route::post('/upload', [StockController::class, 'upload'])->name('upload');
 
-            Route::get('/receive', [StockController::class, 'receive'])->name('receive');
-            Route::get('/receiving', [StockController::class, 'receivingIndex'])->name('receiving.index');
-            Route::post('/receive/store', [StockController::class, 'storeReceiving'])->name('receive.store');
+            Route::prefix('receive')->name('receive.')->group(function () {
+                Route::get('/', [StockController::class, 'receivingIndex'])->name('index');
+                
+                Route::get('/record', [StockController::class, 'receiveForm'])->name('form');
+                Route::post('/receive/store', [StockController::class, 'receivingStore'])->name('store');
+            });
             
-            Route::get('/issuance', [StockController::class, 'issuance'])->name('issuance');
-            Route::get('/issuances', [StockController::class, 'issuanceIndex'])->name('issuances.index');
-            Route::post('/issuance/store', [StockController::class, 'storeIssuance'])->name('issuance.store');
+            Route::prefix('issuance')->name('issuance.')->group(function () {
+                Route::get('/', [StockController::class, 'issuanceIndex'])->name('index');
+
+                Route::get('/form', [StockController::class, 'issuanceForm'])->name('form');
+                Route::post('/record', [StockController::class, 'issuanceStore'])->name('record');
+            });
+
             Route::put('/movements/{movement}', [StockController::class, 'updateMovement'])->name('movements.update');
 
             Route::get('/load-stock/{id}', [StockController::class, 'loadStockCard'])->name('stock-card');
@@ -177,11 +185,11 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
     });
     
     Route::prefix('admin')->name('admin.')->group(function () {
-        Route::prefix('users')->group(function () {
-            Route::get('/', [UserController::class, 'index'])->name('users.index');
+        Route::prefix('users')->name('users.')->group(function () {
+            Route::get('/', [UserController::class, 'index'])->name('index');
 
-            Route::post('/store', [UserController::class, 'store'])->name('users.store');
-            Route::put('/{id}', [UserController::class, 'update'])->name('users.update');
+            Route::post('/store', [UserController::class, 'store'])->name('store');
+            Route::put('/{id}', [UserController::class, 'update'])->name('update');
         });
 
         Route::get('/logs', [ReportsController::class, 'logs'])->name('logs');
