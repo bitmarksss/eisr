@@ -3,7 +3,7 @@
 
     <!-- Tooltip Box -->
     <div data-tooltip
-        class="pointer-events-none fixed z-[9999] whitespace-nowrap rounded px-3 py-1.5 text-xs font-medium opacity-0 transition-opacity group-hover:opacity-100
+        class="pointer-events-none fixed z-[99] whitespace-nowrap rounded px-3 py-1.5 text-xs font-medium opacity-0 transition-opacity group-hover:opacity-100
         -translate-x-1/2 -translate-y-full {{ str_replace(' ', '-', $bg_color) }} {{ $text_color }}">
         {{ $text }}
         <!-- Tooltip Arrow -->

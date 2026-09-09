@@ -9,23 +9,7 @@
 @section('modals')
     @include('components.backdrop')
 
-    @if(request()->routeIs('inventory.*'))
-        @include('components.add-inventory-modal')
-        @include('components.edit-inventory-modal')
-        @include('components.inventory.item-modal')
-    @endif
-
     @include('components.stock.edit-modal')
-
-    @if(request()->routeIs('surface.stock.*'))
-        @include('components.inventory.receiving-modal')
-        @include('components.inventory.issuance-modal')
-    @endif
-
-    @if(request()->routeIs('underground.stock.*'))
-        @include('components.inventory.receiving-modal')
-        @include('components.inventory.issuance-modal')
-    @endif
 
     @if(request()->routeIs('surface.stock.*'))
         @include('components.inventory.stock-card-modal')
@@ -242,7 +226,8 @@
                                 text_color="text-white"
                             >
                                 <button type="button" 
-                                    onclick="stockCardModal('{{ $item->id }}')"
+                                    data-action="stock-card"
+                                    data-stock-id="{{ $item->id }}"
                                     class="py-2 px-2.5 bg-brand-navy text-white rounded-lg hover:underline text-xs font-bold cursor-pointer">
                                     <i class="fa-solid fa-eye"></i>
                                 </button>
@@ -254,7 +239,13 @@
                                 bg_color="bg brand navy"
                                 text_color="text-white"
                             >
-                                <button onclick="editStock('{{ $item->id }}', '{{ $item->supplier->name }}', '{{ addslashes($item->name) }}', '{{ $item->kind->kind }}', '{{ $item->quantity }}')" 
+                                <button 
+                                    data-action="edit-stock"
+                                    data-stock-id="{{ $item->id }}"
+                                    data-supplier="{{ $item->supplier->name }}"
+                                    data-name="{{ $item->name }}"
+                                    data-kind="{{ $item->kind->kind }}"
+                                    data-quantity="{{ $item->quantity }}"
                                     class="py-2 px-2.5 bg-amber-400 text-white rounded-lg hover:underline text-xs font-bold cursor-pointer">
                                     <i class="fa-solid fa-pen-to-square"></i>
                                 </button>
@@ -287,14 +278,48 @@
 @endsection
 
 @push('scripts')
-<script>
+<script type="module">
 document.addEventListener('DOMContentLoaded', function() {
-    window.modal = document.getElementById('stockCardModal');
+    
+window.modal = document.getElementById('stockCardModal');
+window.modal?.addEventListener('click', function(event) {
+    if (event.target === window.modal || event.target.closest('button')) {
+        resetStockCard();
+    }
+});
+                                
+document.addEventListener('click', function (event) {
+    const button = event.target.closest('[data-action]');
+
+    if (!button) return;
+
+    const action = button.dataset.action;
+
+    switch (action) {
+        case 'close-modal':
+            console.log('action', action);
+            closeStockCardModal();
+            break;    
+        case 'stock-card':
+            stockCardModal(button.dataset.stockId);
+            break;
+
+        case 'edit-stock':
+            editStock(
+                button.dataset.stockId,
+                button.dataset.supplier,
+                button.dataset.name,
+                button.dataset.kind,
+                button.dataset.quantity
+            );
+            break;
+    }
 });
 
-function stockCardModal(id, type, kind, quantity, status) {
+function stockCardModal(id) {
     if (!modal) return;
     
+    resetStockCard();
     loadStockCard(id);
 
     window.openModal('stockCardModal');
@@ -318,13 +343,10 @@ async function loadStockCard(stockId) {
     } catch (error) {
         console.error('Error loading stock card:', error);
         alert('An error occurred while loading the stock card. Please try again later.');
-    } finally {
-        // resetStockCard();
     }
 }
 
 function populateStockCard(data) {
-    console.log('data', data)
     const nameEl = document.getElementById('modal_item_name');
     if (nameEl) {
         const nameText = data.stock.item.name;
@@ -339,7 +361,13 @@ function populateStockCard(data) {
     }
 
     const rowsEl = document.getElementById('stockFormRows');
-    rowsEl.innerHTML = data.stock_card.length ? data.stock_card.map(row => `
+    const stockRows = data.stock_card ?? [];
+    const minimumRows = Math.max(stockRows.length, 5);
+    const blankRows = Array.from({ length: minimumRows - stockRows.length }, () => null);
+    const rows = [...stockRows, ...blankRows];
+
+    // rowsEl.innerHTML = rows.length ? rows.map(row => row ? `
+    rowsEl.innerHTML = rows.map(row => row ? `
         <tr class="text-center hover:bg-gray-50 transition-colors">
             <td class="border border-gray-200 p-2.5 font-semibold">${row.date}</td>
             <td class="border border-gray-200 p-2.5">${Number(row.beginning).toLocaleString()}</td>
@@ -347,11 +375,45 @@ function populateStockCard(data) {
             <td class="border border-gray-200 p-2.5 text-red-600 font-semibold">${Number(row.outgoing).toLocaleString()}</td>
             <td class="border border-gray-200 p-2.5 font-bold text-brand-dark">${Number(row.ending).toLocaleString()}</td>
             <td class="border border-gray-200 p-2.5 lowercase text-gray-500">${row.uom ?? ''}</td>
-        </tr>`).join('') : '<tr><td colspan="6" class="p-6 text-center text-gray-400">No movements recorded.</td></tr>';
+        </tr>` : `
+        <tr class="text-center" aria-hidden="true">
+            <td class="border border-gray-200 p-2.5">&nbsp;</td>
+            <td class="border border-gray-200 p-2.5">&nbsp;</td>
+            <td class="border border-gray-200 p-2.5">&nbsp;</td>
+            <td class="border border-gray-200 p-2.5">&nbsp;</td>
+            <td class="border border-gray-200 p-2.5">&nbsp;</td>
+            <td class="border border-gray-200 p-2.5">&nbsp;</td>
+        </tr>`).join('');
 }
 
 function resetStockCard() {
+    document.getElementById('modal_item_name').textContent = 'Loading...';
+    document.getElementById('modal_item_kind').textContent = 'Loading...';
+    const rowsEl = document.getElementById('stockFormRows');
+    let rows = '';
+    for(let i = 0; i < 5; i++) {
+        rows += `<tr class="animate-pulse">`;
 
+        const grays = ['100', '200'];
+        for(let j = 0; j < 6; j++) {
+            rows += `
+                <td class="border border-gray-200 p-0">
+                    <div class="space-y-3 p-4">
+                        <div class="h-4 rounded bg-gray-${grays[Math.floor(Math.random() * grays.length)]}"></div>
+                    </div>
+                </td>`;
+        }
+
+        rows += `</tr>`;
+    }
+    rowsEl.innerHTML = rows;
 }
+
+function closeStockCardModal() {
+    resetStockCard();
+    window.closeModal();
+}
+
+});
 </script>
 @endpush

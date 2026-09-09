@@ -1,26 +1,29 @@
 <div id="stockCardModal" class="fixed inset-0 z-110 flex items-center justify-center p-4 opacity-0 pointer-events-none">
 
     <!-- Backdrop -->
-    <div class="absolute inset-0 bg-gray-950/40 backdrop-blur-xs" onclick="window.closeModal()"></div>
+    <div 
+        data-action="close-modal"
+        class="absolute z-100 inset-0 bg-brand-dark/10 backdrop-blur-xs"
+    ></div>
 
     <!-- Modal Box Container -->
-    <div class="relative bg-white w-full max-w-7xl rounded-xl shadow-xl overflow-hidden border border-gray-200 flex flex-col max-h-[90vh]">
+    <div class="relative z-110 bg-white w-full max-w-7xl rounded-2xl shadow-2xl overflow-hidden border border-gray-100 flex flex-col max-h-[90vh] animate-fade-in">
         
         <!-- Header Section -->
-        <div class="p-6 border-b border-gray-100 flex items-center justify-between">
-            <h3 class="text-lg font-bold text-brand-navy uppercase cursor-pointer tracking-wider">Explosives Stock Card View</h3>
-            <button type="button" onclick="window.closeModal()" class="text-gray-400 hover:text-gray-600 text-xl font-bold">✕</button>
+        <div class="px-6 py-4 bg-brand-green text-white flex items-center justify-between">
+            <h3 class="text-lg font-bold text-white uppercase cursor-pointer tracking-wider">Explosives Stock Card View</h3>
+            <button type="button" onclick="window.closeModal()" class="text-white/70 hover:text-white text-xl font-bold cursor-pointer p-1" aria-label="Close stock card modal">✕</button>
         </div>
 
         <!-- Context Metadata Row -->
         <div class="p-6 bg-gray-50 border-b border-gray-100 flex flex-wrap gap-6 items-center">
             <div class="flex items-center space-x-3">
                 <span class="text-xs font-bold uppercase tracking-wider text-gray-500">Item Name:</span>
-                <span id="modal_item_name" class="text-sm font-semibold text-brand-dark">Dynamite (Emulsion Type)</span>
+                <span id="modal_item_name" class="text-sm font-semibold text-brand-dark">Loading...</span>
             </div>
             <div class="flex items-center space-x-3">
                 <span class="text-xs font-bold uppercase tracking-wider text-gray-500">Kind:</span>
-                <span id="modal_item_kind" class="text-sm font-bold text-brand-navy">High Explosive</span>
+                <span id="modal_item_kind" class="text-sm font-bold text-brand-navy">Loading...</span>
             </div>
         </div>
 
@@ -49,17 +52,17 @@
                     </tr> -->
                 </thead>
                 <tbody id="stockFormRows" class="bg-white divide-y divide-gray-200 text-gray-700">
-                    
-                    <!-- Rows are populated when the stock card is opened. -->
-
+                    <!-- Loading skeleton is the default/reset state. -->
+                    <tr class="animate-pulse"><td colspan="6" class="p-0"><div class="space-y-3 p-4"><div class="h-4 rounded bg-gray-200"></div><div class="h-4 rounded bg-gray-100"></div><div class="h-4 rounded bg-gray-200"></div><div class="h-4 rounded bg-gray-100"></div><div class="h-4 rounded bg-gray-200"></div></div></td></tr>
                 </tbody>
             </table>
         </div>
 
         <!-- Modal Actions Control Footer -->
-        <div class="p-4 bg-gray-50 border-t border-gray-100 flex justify-end items-center">
-            <button type="button" onclick="window.closeModal()" 
-                class="bg-white hover:bg-gray-100 border border-gray-300 text-brand-dark font-bold px-5 py-2.5 rounded-lg shadow-2xs text-xs cursor-pointer tracking-wider transition">
+        <div class="pt-4 px-6 pb-6 bg-white border-t border-gray-100 flex justify-end items-center space-x-3">
+            <button type="button" 
+                data-action="close-modal"
+                class="px-4 py-2 text-sm font-semibold text-gray-500 hover:text-gray-700 transition cursor-pointer">
                 Close
             </button>
         </div>

@@ -102,6 +102,9 @@
                                 <select name="items[{{ $index }}][item_name]" required
                                     class="w-full bg-gray-50 border-gray-300 border rounded-lg p-2 text-sm focus:border-brand-gold focus:outline-none transition">
                                     <option value="" disabled selected>Select Item</option>
+                                    @foreach($items as $item)
+                                        <option value="{{ $item->id }}" {{ old('item_name') == $item->id ? 'selected' : '' }}>{{ $item->name }} {{ $item->variant }}</option>
+                                    @endforeach
                                 </select>
                             </td>
 
