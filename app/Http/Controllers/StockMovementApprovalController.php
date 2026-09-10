@@ -2,12 +2,26 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\{StockMovementApproverAssignment, User};
+use App\Models\{StockMovement, StockMovementApproverAssignment, User};
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class StockMovementApprovalController extends Controller
 {
+    public function approve(StockMovement $movement)
+    {
+        abort_unless($movement->status === 'pending_approval', 403, 'This movement is no longer awaiting approval.');
+        DB::transaction(function () use ($movement) {
+            $assignments = StockMovementApproverAssignment::orderBy('approver_slot')->get();
+            $approved = $movement->approvals()->where('status', 'approved')->pluck('user_id');
+            $next = $assignments->first(fn ($a) => $a->user_id && !$approved->contains($a->user_id));
+            abort_unless($next && $next->user_id === auth()->id(), 403, 'You are not the current approver for this movement.');
+            $movement->approvals()->updateOrCreate(['user_id' => $next->user_id], ['approver_slot' => $next->approver_slot, 'status' => 'approved', 'approved_at' => now()]);
+            if ($assignments->filter(fn ($a) => $a->user_id && !$approved->contains($a->user_id) && $a->user_id !== auth()->id())->isEmpty()) $movement->update(['status' => 'approved']);
+        });
+        return back()->with('success', 'Movement approved successfully.');
+    }
+
     public function index()
     {
         abort_unless(auth()->user()?->role?->role === 'admin', 403);

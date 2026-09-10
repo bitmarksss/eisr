@@ -98,6 +98,8 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
             });
 
             Route::put('/movements/{movement}', [StockController::class, 'updateMovement'])->name('movements.update');
+            Route::post('/movements/{movement}/cancel', [StockController::class, 'cancelMovement'])->name('movements.cancel');
+            Route::post('/movements/{movement}/approve', [StockMovementApprovalController::class, 'approve'])->name('movements.approve');
 
             Route::get('/load-stock/{id}', [StockController::class, 'loadStockCard'])->name('stock-card');
 

@@ -61,8 +61,8 @@
                 
                 <!-- Date Received -->
                 <div>
-                    <label for="receiving-date" class="block text-xs font-bold text-brand-dark uppercase tracking-wider mb-1">Issuance Date</label>
-                    <input type="date" id="receiving-date" name="issuance_date" value="{{ old('issuance_date') }}" required
+                    <label for="issuance-date" class="block text-xs font-bold text-brand-dark uppercase tracking-wider mb-1">Issuance Date</label>
+                    <input type="date" id="issuance-date" name="issuance_date" value="{{ old('issuance_date') }}" required
                         class="w-full bg-gray-50 border @error('issuance_date') border-red-500 @else border-gray-300 @enderror rounded-lg px-3 py-2 text-sm focus:border-brand-gold focus:outline-none transition focus:ring-2 focus:ring-brand-gold/20">
                     @error('issuance_date') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                 </div>   
@@ -72,6 +72,7 @@
                 <table class="w-full text-left border border-gray-200 rounded-xl text-xs uppercase font-medium text-gray-600">
                     <thead class="bg-gray-50 text-center select-none sticky top-0 z-10">
                         <tr>
+                            <th class="w-[10%] border border-gray-200 p-2 text-brand-navy">Current Quantity</th>
                             <th class="w-[10%] border border-gray-200 p-2 text-brand-navy">Quantity</th>
                             <th class="border border-gray-200 p-2 text-brand-navy">Item Name</th>
                             <th class="border border-gray-200 p-2 text-brand-navy">Category</th>
@@ -79,7 +80,7 @@
                             <th class="border border-gray-200 p-2 text-brand-navy">Remarks</th>
                             <th class="w-[1%] border border-gray-200 p-2 text-brand-navy">
                                 <button type="button" 
-                                    onclick="addRow('receiving');"
+                                    onclick="addRow('issuance');"
                                     class="px-5 py-2 rounded-lg bg-brand-green hover:bg-brand-green-hover text-white text-sm font-bold shadow-xs transition cursor-pointer text-nowrap"> 
                                     <i class="fa-solid fa-circle-plus"></i>
                                     Add Row
@@ -87,9 +88,16 @@
                             </th>
                         </tr>
                     </thead>
-                    <tbody id="receivingFormInputs" class="bg-white divide-y divide-gray-200">
+                    <tbody id="issuanceFormInputs" class="bg-white divide-y divide-gray-200">
                         @foreach([0,1,2] as $index)
                         <tr class="text-center max-h-9" data-index="{{ $index }}">
+                            <!-- Current Quantity -->
+                            <td class="w-[10%] border-box border h-full border-gray-200 p-1">
+                                <input type="text" readonly value="—"
+                                    name="items[{{ $index }}][current_quantity]"
+                                    class="current-quantity w-full bg-gray-100 border-gray-300 border rounded-lg px-3 py-2 text-sm text-gray-600">
+                            </td>
+
                             <!-- Quantity -->
                             <td class="w-[10%] border-box border h-full border-gray-200 p-1">
                                 <input type="number" required
@@ -152,7 +160,7 @@
                             <!-- Remove Button -->
                             @if($index != 0)
                             <td class="w-[1%] border border-gray-200 p-1">
-                                <button type="button" onclick="removeRow(`receiving`, {{ $index }});" 
+                                <button type="button" onclick="removeRow(`issuance`, {{ $index }});" 
                                     class="w-full bg-red-500 hover:bg-red-600 active:translate-y-0.5 rounded-lg p-2 cursor-pointer transition">
                                     <i class="fa-solid fa-circle-minus fa-lg text-white"></i>
                                 </button>
@@ -192,51 +200,17 @@ window.modalData = {
 };
 
 document.addEventListener('DOMContentLoaded',() => {
-    document.getElementById('receiving-date').value = new Date().toISOString().split('T')[0];
+    document.getElementById('issuance-date').value = new Date().toISOString().split('T')[0];
 });
 
-const receivingForm = document.getElementById('receiving-form');
-const supplierSelect = document.getElementById('edit-supplier-id');
+const issuanceForm = document.getElementById('issuance-form');
 window.modalData.inventoryItems = @json($items);
-receivingForm.querySelectorAll('select[name^="items"][name$="[item_name]"]')
-    .forEach(select => populateItemSelect(select, window.modalData.inventoryItems));
+issuanceForm.querySelectorAll('select[name^="items"][name$="[item_name]"]')
+    .forEach(select => 
+        populateItemSelect(select, window.modalData.inventoryItems)
+    );
 
-if (supplierSelect) supplierSelect.addEventListener('change', async function () {
-    const supplierId = this.value;
-
-    if (!supplierId) return;
-
-    resetReceivingRows();
-    setReceivingRowsLoading(true);
-
-    // Fetch items...
-    try {
-        const response = await fetch('/maintenance/supplier/' + supplierId + '/items', {
-            method: 'GET',
-            headers: {
-                'Accept': 'application/json',
-                'X-Requested-With': 'XMLHttpRequest'
-            }
-        });
-
-        if (!response.ok) throw new Error('Unable to load supplier items.');
-
-        const items = await response.json();
-        window.modalData.inventoryItems = items;
-        receivingForm.querySelectorAll('select[name^="items"][name$="[item_name]"]')
-            .forEach(select => populateItemSelect(select, items));
-        refreshSelectedItemOptions();
-    } catch (error) {
-        window.modalData.inventoryItems = [];
-        receivingForm.querySelectorAll('select[name^="items"][name$="[item_name]"]')
-            .forEach(select => populateItemSelect(select, []));
-        console.error(error);
-    } finally {
-        setReceivingRowsLoading(false);
-    }
-});
-
-receivingForm.addEventListener('change', function(event) {
+issuanceForm.addEventListener('change', function(event) {
     if (event.target.matches('select[name^="items"][name$="[item_name]"]')) {
         const selectedItemId = event.target.value;
         const selectedItem = window.modalData.inventoryItems.find(item => item.id == selectedItemId);
@@ -244,6 +218,10 @@ receivingForm.addEventListener('change', function(event) {
         console.log('selectedItem', selectedItem);
         if (selectedItem) {
             const row = event.target.closest('tr');
+            const currentQuantityInput = row.querySelector('input[name$="[current_quantity]"]');
+            if (currentQuantityInput) {
+                currentQuantityInput.value = selectedItem.stock?.[0]?.quantity ?? 0;
+            }
 
             // const categorySelect = row.querySelector('select[name^="items"][name$="[category]"]');
             // const uomSelect = row.querySelector('select[name^="items"][name$="[uom]"]');
@@ -257,13 +235,15 @@ receivingForm.addEventListener('change', function(event) {
             const categoryInput = row.querySelector('input[name^="items"][name$="[category]"]');
             const uomInput = row.querySelector('input[name^="items"][name$="[uom]"]');
             if (categoryInput) {
-                categoryInput.value = selectedItem.kind;
+                categoryInput.value = selectedItem.kind.kind;
             }
             if (uomInput) {
-                uomInput.value = selectedItem.unit ?? selectedItem.unit;
+                uomInput.value = selectedItem.unit.unit ?? selectedItem.unit.unit;
             }
 
             refreshSelectedItemOptions();
+        } else {
+            event.target.closest('tr').querySelector('input[name$="[current_quantity]"]').value = '—';
         }
     }
 
@@ -284,7 +264,7 @@ function populateItemSelect(select, items) {
 }
 
 function refreshSelectedItemOptions() {
-    const selects = [...receivingForm.querySelectorAll(
+    const selects = [...issuanceForm.querySelectorAll(
         'select[name^="items"][name$="[item_name]"]'
     )];
     const selectedValues = selects
@@ -302,7 +282,7 @@ function refreshSelectedItemOptions() {
 }
 
 function resetReceivingRows() {
-    const rows = receivingForm.querySelectorAll('#receivingFormInputs tr');
+    const rows = issuanceForm.querySelectorAll('#issuanceFormInputs tr');
 
     rows.forEach((row, index) => {
         if (index >= 3) {
@@ -320,7 +300,7 @@ function resetReceivingRows() {
 }
 
 function setReceivingRowsLoading(isLoading) {
-    receivingForm.querySelectorAll('#receivingFormInputs tr').forEach(row => {
+    issuanceForm.querySelectorAll('#issuanceFormInputs tr').forEach(row => {
         row.classList.toggle('animate-pulse', isLoading);
         row.classList.toggle('opacity-60', isLoading);
 

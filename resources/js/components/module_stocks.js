@@ -79,6 +79,22 @@ function createRow(modalPrefix, index, inventoryItems, categories, uoms) {
     quantityCell.appendChild(quantityInput);
     row.appendChild(quantityCell);
 
+    if (modalPrefix === 'issuance') {
+        const currentQuantityCell = document.createElement('td');
+        currentQuantityCell.className = 'w-[10%] border-box border h-full border-gray-200 p-1';
+
+        const currentQuantityInput = document.createElement('input');
+        currentQuantityInput.type = 'text';
+        currentQuantityInput.readOnly = true;
+        currentQuantityInput.value = '—';
+        currentQuantityInput.name = `items[${index}][current_quantity]`;
+        currentQuantityInput.className =
+            'current-quantity w-full bg-gray-100 border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-600';
+
+        currentQuantityCell.appendChild(currentQuantityInput);
+        row.insertBefore(currentQuantityCell, quantityCell);
+    }
+
 
     // =========================================================
     // Item Name
@@ -110,15 +126,23 @@ function createRow(modalPrefix, index, inventoryItems, categories, uoms) {
     categoryCell.className =
         'border border-gray-200 p-1';
 
-    const categorySelect = createSelect({
-        name: `items[${index}][category]`,
-        placeholder: 'Select Category',
-        options: categories,
-        valueKey: 'id',
-        textKey: 'kind'
-    });
+    // const categorySelect = createSelect({
+    //     name: `items[${index}][category]`,
+    //     placeholder: 'Select Category',
+    //     options: categories,
+    //     valueKey: 'id',
+    //     textKey: 'kind'
+    // });
+    // categoryCell.appendChild(categorySelect);
 
-    categoryCell.appendChild(categorySelect);
+    const categoryInput = document.createElement('input');
+    categoryInput.readOnly = true;
+    categoryInput.type = 'text';
+    categoryInput.name = `items[${index}][category]`;
+    categoryInput.placeholder = 'Item category...';
+    categoryInput.className = "w-full bg-gray-50 border-gray-300 border rounded-lg px-3 py-2 text-sm focus:border-brand-gold focus:outline-none transition";
+    categoryCell.appendChild(categoryInput);
+
     row.appendChild(categoryCell);
 
 
@@ -131,15 +155,23 @@ function createRow(modalPrefix, index, inventoryItems, categories, uoms) {
     uomCell.className =
         'border border-gray-200 p-1';
 
-    const uomSelect = createSelect({
-        name: `items[${index}][uom]`,
-        placeholder: 'Select UoM',
-        options: uoms,
-        valueKey: 'id',
-        textKey: 'unit'
-    });
+    // const uomSelect = createSelect({
+    //     name: `items[${index}][uom]`,
+    //     placeholder: 'Select UoM',
+    //     options: uoms,
+    //     valueKey: 'id',
+    //     textKey: 'unit'
+    // });
+    // uomCell.appendChild(uomSelect);
+    
+    const uomInput = document.createElement('input');
+    uomInput.readOnly = true;
+    uomInput.type = 'text';
+    uomInput.name = `items[${index}][uom]`;
+    uomInput.placeholder = 'Item unit...';
+    uomInput.className = "w-full bg-gray-50 border-gray-300 border rounded-lg px-3 py-2 text-sm focus:border-brand-gold focus:outline-none transition";
+    uomCell.appendChild(uomInput);
 
-    uomCell.appendChild(uomSelect);
     row.appendChild(uomCell);
 
 

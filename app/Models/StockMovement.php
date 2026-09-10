@@ -45,6 +45,11 @@ class StockMovement extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
 
+    public function level(): BelongsTo
+    {
+        return $this->belongsTo(Level::class, 'level_id');
+    }
+
     public function approvals(): HasMany
     {
         return $this->hasMany(StockMovementApproval::class);

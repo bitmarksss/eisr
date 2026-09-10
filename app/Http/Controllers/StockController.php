@@ -16,6 +16,7 @@ use App\Models\{
     UploadedFile, 
     UnitOfMeasurement
 };
+use App\Models\StockMovementApproverAssignment;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -73,11 +74,12 @@ class StockController extends Controller
      */
     public function receivingIndex()
     {
-        $movements = StockMovement::with(['user', 'items.item', 'approvals.user'])
+        $movements = StockMovement::with(['user', 'level', 'items.item.kind', 'items.item.unit', 'items.item.supplier', 'approvals.user'])
             ->where('type', 'receive')
             ->latest('movement_date')
             ->latest('id')
             ->paginate(15);
+        $this->attachApprovalState($movements);
 
         return view('pages.stock.movements.index', [
             'movements' => $movements, 
@@ -180,22 +182,39 @@ class StockController extends Controller
     public function issuanceIndex()
     {
         $movements = StockMovement::with([
-                'user', 
-                'items.item', 'items.destinationLevel', 
+                'user', 'level',
+                'items.item.kind', 'items.item.unit', 'items.item.supplier', 'items.destinationLevel',
                 'approvals.user'
             ])
             ->where('type', 'issuance')
             ->latest('movement_date')
             ->latest('id')
             ->paginate(15);
+        $this->attachApprovalState($movements);
 
         return view('pages.stock.movements.index', ['movements' => $movements, 'movementType' => 'issuance']);
+    }
+
+    private function attachApprovalState($movements): void
+    {
+        $assignments = StockMovementApproverAssignment::with('user')->orderBy('approver_slot')->get();
+        $movements->getCollection()->each(function ($movement) use ($assignments) {
+            $approved = $movement->approvals->where('status', 'approved')->pluck('user_id');
+            $movement->setAttribute('pending_approver', $assignments->first(fn ($a) => $a->user_id && !$approved->contains($a->user_id)));
+        });
     }
 
     public function issuanceForm()
     {
 
-        $items = InventoryItem::with(['kind', 'unit', 'supplier'])->get();
+        $items = InventoryItem::with([
+            'kind',
+            'unit',
+            'supplier',
+            'stock' => fn ($query) => $query
+                ->where('location', 'surface')
+                ->whereNull('level_id'),
+        ])->get();
         $categories = InventoryKind::get();
         $suppliers = Supplier::get();
         $levels = Level::get();
@@ -322,6 +341,15 @@ class StockController extends Controller
             }
         });
         return back()->with('success', 'Movement updated successfully.');
+    }
+
+    public function cancelMovement(StockMovement $movement)
+    {
+        abort_unless($movement->status === 'pending_approval', 403, 'This movement can no longer be cancelled.');
+
+        $movement->update(['status' => 'cancelled']);
+
+        return back()->with('success', 'Movement cancelled successfully.');
     }
 
     /**

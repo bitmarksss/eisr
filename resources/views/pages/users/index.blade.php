@@ -159,6 +159,7 @@
             <thead>
                 <tr class="bg-gray-50 text-xs font-bold text-brand-navy uppercase tracking-wider border-b border-gray-200">
                     <th class="px-6 py-4">User Details</th>
+                    <th class="px-6 py-4">Username</th>
                     <th class="px-6 py-4">Email Address</th>
                     <th class="px-6 py-4">Role System Designation</th>
                     <th class="px-6 py-4 text-right">Actions</th>
@@ -175,6 +176,7 @@
                                 <span class="text-xs text-gray-400">Middle: {{ $user->middle_name }}</span>
                             @endif
                         </td>
+                        <td class="px-6 py-4 font-mono text-gray-600 text-xs">{{ $user->username }}</td>
                         <td class="px-6 py-4 font-mono text-gray-600 text-xs">{{ $user->email }}</td>
                         <td class="px-6 py-4">
                             <span class="px-2.5 py-1 bg-green-50 text-brand-green border border-brand-green/20 font-bold text-xs rounded-full">
@@ -189,7 +191,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="4" class="px-6 py-12 text-center text-gray-400 font-medium">
+                        <td colspan="5" class="px-6 py-12 text-center text-gray-400 font-medium">
                             No matching user registries identified in system records.
                         </td>
                     </tr>
