@@ -7,7 +7,7 @@
     <div class="relative bg-white w-full max-w-lg rounded-2xl shadow-2xl border border-gray-100 overflow-hidden transform transition-all z-110 animate-fade-in">
         
         <!-- Header Strip -->
-        <div class="px-6 py-4 bg-brand-green text-white flex justify-between items-center">
+        <div class="px-6 py-4 bg-brand-gold text-white flex justify-between items-center">
             <h3 class="font-bold tracking-wide text-lg">Modify / Evaluate Stock Quantity</h3>
             <button onclick="window.closeModal()" class="text-white/70 hover:text-white font-bold text-xl cursor-pointer p-1">✕</button>
         </div>

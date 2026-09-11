@@ -16,6 +16,17 @@
     </div>
 </div>
 
+<div id="editMovementModal" class="hidden fixed inset-0 z-110 flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="editModalTitle">
+    <div class="absolute z-100 inset-0 bg-brand-dark/10 backdrop-blur-xs" onclick="closeEditMovementModal()"></div>
+    <div class="relative z-110 flex max-h-[90vh] w-full max-w-4xl flex-col overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-2xl animate-fade-in">
+        <div class="flex items-center justify-between bg-brand-gold px-6 py-4 text-white [&>button]:text-white/70 [&>button]:hover:text-white [&>button]:font-bold [&>button]:text-xl [&>button]:cursor-pointer [&>button]:p-1">
+            <h3 id="editModalTitle" class="text-lg font-bold"></h3>
+            <button type="button" onclick="closeEditMovementModal()">✕</button>
+        </div>
+        <div id="editModalBody" class="max-h-[calc(90vh-72px)] overflow-y-auto p-6"></div>
+    </div>
+</div>
+
 <div id="cancelConfirmModal" class="hidden fixed inset-0 z-[120] flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="cancelConfirmTitle">
     <div class="absolute inset-0 bg-brand-dark/20 backdrop-blur-xs" onclick="closeCancelModal()"></div>
     <div class="relative z-[121] w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl">

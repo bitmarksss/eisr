@@ -7,7 +7,14 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class StockMovementApproval extends Model
 {
-    protected $fillable = ['stock_movement_id', 'user_id', 'status', 'approved_at', 'remarks'];
+    protected $fillable = [
+        'stock_movement_id',
+        'user_id',
+        'approver_slot',
+        'status',
+        'approved_at',
+        'remarks',
+    ];
 
     protected $casts = ['approved_at' => 'datetime'];
 

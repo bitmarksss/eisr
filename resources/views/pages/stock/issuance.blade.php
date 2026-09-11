@@ -316,6 +316,49 @@ function setReceivingRowsLoading(isLoading) {
         });
     });
 }
+
+issuanceForm.querySelectorAll('#issuanceFormInputs tr:not(:first-child) [name^="items["]').forEach(field => field.removeAttribute('required'));
+issuanceForm.addEventListener('submit', function (event) {
+    const invalidRow = [...this.querySelectorAll('#issuanceFormInputs tr')].find(row => {
+        const itemSelect = row.querySelector('select[name$="[item_name]"]');
+        const quantityInput = row.querySelector('input[name$="[quantity]"]');
+        const currentQuantityInput = row.querySelector('input[name$="[current_quantity]"]');
+
+        if (!itemSelect?.value || !quantityInput?.value) return false;
+
+        const requested = Number(quantityInput.value);
+        const available = Number(currentQuantityInput?.value ?? 0);
+        return Number.isFinite(requested) && Number.isFinite(available) && requested > available;
+    });
+
+    if (invalidRow) {
+        event.preventDefault();
+        const itemName = invalidRow.querySelector('select[name$="[item_name]"] option:checked')?.textContent?.trim() || 'selected item';
+        const available = invalidRow.querySelector('input[name$="[current_quantity]"]')?.value || 0;
+        alert(`The requested quantity for ${itemName} exceeds the available quantity (${available}).`);
+    }
+});
+
+issuanceForm.addEventListener('submit', function () {
+    const rows = [...this.querySelectorAll('#issuanceFormInputs tr')];
+    let itemIndex = 0;
+
+    rows.forEach(row => {
+        const item = row.querySelector('select[name$="[item_name]"]');
+        const quantity = row.querySelector('input[name$="[quantity]"]');
+        const hasInput = item?.value || quantity?.value || row.querySelector('input[name$="[remarks]"]')?.value;
+
+        if (!hasInput) {
+            row.remove();
+            return;
+        }
+
+        row.querySelectorAll('[name]').forEach(field => {
+            field.name = field.name.replace(/items\[\d+\]/, `items[${itemIndex}]`);
+        });
+        itemIndex++;
+    });
+});
 </script>
 @endpush
 

@@ -44,7 +44,7 @@
                     <input type="text" name="search" value="{{ $search }}" placeholder="Search by name, email..." 
                         class="w-full bg-gray-50 border border-gray-300 text-brand-dark text-sm rounded-tl-lg rounded-bl-lg pl-3 pr-10 py-2 focus:border-brand-gold focus:outline-none focus:ring-2 focus:ring-brand-gold/20 transition">
                     @if($search)
-                        <a href="{{ route('users.index') }}" class="absolute right-3 top-2.5 text-gray-400 hover:text-gray-600 text-sm">✕</a>
+                        <a href="{{ route('admin.users.index') }}" class="absolute right-3 top-2.5 text-gray-400 hover:text-gray-600 text-sm">✕</a>
                     @endif
                 </div>
                 <button type="submit" class="px-2.5 cursor-pointer active:translate-y-0.5 transition

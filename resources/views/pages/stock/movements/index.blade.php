@@ -71,6 +71,17 @@
                             >
                                 <button type="button" class="edit-movement py-2 px-2.5 bg-amber-400 text-white rounded-lg hover:underline text-xs font-bold cursor-pointer" data-movement='@json($movement)'><i class="fa-solid fa-pen-to-square"></i></button>
                             </x-tooltip>
+                            @if($movement->can_approve)
+                            <form method="POST" action="{{ route('surface.stock.movements.approve', $movement) }}" class="inline">
+                                @csrf
+                                <x-tooltip text="Approve Record"
+                                    bg_color="bg brand navy"
+                                    text_color="text-white"
+                                >
+                                    <button type="submit" class="py-2 px-2.5 bg-brand-green text-white rounded-lg hover:bg-brand-green-hover text-xs font-bold cursor-pointer"><i class="fa-solid fa-check"></i></button>
+                                </x-tooltip>
+                            </form>
+                            @endif
                             <form method="POST" action="{{ route('surface.stock.movements.cancel', $movement) }}" class="inline" onsubmit="return openCancelModal(this);">
                                 @csrf
                                 <x-tooltip text="Cancel Record"
@@ -124,6 +135,10 @@
         modal.classList.add('hidden')
     }
 
+    function closeEditMovementModal() {
+        document.getElementById('editMovementModal').classList.add('hidden');
+    }
+
     const escapeHtml = value => String(value ?? '')
         .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
         .replace(/"/g, '&quot;').replace(/'/g, '&#039;');
@@ -135,7 +150,8 @@
             approved: 'bg-green-50 text-brand-green border-brand-green/20',
             rejected: 'bg-red-50 text-red-700 border-red-200',
             pending: 'bg-amber-50 text-brand-gold border-brand-gold/20',
-            pending_approval: 'bg-amber-50 text-brand-gold border-brand-gold/20'
+            pending_approval: 'bg-amber-50 text-brand-gold border-brand-gold/20',
+            cancelled: 'bg-red-50 text-red-700 border-red-200'
         };
         return `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold border ${styles[status] ?? styles.pending}"><span class="h-1.5 w-1.5 rounded-full bg-current"></span>${escapeHtml(label)}</span>`;
     };
@@ -163,6 +179,7 @@
                 <td class="px-4 py-3 font-semibold text-brand-dark">${escapeHtml(item.name || i.item_name || '—')}</td>
                 <td class="px-4 py-3 text-gray-600">${escapeHtml(category)}</td>
                 <td class="px-4 py-3 text-gray-600">${escapeHtml(uom)}</td>
+                <td class="px-4 py-3 text-gray-600">${escapeHtml(i.remarks || '—')}</td>
             </tr>`;
         }).join('');
         const approverRows = approvals.length ? approvals.map(a => `
@@ -209,9 +226,10 @@
                             <th class="px-4 py-3">Item</th>
                             <th class="px-4 py-3">Category</th>
                             <th class="px-4 py-3">UOM</th>
+                            <th class="px-4 py-3">Remarks</th>
                         </tr>
                     </thead>
-                    <tbody>${items || '<tr><td colspan="4" class="px-4 py-4 text-center text-gray-500">No inventory items.</td></tr>'}</tbody>
+                    <tbody>${items || '<tr><td colspan="5" class="px-4 py-4 text-center text-gray-500">No inventory items.</td></tr>'}</tbody>
                 </table>
             </div>
         </section>
@@ -223,12 +241,14 @@
         ${approveButton}
         ${m.notes && !Object.keys(notes).length ? `<p class="text-sm text-gray-600">${escapeHtml(m.notes)}</p>` : ''}`;
     }
+
     document.querySelectorAll('.view-movement')
         .forEach(b => b.onclick=() => {
             const m = JSON.parse(b.dataset.movement);
+            console.log('data', m);
             
             document.getElementById('modalTitle')
-                .textContent = m.reference_no;
+                .textContent = movementType === 'issuance' ? 'Underground Issuance Record' : 'Surface Receiving Record';
             
             body.innerHTML = renderMovementDetails(m); modal.classList.remove('hidden')});
     
@@ -241,17 +261,52 @@
             const item = i.item || {};
             return `<tr class="border-t border-gray-100"><td class="px-2 py-2"><input type="number" min="1" required name="items[${n}][quantity]" value="${escapeHtml(i.quantity)}" class="w-full rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-sm focus:border-brand-gold focus:outline-none"></td><td class="px-2 py-2 font-semibold text-brand-dark">${escapeHtml(item.name || i.item_name || '—')}<input type="hidden" name="items[${n}][item_id]" value="${escapeHtml(i.item_id)}"></td><td class="px-2 py-2 text-gray-600">${escapeHtml(item.kind?.kind || '—')}</td><td class="px-2 py-2 text-gray-600">${escapeHtml(item.unit?.unit || i.unit || '—')}</td><td class="px-2 py-2"><input type="text" name="items[${n}][remarks]" value="${escapeHtml(i.remarks)}" class="w-full rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-sm focus:border-brand-gold focus:outline-none"></td></tr>`;
         }).join('');
-        return `<form method="POST" action="{{ url('/surface/stock/movements') }}/${m.id}" class="space-y-5">@csrf @method('PUT')
-            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2"><div><label class="mb-1 block text-xs font-bold uppercase tracking-wider text-brand-dark">${contextLabel}</label><div class="rounded-lg border border-gray-200 bg-gray-100 px-3 py-2 text-sm font-semibold text-gray-700">${escapeHtml(context)}</div></div><div><label class="mb-1 block text-xs font-bold uppercase tracking-wider text-brand-dark">Movement date</label><input class="w-full rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-sm focus:border-brand-gold focus:outline-none" type="date" name="movement_date" value="${escapeHtml(m.movement_date)}" required></div></div>
-            <div><label class="mb-1 block text-xs font-bold uppercase tracking-wider text-brand-dark">Inventory items</label><div class="overflow-x-auto rounded-xl border border-gray-100"><table class="w-full min-w-[680px] text-left text-sm"><thead class="bg-gray-50 text-xs uppercase tracking-wider text-gray-500"><tr><th class="px-2 py-3">Quantity</th><th class="px-2 py-3">Item</th><th class="px-2 py-3">Category</th><th class="px-2 py-3">UOM</th><th class="px-2 py-3">Remarks</th></tr></thead><tbody>${rows}</tbody></table></div></div>
-            <div><label class="mb-1 block text-xs font-bold uppercase tracking-wider text-brand-dark">Notes</label><textarea class="w-full rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-sm focus:border-brand-gold focus:outline-none" name="notes" rows="3">${escapeHtml(typeof m.notes === 'string' && !Object.keys(notes).length ? m.notes : '')}</textarea></div>
-            <div class="flex justify-end border-t border-gray-100 pt-4"><button type="submit" class="rounded-lg bg-brand-gold px-5 py-2 text-sm font-bold text-white hover:bg-brand-gold-hover">Save changes</button></div></form>`;
+        return `
+        <form method="POST" action="{{ url('/surface/stock/movements') }}/${m.id}" class="space-y-5">
+            @csrf 
+            @method('PUT')
+            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div>
+                    <label class="mb-1 block text-xs font-bold uppercase tracking-wider text-brand-dark">${contextLabel}</label>
+                    <div class="rounded-lg border border-gray-200 bg-gray-100 px-3 py-2 text-sm font-semibold text-gray-700">
+                    ${escapeHtml(context)}</div>
+                </div>
+                <div>
+                    <label class="mb-1 block text-xs font-bold uppercase tracking-wider text-brand-dark">Movement date</label>
+                    <input class="w-full rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-sm focus:border-brand-gold focus:outline-none" type="date" name="movement_date" value="${escapeHtml(m.movement_date)}" required>
+                </div>
+            </div>
+            <div>
+                <label class="mb-1 block text-xs font-bold uppercase tracking-wider text-brand-dark">Inventory items</label>
+                <div class="overflow-x-auto rounded-xl border border-gray-100">
+                    <table class="w-full min-w-[680px] text-left text-sm">
+                        <thead class="bg-gray-50 text-xs uppercase tracking-wider text-gray-500">
+                            <tr>
+                                <th class="px-2 py-3">Quantity</th>
+                                <th class="px-2 py-3">Item</th>
+                                <th class="px-2 py-3">Category</th>
+                                <th class="px-2 py-3">UOM</th>
+                                <th class="px-2 py-3">Remarks</th>
+                            </tr>
+                        </thead>
+                        <tbody>${rows}</tbody>
+                    </table>
+                </div>
+            </div>
+            <div>
+            </div>
+            <div class="flex justify-end border-t border-gray-100 pt-4">
+                <button type="submit" class="rounded-lg bg-brand-gold px-5 py-2 text-sm font-bold text-white hover:bg-brand-gold-hover">Save changes</button>
+            </div>
+        </form>`;
     }
 
     document.querySelectorAll('.edit-movement')
         .forEach(b=>b.onclick=()=>{
             const m=JSON.parse(b.dataset.movement);
             
-            document.getElementById('modalTitle').textContent='Edit '+m.reference_no;
-            body.innerHTML=renderEditForm(m); modal.classList.remove('hidden')});
+            document.getElementById('editModalTitle').textContent='Edit '+m.reference_no;
+            document.getElementById('editModalBody').innerHTML=renderEditForm(m);
+            document.getElementById('editMovementModal').classList.remove('hidden');
+        });
 </script>@endpush

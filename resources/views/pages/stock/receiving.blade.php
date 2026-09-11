@@ -93,7 +93,7 @@
                             <!-- Quantity -->
                             <td class="w-[10%] border-box border h-full border-gray-200 p-1">
                                 <input type="number" 
-                                    name="items[{{ $index }}][quantity]" placeholder="0"
+                                    name="items[{{ $index }}][quantity]" placeholder="0" required
                                     class="w-full bg-gray-50 border-gray-300 border rounded-lg px-3 py-2 text-sm focus:border-brand-gold focus:outline-none transition">
                             </td>
 
@@ -329,5 +329,27 @@ function setReceivingRowsLoading(isLoading) {
         });
     });
 }
+
+receivingForm.querySelectorAll('#receivingFormInputs tr:not(:first-child) [name^="items["]').forEach(field => field.removeAttribute('required'));
+receivingForm.addEventListener('submit', function () {
+    const rows = [...this.querySelectorAll('#receivingFormInputs tr')];
+    let itemIndex = 0;
+
+    rows.forEach(row => {
+        const item = row.querySelector('select[name$="[item_name]"]');
+        const quantity = row.querySelector('input[name$="[quantity]"]');
+        const hasInput = item?.value || quantity?.value || row.querySelector('input[name$="[remarks]"]')?.value;
+
+        if (!hasInput) {
+            row.remove();
+            return;
+        }
+
+        row.querySelectorAll('[name]').forEach(field => {
+            field.name = field.name.replace(/items\[\d+\]/, `items[${itemIndex}]`);
+        });
+        itemIndex++;
+    });
+});
 </script>
 @endpush

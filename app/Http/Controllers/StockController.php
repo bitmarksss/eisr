@@ -100,6 +100,10 @@ class StockController extends Controller
 
     public function receivingStore(Request $request)
     {
+        $request->merge(['items' => collect($request->input('items', []))
+            ->filter(fn ($item) => filled($item['item_name'] ?? null) || filled($item['quantity'] ?? null) || filled($item['remarks'] ?? null))
+            ->values()->all()]);
+
         $validator = Validator::make($request->all(), [
             'receiving_no' => [
                 'required',
@@ -170,7 +174,14 @@ class StockController extends Controller
             }
         });
 
-        return redirect()->route('surface.stock.index')
+        $movements = StockMovement::with(['user', 'level', 'items.item.kind', 'items.item.unit', 'items.item.supplier', 'approvals.user'])
+            ->where('type', 'receive')
+            ->latest('movement_date')
+            ->latest('id')
+            ->paginate(15);
+        $this->attachApprovalState($movements);
+
+        return redirect()->route('surface.stock.receive.index')
             ->with('success', 'Stock received and inventory updated successfully.');
     }
 
@@ -197,10 +208,20 @@ class StockController extends Controller
 
     private function attachApprovalState($movements): void
     {
-        $assignments = StockMovementApproverAssignment::with('user')->orderBy('approver_slot')->get();
-        $movements->getCollection()->each(function ($movement) use ($assignments) {
-            $approved = $movement->approvals->where('status', 'approved')->pluck('user_id');
-            $movement->setAttribute('pending_approver', $assignments->first(fn ($a) => $a->user_id && !$approved->contains($a->user_id)));
+        $assignments = StockMovementApproverAssignment::with('user')
+            ->orderBy('approver_slot')
+            ->get();
+
+        $movements->getCollection()
+            ->each(function ($movement) use ($assignments) {
+                $approved = $movement
+                    ->approvals
+                    ->where('status', 'approved')
+                    ->pluck('user_id');
+
+                $pending = $assignments->first(fn ($a) => $a->user_id && !$approved->contains($a->user_id));
+                $movement->setAttribute('pending_approver', $pending);
+                $movement->setAttribute('can_approve', $movement->status === 'pending_approval' && (int) $pending?->user_id === (int) auth()->id());
         });
     }
 
@@ -225,6 +246,10 @@ class StockController extends Controller
 
     public function issuanceStore(Request $request)
     {
+        $request->merge(['items' => collect($request->input('items', []))
+            ->filter(fn ($item) => filled($item['item_name'] ?? null) || filled($item['quantity'] ?? null) || filled($item['remarks'] ?? null))
+            ->values()->all()]);
+
         // 1. Validate Form Input
         $validated = $request->validate([
             'issuance_no' => ['required', 'string', 'max:100', Rule::unique('stock_movement_headers', 'reference_no')],
@@ -290,7 +315,8 @@ class StockController extends Controller
             }
         });
 
-        return redirect()->back()->with('success', 'Underground issuance logged and stock updated successfully!');
+        return redirect()->route('surface.stock.issuance.index')
+            ->with('success', 'Underground issuance logged and stock updated successfully!');
     }
     
     /**

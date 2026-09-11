@@ -248,7 +248,7 @@ function createSelect({
     const select = document.createElement('select');
 
     select.name = name;
-    select.required = true;
+    // select.required = true;
 
     select.className =
         'w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm focus:border-brand-gold focus:outline-none transition';
