@@ -179,7 +179,7 @@
 .topbar-menu:hover > .topbar-link 
 /* ,.topbar-menu:focus-within > .topbar-link */
 {
-    @apply bg-brand-green text-brand-light;
+    @apply bg-brand-green/80 text-brand-light;
 }
 
 .topbar-dropdown a {

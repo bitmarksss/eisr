@@ -27,7 +27,8 @@
         </div>
         <a href="{{ route($movementType === 'receive' ? 'surface.stock.receive.form' : 'surface.stock.issuance.form') }}"
             class="bg-brand-gold hover:bg-brand-gold-hover text-white font-semibold px-4 py-2 rounded-lg shadow transition text-sm cursor-pointer">
-            <i class="fa-solid fa-plus mr-1"></i> Create New
+            <i class="fa-solid fa-plus mr-1"></i> 
+            Record {{ $movementType === 'receive' ? 'Receive' : 'Issuance' }}
         </a>
     </div>
 

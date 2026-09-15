@@ -174,7 +174,7 @@
                         @endif
 
                         <!-- Supplier Column -->
-                        <td class="px-6 py-4 font-semibold text-brand-dark">
+                        <td class="px-6 py-4 text-brand-dark">
                             {{ $item->item->variant ?? 'Unassigned' }}
                         </td>
 

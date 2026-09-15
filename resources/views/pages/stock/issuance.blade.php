@@ -16,8 +16,16 @@
         </div>
     @endif
     @if(session('errors'))
-        <div class="bg-red-100 border border-red-300 text-red-600 p-4 rounded-xl text-sm font-semibold flex items-center shadow-xs">
-            <span class="mr-2">✗</span> {{ session('errors') }}
+        <div class="bg-red-100 border border-red-300 text-red-600 p-4 rounded-xl text-sm font-semibold shadow-xs">
+            <div class="flex justify-start mb-4">
+                <!-- <span class="mr-2">✗</span> -->
+                <span class="ml-4 underline underline-offset-2">Invalid data submitted, please check the errors and try again.</span>
+            </div>
+            <ul class="list-disc">
+                @foreach(session('errors')->all() as $error)
+                    <li class="ml-4">{{ $error }}</li>
+                @endforeach
+            </ul>
         </div>
     @endif
 

@@ -4,7 +4,8 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\{
     AuthController,
-
+    
+    ApprovalController,
     DashboardController,
     FileController,
     InventoryController,
@@ -13,12 +14,7 @@ use App\Http\Controllers\{
     DailyReportController,
     StockController,
     SupplierController,
-
-    LoanController,
-    GroceryController,
-    PaymentsController,
     UserController
-    ,StockMovementApprovalController
 };
 
 /*
@@ -63,8 +59,8 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
             Route::get('/store', [LevelController::class, 'store'])->name('store');
             Route::get('/update', [LevelController::class, 'update'])->name('update');
         });
-        Route::get('/stock-approvers', [StockMovementApprovalController::class, 'index'])->name('stock-approvers.index');
-        Route::put('/stock-approvers', [StockMovementApprovalController::class, 'update'])->name('stock-approvers.update');
+        Route::get('/stock-approvers', [ApprovalController::class, 'index'])->name('stock-approvers.index');
+        Route::put('/stock-approvers', [StockController::class, 'updateApprovers'])->name('stock-approvers.update');
     });
 
     // SURFACE
@@ -100,7 +96,7 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
             Route::prefix('movements')->name('movements.')->group(function () {
                 Route::put('/{movement}', [StockController::class, 'updateMovement'])->name('update');
                 Route::post('/{movement}/cancel', [StockController::class, 'cancelMovement'])->name('cancel');
-                Route::post('/{movement}/approve', [StockMovementApprovalController::class, 'approve'])->name('approve');
+                Route::post('/{movement}/approve', [StockController::class, 'approveMovement'])->name('approve');
 
             });
 

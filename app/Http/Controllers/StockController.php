@@ -147,23 +147,6 @@ class StockController extends Controller
             ]);
 
             foreach ($data['items'] as $line) {
-                $stock = InventoryStock::where('item_id', $line['item_name'])
-                    ->where('location', 'surface')
-                    ->whereNull('level_id')
-                    ->lockForUpdate()
-                    ->first();
-
-                if ($stock) {
-                    $stock->increment('quantity', $line['quantity']);
-                } else {
-                    InventoryStock::create([
-                        'item_id' => $line['item_name'],
-                        'location' => 'surface',
-                        'level_id' => null,
-                        'quantity' => $line['quantity'],
-                    ]);
-                }
-
                 $movement->items()->create([
                     'item_id' => $line['item_name'],
                     'source_location' => 'surface',
@@ -182,7 +165,99 @@ class StockController extends Controller
         $this->attachApprovalState($movements);
 
         return redirect()->route('surface.stock.receive.index')
-            ->with('success', 'Stock received and inventory updated successfully.');
+            ->with('success', 'Receiving record submitted for approval.');
+    }
+
+    public function approveMovement(StockMovement $movement)
+    {
+        abort_unless($movement->status === 'pending_approval', 403, 'This movement is no longer awaiting approval.');
+
+        DB::transaction(function () use ($movement) {
+            $assignments = StockMovementApproverAssignment::orderBy('approver_slot')->get();
+            $approved = $movement->approvals()->where('status', 'approved')->pluck('user_id');
+            $next = $assignments->first(fn ($a) => $a->user_id && !$approved->contains($a->user_id));
+
+            abort_unless($next && $next->user_id === auth()->id(), 403, 'You are not the current approver for this movement.');
+
+            $movement->approvals()->updateOrCreate(
+                ['user_id' => $next->user_id],
+                ['approver_slot' => $next->approver_slot, 'status' => 'approved', 'approved_at' => now()]
+            );
+
+            $isFullyApproved = $assignments
+                ->filter(fn ($a) => $a->user_id && !$approved->contains($a->user_id) && $a->user_id !== auth()->id())
+                ->isEmpty();
+
+            if ($isFullyApproved) {
+                if ($movement->type === 'receive') {
+                    foreach ($movement->items as $line) {
+                        $stock = InventoryStock::where('item_id', $line->item_id)
+                            ->where('location', 'surface')
+                            ->whereNull('level_id')
+                            ->lockForUpdate()
+                            ->first();
+
+                        if ($stock) {
+                            $stock->increment('quantity', $line->quantity);
+                        } else {
+                            InventoryStock::create([
+                                'item_id' => $line->item_id,
+                                'location' => 'surface',
+                                'level_id' => null,
+                                'quantity' => $line->quantity,
+                            ]);
+                        }
+                    }
+                } elseif ($movement->type === 'issuance') {
+                    foreach ($movement->items as $line) {
+                        $surfaceStock = InventoryStock::where('item_id', $line->item_id)
+                            ->where('location', 'surface')
+                            ->whereNull('level_id')
+                            ->lockForUpdate()
+                            ->first();
+
+                        abort_unless($surfaceStock && $surfaceStock->quantity >= $line->quantity, 422, 'Insufficient surface stock to approve this issuance.');
+                        $surfaceStock->decrement('quantity', $line->quantity);
+
+                        InventoryStock::firstOrCreate(
+                            [
+                                'item_id' => $line->item_id,
+                                'location' => 'underground',
+                                'level_id' => $movement->level_id,
+                            ],
+                            ['quantity' => 0]
+                        )->increment('quantity', $line->quantity);
+                    }
+                }
+
+                $movement->update(['status' => 'approved']);
+            }
+        });
+
+        return back()->with('success', 'Movement approved successfully.');
+    }
+
+    public function updateApprovers(Request $request)
+    {
+        abort_unless(auth()->user()?->role?->role === 'admin', 403);
+        $data = $request->validate([
+            'approvers' => ['required', 'array', 'size:5'],
+            'approvers.*' => ['nullable', 'integer', 'exists:users,id'],
+        ]);
+
+        $users = collect($data['approvers'])->filter()->values();
+        if ($users->count() !== $users->unique()->count()) {
+            return back()->withErrors(['approvers' => 'Each approver slot must have a different user.']);
+        }
+
+        DB::transaction(function () use ($data) {
+            foreach ($data['approvers'] as $slot => $userId) {
+                StockMovementApproverAssignment::where('approver_slot', $slot + 1)
+                    ->update(['user_id' => $userId ?: null]);
+            }
+        });
+
+        return back()->with('success', 'Stock movement approvers updated successfully.');
     }
 
 
@@ -273,50 +348,20 @@ class StockController extends Controller
             ]);
 
             foreach ($validated['items'] as $line) {
-                $itemId  = $line['item_name'];
-                $levelId = $validated['level_id'];
-                $qty     = $line['quantity'];
-
-                // A. Deduct Qty from Surface Stock
-                $surfaceStock = InventoryStock::where('item_id', $itemId)
-                    ->where('location', 'surface')
-                    ->whereNull('level_id')
-                    ->lockForUpdate()
-                    ->firstOrFail();
-
-                if ($surfaceStock->quantity < $qty) {
-                    throw new \Exception("Insufficient surface stock for Item ID: {$itemId}");
-                }
-
-                $surfaceStock->decrement('quantity', $qty);
-
-                // B. Add/Increment Qty on Target Underground Level
-                $undergroundStock = InventoryStock::firstOrCreate(
-                    [
-                        'item_id'  => $itemId,
-                        'location' => 'underground',
-                        'level_id' => $levelId,
-                    ],
-                    ['quantity' => 0]
-                );
-
-                $undergroundStock->increment('quantity', $qty);
-
-                // C. Record Movement Line Item Log
                 $movement->items()->create([
-                    'item_id'                => $itemId,
+                    'item_id'                => $line['item_name'],
                     'source_location'        => 'surface',
                     'source_level_id'        => null,
                     'destination_location'   => 'underground',
-                    'destination_level_id'   => $levelId,
-                    'quantity'               => $qty,
+                    'destination_level_id'   => $validated['level_id'],
+                    'quantity'               => $line['quantity'],
                     'remarks'                => $line['remarks'] ?? null,
                 ]);
             }
         });
 
         return redirect()->route('surface.stock.issuance.index')
-            ->with('success', 'Underground issuance logged and stock updated successfully!');
+            ->with('success', 'Issuance record submitted for approval.');
     }
     
     /**
@@ -336,34 +381,12 @@ class StockController extends Controller
 
         DB::transaction(function () use ($movement, $data) {
             $oldItems = $movement->items()->get();
-            foreach ($oldItems as $item) {
-                $surface = InventoryStock::where('item_id', $item->item_id)
-                    ->where('location', 'surface')->whereNull('level_id')->lockForUpdate()->first();
-                if ($movement->type === 'receive') {
-                    $surface?->decrement('quantity', $item->quantity);
-                } else {
-                    $surface?->increment('quantity', $item->quantity);
-                    InventoryStock::where('item_id', $item->item_id)->where('location', 'underground')
-                        ->where('level_id', $item->destination_level_id)->lockForUpdate()->first()?->decrement('quantity', $item->quantity);
-                }
-            }
 
             $movement->update(['movement_date' => $data['movement_date'], 'notes' => $data['notes'] ?? null]);
             foreach ($oldItems as $index => $item) {
                 if (!isset($data['items'][$index])) continue;
                 $line = $data['items'][$index];
                 $item->update($line);
-                $surface = InventoryStock::where('item_id', $item->item_id)->where('location', 'surface')
-                    ->whereNull('level_id')->lockForUpdate()->firstOrFail();
-                if ($movement->type === 'receive') {
-                    $surface->increment('quantity', $line['quantity']);
-                } else {
-                    if ($surface->quantity < $line['quantity']) throw new \Exception('Insufficient surface stock.');
-                    $surface->decrement('quantity', $line['quantity']);
-                    InventoryStock::firstOrCreate([
-                        'item_id' => $item->item_id, 'location' => 'underground', 'level_id' => $item->destination_level_id,
-                    ], ['quantity' => 0])->increment('quantity', $line['quantity']);
-                }
             }
         });
         return back()->with('success', 'Movement updated successfully.');
