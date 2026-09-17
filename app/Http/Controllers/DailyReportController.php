@@ -143,11 +143,12 @@ class DailyReportController extends Controller
                 'prepared_by' => auth()->user()->id
             ]);
 
-            foreach ($validated['shifts'] as $shift) {
+            foreach ($validated['shifts'] as $shift => $rows) {
                 if (!empty($shift['no_blast'])) continue;
 
-                foreach ($shift['rows'] ?? [] as $row) {
+                foreach ($rows['rows'] ?? [] as $row) {
                     $detail = $header->details()->create([
+                        'shift_no' => $shift,
                         'contractor_name' => $row['contractor_name'],
                         'support' => $row['support'] ?? '',
                         'drill_steel' => $row['drill_steel'] ?? 0,

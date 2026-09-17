@@ -210,7 +210,7 @@
                 <p class="mt-1 font-bold text-brand-dark">${escapeHtml(contextValue)}</p>
             </div>
             <div class="rounded-xl border border-gray-100 bg-white px-4 py-3">
-                <p class="text-xs font-bold uppercase tracking-wider text-gray-500">Movement date</p>
+                <p class="text-xs font-bold uppercase tracking-wider text-gray-500">${isIssuance ? 'ISsuance' : 'Receiving'} Date</p>
                 <p class="mt-1 font-semibold text-brand-dark">${escapeHtml(m.movement_date || '—')}</p>
             </div>
         </div>
