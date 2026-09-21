@@ -81,8 +81,16 @@
             <!-- Dynamic Quick Action Accent Button Based on Role -->
             <div class="flex items-center space-x-4">
 
-                <!-- Receive Items from Supplier -->
+                <!-- Request Items from Mill -->
                 @if(request()->routeIs('surface.stock.index')) <!-- limited receiving to SURFACE -->
+                <a href="{{ route('surface.stock.receive.index') }}" class="bg-brand-green border-0  hover:bg-brand-green-hover text-white font-semibold px-4 py-2 space-x-1 rounded-lg shadow transition text-sm cursor-pointer active:translate-y-0.5">
+                    <i class="fa-solid fa-file-lines"></i>
+                    <span>Request Stock</span>
+                </a>
+                @endif
+
+                <!-- Receive Items from Mill -->
+                @if(false)
                 <a href="{{ route('surface.stock.receive.index') }}" class="bg-brand-green border-0  hover:bg-brand-green-hover text-white font-semibold px-4 py-2 space-x-1 rounded-lg shadow transition text-sm cursor-pointer active:translate-y-0.5">
                     <i class="fa-solid fa-truck-ramp-box"></i>
                     <span>Receive Items</span>

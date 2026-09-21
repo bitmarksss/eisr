@@ -281,6 +281,18 @@ class StockController extends Controller
         return view('pages.stock.movements.index', ['movements' => $movements, 'movementType' => 'issuance']);
     }
 
+    public function stockRequestsIndex()
+    {
+        $stockRequests = StockMovement::with(['user', 'level', 'items.item.kind', 'items.item.unit', 'items.item.supplier', 'approvals.user'])
+            ->where('type', 'issuance')
+            ->latest('movement_date')
+            ->latest('id')
+            ->paginate(15);
+        $this->attachApprovalState($stockRequests);
+
+        return view('pages.stock.requests.index', compact('stockRequests'));
+    }
+
     private function attachApprovalState($movements): void
     {
         $assignments = StockMovementApproverAssignment::with('user')

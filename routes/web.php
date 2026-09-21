@@ -93,6 +93,8 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
                 Route::post('/record', [StockController::class, 'issuanceStore'])->name('record');
             });
 
+            Route::get('/requests', [StockController::class, 'stockRequestsIndex'])->name('requests.index');
+
             Route::prefix('movements')->name('movements.')->group(function () {
                 Route::put('/{movement}', [StockController::class, 'updateMovement'])->name('update');
                 Route::post('/{movement}/cancel', [StockController::class, 'cancelMovement'])->name('cancel');

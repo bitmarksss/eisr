@@ -16,6 +16,7 @@
                 </button>
                 <div class="topbar-dropdown">
                     <a href="{{ route('surface.stock.index') }}">Inventory Stock</a>
+                    <a href="{{ route('surface.stock.requests.index') }}">Stock Requests</a>
                     <a href="{{ route('surface.stock.receive.index') }}">Receiving Records</a>
                     <a href="{{ route('surface.stock.issuance.index') }}">Issuance Records</a>
                     <a href="{{ route('surface.stock.logs') }}">Stock Logs</a>
