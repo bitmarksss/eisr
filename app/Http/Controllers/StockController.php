@@ -12,6 +12,7 @@ use App\Models\{
     Stock,
     StockMovement,
     StockMovementItem,
+    StockRequest,
     Supplier, 
     UploadedFile, 
     UnitOfMeasurement
@@ -283,21 +284,69 @@ class StockController extends Controller
 
     public function stockRequestsIndex()
     {
-        $stockRequests = StockMovement::with([
-                'user', 
-                'level', 
-                'items.item.kind', 'items.item.unit', 'items.item.supplier', 
-                'approvals.user'
+        $stockRequests = StockRequest::with([
+                'requester',
+                'items.item.kind', 'items.item.unit', 'items.item.supplier',
             ])
-            ->where('type', 'issuance')
-            ->latest('movement_date')
+            ->latest('date')
             ->latest('id')
             ->paginate(15);
-        $this->attachApprovalState($stockRequests);
-
-        // dd('stockRequests', $stockRequests->getCollection());
 
         return view('pages.stock.requests.index', compact('stockRequests'));
+    }
+
+    public function stockRequestForm()
+    {
+        $items = InventoryItem::with(['kind', 'unit', 'supplier'])->get();
+        $suppliers = Supplier::orderBy('name')->get();
+
+        return view('pages.stock.requests.form', compact('items', 'suppliers'));
+    }
+
+    public function stockRequestStore(Request $request)
+    {
+        $request->merge(['items' => collect($request->input('items', []))
+            ->filter(fn ($item) => filled($item['item_id'] ?? null) || filled($item['quantity'] ?? null) || filled($item['remarks'] ?? null))
+            ->values()
+            ->all()]);
+
+        $data = $request->validate([
+            'reference_no' => ['required', 'string', 'max:100', Rule::unique('stock_request_headers', 'reference_no')],
+            'date' => ['required', 'date'],
+            'items' => ['required', 'array', 'min:1'],
+            'items.*.supplier_id' => ['required', 'integer', 'exists:suppliers,id'],
+            'items.*.item_id' => ['required', 'integer', 'exists:inventory_items,id'],
+            'items.*.quantity' => ['required', 'integer', 'min:1'],
+            'items.*.remarks' => ['nullable', 'string', 'max:1000'],
+        ]);
+
+        $itemSupplierMatches = InventoryItem::query()
+            ->whereIn('id', collect($data['items'])->pluck('item_id'))
+            ->pluck('supplier_id', 'id');
+
+        foreach ($data['items'] as $index => $item) {
+            if ((int) ($itemSupplierMatches[$item['item_id']] ?? 0) !== (int) $item['supplier_id']) {
+                return back()->withErrors(["items.$index.item_id" => 'The selected item does not belong to the selected supplier.'])->withInput();
+            }
+        }
+
+        DB::transaction(function () use ($data) {
+            $stockRequest = StockRequest::create([
+                'reference_no' => $data['reference_no'],
+                'date' => $data['date'],
+                'requested_by' => auth()->id(),
+            ]);
+
+            foreach ($data['items'] as $item) {
+                $stockRequest->items()->create([
+                    'item_id' => $item['item_id'],
+                    'quantity' => $item['quantity'],
+                    'remarks' => $item['remarks'] ?? null,
+                ]);
+            }
+        });
+
+        return redirect()->route('surface.stock.requests.index')->with('success', 'Stock request created successfully.');
     }
 
     private function attachApprovalState($movements): void

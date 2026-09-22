@@ -29,6 +29,7 @@ class DatabaseSeeder extends Seeder
             LevelSeeder::class, 
             InventoryStockSeeder::class, 
             StockSeeder::class, 
+            StockRequestSeeder::class,
             StockMovementSeeder::class, 
             // LocationSeeder::class, 
             DailyReportHeaderSeeder::class,

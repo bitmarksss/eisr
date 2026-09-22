@@ -29,7 +29,7 @@
                     $breadcrumb[] = ['label' => 'Issuance', 'url' => route('surface.stock.issuance.index')];
                 } elseif (request()->routeIs('surface.stock.logs')) {
                     $breadcrumb[] = ['label' => 'Stock Logs', 'url' => route('surface.stock.logs')];
-                } elseif (request()->routeIs('surface.stock.requests.index')) {
+                } elseif (request()->routeIs('surface.stock.requests.*')) {
                     $breadcrumb[] = ['label' => 'Stock Requests', 'url' => route('surface.stock.requests.index')];
                 } elseif (request()->routeIs('surface.stock.*')) {
                     $breadcrumb[] = ['label' => 'Stocks', 'url' => route('surface.stock.index')];

@@ -98,7 +98,11 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
                 Route::post('/record', [StockController::class, 'issuanceStore'])->name('record');
             });
 
-            Route::get('/requests', [StockController::class, 'stockRequestsIndex'])->name('requests.index');
+            Route::prefix('requests')->name('requests.')->group(function () {
+                Route::get('/', [StockController::class, 'stockRequestsIndex'])->name('index');
+                Route::get('/form', [StockController::class, 'stockRequestForm'])->name('form');
+                Route::post('/', [StockController::class, 'stockRequestStore'])->name('store');
+            });
 
             Route::prefix('movements')->name('movements.')->group(function () {
                 Route::put('/{movement}', [StockController::class, 'updateMovement'])->name('update');
