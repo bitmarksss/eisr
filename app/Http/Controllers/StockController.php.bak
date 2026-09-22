@@ -112,10 +112,9 @@ class StockController extends Controller
                 'max:100',
                 Rule::unique('stock_movement_headers', 'reference_no'),
             ],
-            // 'supplier_id' => ['required', 'integer', 'exists:suppliers,id'],
+            'supplier_id' => ['required', 'integer', 'exists:suppliers,id'],
             'receiving_date' => ['required', 'date'],
             'items' => ['required', 'array', 'min:1'],
-            'items.*.supplier_id' => ['required', 'integer', 'exists:suppliers,id'],
             'items.*.quantity' => ['required', 'integer', 'min:1'],
             'items.*.item_name' => ['required', 'integer', 'exists:inventory_items,id'],
             // 'items.*.category' => ['required', 'integer', 'exists:inventory_kinds,id'],
@@ -134,16 +133,6 @@ class StockController extends Controller
         }
 
         $data = $validator->validated();
-
-        $itemSupplierMatches = InventoryItem::query()
-            ->whereIn('id', collect($data['items'])->pluck('item_name'))
-            ->pluck('supplier_id', 'id');
-
-        foreach ($data['items'] as $index => $item) {
-            if ((int) ($itemSupplierMatches[$item['item_name']] ?? 0) !== (int) $item['supplier_id']) {
-                return back()->withErrors(["items.$index.item_name" => 'The selected item does not belong to the selected supplier.'])->withInput();
-            }
-        }
     
         DB::transaction(function () use ($data) {
             $movement = StockMovement::create([
@@ -153,7 +142,7 @@ class StockController extends Controller
                 'user_id' => auth()->id(),
                 'notes' => json_encode([
                     'transaction' => 'receiving',
-                    'supplier_ids' => collect($data['items'])->pluck('supplier_id')->unique()->values()->all(),
+                    'supplier_id' => $data['supplier_id'],
                     'receiving_date' => $data['receiving_date'],
                 ]),
             ]);
@@ -169,8 +158,7 @@ class StockController extends Controller
             }
         });
 
-        $movements = StockMovement::with([
-            'user', 'level', 'items.item.kind', 'items.item.unit', 'items.item.supplier', 'approvals.user'])
+        $movements = StockMovement::with(['user', 'level', 'items.item.kind', 'items.item.unit', 'items.item.supplier', 'approvals.user'])
             ->where('type', 'receive')
             ->latest('movement_date')
             ->latest('id')

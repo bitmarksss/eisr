@@ -1,370 +1,111 @@
 @extends('layouts.app')
 
 @section('page-title', 'Surface Stock')
-
-@section('sidebar')
-    @include('components.sidebar')
-@endsection
+@section('sidebar') @include('components.sidebar') @endsection
 
 @section('content')
 <div class="space-y-6">
-
-    <!-- Flash Messages -->
     @if(session('success'))
-        <div class="bg-green-100 border border-brand-green/30 text-brand-green p-4 rounded-xl text-sm font-semibold flex items-center shadow-xs">
-            <span class="mr-2">✓</span> {{ session('success') }}
-        </div>
+        <div class="flex rounded-xl border border-brand-green/30 bg-green-100 p-4 text-sm font-semibold text-brand-green">{{ session('success') }}</div>
     @endif
-    @if(session('errors'))
-        <div class="bg-red-100 border border-red-300 text-red-600 p-4 rounded-xl text-sm font-semibold shadow-xs">
-            <div class="flex justify-start mb-4">
-                <!-- <span class="mr-2">✗</span> -->
-                <span class="ml-4 underline underline-offset-2">Invalid data submitted, please check the errors and try again.</span>
-            </div>
-            <ul class="list-disc">
-                @foreach(session('errors')->all() as $error)
-                    <li class="ml-4">{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
+    @if($errors->any())
+        <div class="rounded-xl border border-red-300 bg-red-100 p-4 text-sm font-semibold text-red-600"><p>Invalid data submitted. Please check the errors and try again.</p><ul class="mt-2 list-disc pl-5">@foreach($errors->all() as $error)<li>{{ $error }}</li>@endforeach</ul></div>
     @endif
 
-    <!-- Receiving Form -->
-    <div class="bg-white w-full rounded-2xl border-0 overflow-hidden">
-        
-        <!-- Header Strip -->
-        <div class="px-6 py-4 bg-white text-brand-navy flex justify-between items-center">
-            <h3 class="px-4 w-full font-bold tracking-wide text-2xl border-0 border-b border-brand-green">Item Receiving Form</h3>
-        </div>
-
-
-        <!-- Master Update Submission Form Layout -->
-        <form action="{{ route('surface.stock.receive.store') }}" method="POST" 
-            id="receiving-form" class="p-6 space-y-4 w-full">
+    <div class="w-full overflow-hidden rounded-2xl bg-white">
+        <div class="flex items-center px-6 py-4 text-brand-navy"><h3 class="w-full border-b border-brand-green px-4 text-2xl font-bold tracking-wide">Item Receiving Form</h3></div>
+        <form action="{{ route('surface.stock.receive.store') }}" method="POST" id="receiving-form" class="w-full space-y-4 p-6">
             @csrf
-            @method('POST')
-            
-            <div class="grid grid-cols-4 gap-2">
-
-                <!-- Receipt No. -->
-                <div>
-                    <label for="receiving-no" class="block text-xs font-bold text-brand-dark uppercase tracking-wider mb-1">Receipt No.</label>
-                    <input type="text" id="receiving-no" name="receiving_no" required placeholder="e.g., 1234"
-                        class="w-full bg-gray-50 border @error('receiving_no') border-red-500 @else border-gray-300 @enderror rounded-lg px-3 py-2 text-sm focus:border-brand-gold focus:outline-none transition focus:ring-2 focus:ring-brand-gold/20">
-                    @error('receiving_no') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
-                </div>    
-
-                <!-- Supplier -->
-                <div class="col-span-2">
-                    <label for="edit-supplier-id" class="block text-xs font-bold text-brand-dark uppercase tracking-wider mb-1">Supplier</label>
-                    <select id="edit-supplier-id" name="supplier_id" required
-                        class="w-full bg-gray-50 border @error('supplier_id') border-red-500 @else border-gray-300 @enderror rounded-lg p-2 text-sm focus:border-brand-gold focus:outline-none transition">
-                        <option value="" disabled selected>Select Supplier</option>
-                        @foreach($suppliers as $supplier)
-                            <option value="{{ $supplier->id }}" {{ old('supplier_id') == $supplier->id ? 'selected' : '' }}>{{ $supplier->name }}</option>
-                        @endforeach
-                    </select>
-                    @error('supplier_id') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
-                </div>
-
-                <!-- Date Received -->
-                <div>
-                    <label for="receiving-date" class="block text-xs font-bold text-brand-dark uppercase tracking-wider mb-1">Receiving Date</label>
-                    <input type="date" id="receiving-date" name="receiving_date" required
-                        class="w-full bg-gray-50 border @error('receiving_date') border-red-500 @else border-gray-300 @enderror rounded-lg px-3 py-2 text-sm focus:border-brand-gold focus:outline-none transition focus:ring-2 focus:ring-brand-gold/20">
-                    @error('name') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
-                </div>   
+            <div class="grid grid-cols-1 gap-2 md:grid-cols-2">
+                <div><label for="receiving-no" class="mb-1 block text-xs font-bold uppercase tracking-wider text-brand-dark">Receipt No.</label><input type="text" id="receiving-no" name="receiving_no" required value="{{ old('receiving_no') }}" placeholder="e.g., 1234" class="w-full rounded-lg border @error('receiving_no') border-red-500 @else border-gray-300 @enderror bg-gray-50 px-3 py-2 text-sm focus:border-brand-gold focus:outline-none focus:ring-2 focus:ring-brand-gold/20"></div>
+                <div><label for="receiving-date" class="mb-1 block text-xs font-bold uppercase tracking-wider text-brand-dark">Receiving Date</label><input type="date" id="receiving-date" name="receiving_date" required value="{{ old('receiving_date') }}" class="w-full rounded-lg border @error('receiving_date') border-red-500 @else border-gray-300 @enderror bg-gray-50 px-3 py-2 text-sm focus:border-brand-gold focus:outline-none focus:ring-2 focus:ring-brand-gold/20"></div>
             </div>
-
-            <div class="overflow-auto flex-1">
-                <table class="w-full text-left border border-gray-200 rounded-xl text-xs uppercase font-medium text-gray-600">
-                    <thead class="bg-gray-50 text-center select-none sticky top-0 z-10">
-                        <tr>
-                            <th class="w-[10%] border border-gray-200 p-2 text-brand-navy">Quantity</th>
-                            <th class="border border-gray-200 p-2 text-brand-navy">Item Name</th>
-                            <th class="border border-gray-200 p-2 text-brand-navy">Category</th>
-                            <th class="border border-gray-200 p-2 text-brand-navy">UoM</th>
-                            <th class="border border-gray-200 p-2 text-brand-navy">Remarks</th>
-                            <th class="w-[1%] border border-gray-200 p-2 text-brand-navy">
-                                <button type="button" 
-                                    onclick="addRow('receiving');"
-                                    class="px-5 py-2 rounded-lg bg-brand-green hover:bg-brand-green-hover text-white text-sm font-bold shadow-xs transition cursor-pointer text-nowrap"> 
-                                    <i class="fa-solid fa-circle-plus"></i>
-                                    Add Row
-                                </button>
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody id="receivingFormInputs" class="bg-white divide-y divide-gray-200">
-                        @foreach([0,1,2] as $index)
-                        <tr class="text-center max-h-9" data-index="{{ $index }}">
-                            <!-- Quantity -->
-                            <td class="w-[10%] border-box border h-full border-gray-200 p-1">
-                                <input type="number" 
-                                    name="items[{{ $index }}][quantity]" placeholder="0" required
-                                    value="{{ old('items.' . $index . '.quantity') }}" 
-                                    class="w-full bg-gray-50 border-gray-300 border rounded-lg px-3 py-2 text-sm focus:border-brand-gold focus:outline-none transition">
-                            </td>
-
-                            <!-- Item Name -->
-                            <td class="border border-gray-200 p-1">
-                                <select name="items[{{ $index }}][item_name]" required
-                                    class="w-full bg-gray-50 border-gray-300 border rounded-lg p-2 text-sm focus:border-brand-gold focus:outline-none transition">
-                                    <option value="" disabled selected>Select Item</option>
-                                </select>
-                            </td>
-
-                            <!-- Category -->
-                            <td class="border border-gray-200 p-1">
-                                <input type="text" readonly
-                                    name="items[{{ $index }}][category]" placeholder="Item category..."
-                                    value="{{ old('items.' . $index . '.category') }}"
-                                    class="w-full bg-gray-50 border-gray-300 border rounded-lg px-3 py-2 text-sm focus:border-brand-gold focus:outline-none transition">
-                          
-                                {{--
-                                <select name="items[{{ $index }}][category]" required
-                                    class="w-full bg-gray-50 border-gray-300 border rounded-lg p-2 text-sm focus:border-brand-gold focus:outline-none transition">
-                                    <option value="" disabled selected>Select Category</option>
-                                    @foreach($categories as $category)
-                                        <option value="{{ $category->id }}" {{ old('category') == $category->id ? 'selected' : '' }}>{{ $category->kind }}</option>
-                                    @endforeach
-                                </select>
-                                --}}
-                            </td>
-
-                            <!-- UoM -->
-                            <td class="border border-gray-200 p-1">
-                                <input type="text" readonly
-                                    name="items[{{ $index }}][uom]" placeholder="Item unit..."
-                                    value="{{ old('items.' . $index . '.uom') }}"
-                                    class="w-full bg-gray-50 border-gray-300 border rounded-lg px-3 py-2 text-sm focus:border-brand-gold focus:outline-none transition">
-                          
-                                {{--
-                                <select name="items[{{ $index }}][uom]" required
-                                    class="w-full bg-gray-50 border-gray-300 border rounded-lg p-2 text-sm focus:border-brand-gold focus:outline-none transition">
-                                    <option value="" disabled selected>Select UoM</option>
-                                    @foreach($uoms as $uom)
-                                        <option value="{{ $uom->id }}" {{ old('uom') == $uom->id ? 'selected' : '' }}>{{ $uom->unit }}</option>
-                                    @endforeach
-                                </select>
-                                --}}
-                            </td>
-
-                            <!-- Remarks -->
-                            <td class="border border-gray-200 p-1">
-                                <input type="text" 
-                                    name="items[{{ $index }}][remarks]" placeholder="Any additional details..."
-                                    value="{{ old('items.' . $index . '.remarks') }}"
-                                    class="w-full bg-gray-50 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:border-brand-gold focus:outline-none transition">
-                            </td>
-
-                            <!-- Remove Button -->
-                            @if($index != 0)
-                            <td class="w-[1%] border border-gray-200 p-1">
-                                <button type="button" onclick="removeRow(`receiving`, {{ $index }});" 
-                                    class="w-full bg-red-500 hover:bg-red-600 active:translate-y-0.5 rounded-lg p-2 cursor-pointer transition">
-                                    <i class="fa-solid fa-circle-minus fa-lg text-white"></i>
-                                </button>
-                            </td>
-                            @else
-                            <td></td>
-                            @endif
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- Footer Bottom Section -->
-            <div class="pt-4 flex justify-end space-x-3 border-t border-gray-100">
-                <div>
-                    <button type="button" onclick="window.history.back()" class="px-4 py-2 text-sm font-semibold text-gray-500 hover:text-gray-700 transition cursor-pointer">
-                        Cancel
-                    </button>
-                    <button type="submit" class="px-5 py-2 rounded-lg bg-brand-gold hover:bg-brand-gold-hover text-white text-sm font-bold shadow-xs transition cursor-pointer">
-                        Confirm
-                    </button>
-                </div>
-            </div>
+            <div class="overflow-x-auto"><table class="w-full min-w-[1050px] rounded-xl border border-gray-200 text-left text-xs font-medium uppercase text-gray-600"><thead class="sticky top-0 z-10 bg-gray-50 text-center"><tr>
+                <th class="border border-gray-200 p-2 text-brand-navy">Supplier</th><th class="border border-gray-200 p-2 text-brand-navy">Item Name</th><th class="border border-gray-200 p-2 text-brand-navy">Category</th><th class="w-[10%] border border-gray-200 p-2 text-brand-navy">Quantity</th><th class="border border-gray-200 p-2 text-brand-navy">UOM</th><th class="border border-gray-200 p-2 text-brand-navy">Remarks</th><th class="w-[1%] border border-gray-200 p-2 text-brand-navy"><button type="button" id="add-receiving-row" class="whitespace-nowrap rounded-lg bg-brand-green px-5 py-2 text-sm font-bold text-white shadow-xs transition hover:bg-brand-green-hover"><i class="fa-solid fa-circle-plus"></i> Add Row</button></th>
+            </tr></thead><tbody id="receivingFormInputs" class="divide-y divide-gray-200 bg-white"></tbody></table></div>
+            <div class="flex justify-end space-x-3 border-t border-gray-100 pt-4"><button type="button" onclick="window.history.back()" class="cursor-pointer px-4 py-2 text-sm font-semibold text-gray-500 hover:text-gray-700">Cancel</button><button type="submit" class="cursor-pointer rounded-lg bg-brand-gold px-5 py-2 text-sm font-bold text-white shadow-xs transition hover:bg-brand-gold-hover">Confirm</button></div>
         </form>
     </div>
 </div>
 @endsection
 
 @push('scripts')
-<script type="module">
-window.modalData = {
-    inventoryItems: [],
-    categories: @json($categories),
-    uoms: @json($uoms)
-};
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const suppliers = @json($suppliers->map(fn ($supplier) => ['id' => $supplier->id, 'name' => $supplier->name])->values());
+    const tbody = document.getElementById('receivingFormInputs');
+    const oldItems = {{ Illuminate\Support\Js::from(old('items', [[], [], []])) }};
+    const itemCache = new Map();
+    const esc = value => String(value ?? '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
-window.errors = @json($errors->toArray());
-
-document.addEventListener('DOMContentLoaded',() => {
-    document.getElementById('receiving-date').value = new Date().toISOString().split('T')[0];
-
-    console.log('errors', errors);
-});
-
-const receivingForm = document.getElementById('receiving-form');
-const supplierSelect = document.getElementById('edit-supplier-id');
-
-supplierSelect.addEventListener('change', async function () {
-    const supplierId = this.value;
-
-    if (!supplierId) return;
-
-    resetReceivingRows();
-    setReceivingRowsLoading(true);
-
-    // Fetch items...
-    try {
-        const response = await fetch('/maintenance/supplier/' + supplierId + '/items', {
-            method: 'GET',
-            headers: {
-                'Accept': 'application/json',
-                'X-Requested-With': 'XMLHttpRequest'
-            }
-        });
-
-        if (!response.ok) throw new Error('Unable to load supplier items.');
-
-        const items = await response.json();
-        window.modalData.inventoryItems = items;
-        receivingForm.querySelectorAll('select[name^="items"][name$="[item_name]"]')
-            .forEach(select => populateItemSelect(select, items));
-        refreshSelectedItemOptions();
-    } catch (error) {
-        window.modalData.inventoryItems = [];
-        receivingForm.querySelectorAll('select[name^="items"][name$="[item_name]"]')
-            .forEach(select => populateItemSelect(select, []));
-        console.error(error);
-    } finally {
-        setReceivingRowsLoading(false);
+    function addRow(values = {}) {
+        const index = tbody.children.length;
+        const row = document.createElement('tr');
+        row.className = 'text-center';
+        row.innerHTML = `<td class="border border-gray-200 p-1"><select name="items[${index}][supplier_id]" required class="supplier-select w-full rounded-lg border border-gray-300 bg-gray-50 p-2 text-sm focus:border-brand-gold focus:outline-none"><option value="" disabled selected>Select Supplier</option>${suppliers.map(s => `<option value="${s.id}" ${String(values.supplier_id) === String(s.id) ? 'selected' : ''}>${esc(s.name)}</option>`).join('')}</select></td><td class="border border-gray-200 p-1"><select name="items[${index}][item_name]" required class="item-select w-full rounded-lg border border-gray-300 bg-gray-50 p-2 text-sm focus:border-brand-gold focus:outline-none"><option value="" disabled selected>Select Item</option></select></td><td class="border border-gray-200 p-1"><input type="text" readonly name="items[${index}][category]" class="category-input w-full rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-sm" placeholder="Item category"></td><td class="border border-gray-200 p-1"><input type="number" min="1" name="items[${index}][quantity]" required value="${esc(values.quantity || '')}" class="w-full rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-sm focus:border-brand-gold focus:outline-none" placeholder="0"></td><td class="border border-gray-200 p-1"><input type="text" readonly name="items[${index}][uom]" class="uom-input w-full rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-sm" placeholder="Item unit"></td><td class="border border-gray-200 p-1"><input type="text" name="items[${index}][remarks]" value="${esc(values.remarks || '')}" class="w-full rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-sm focus:border-brand-gold focus:outline-none" placeholder="Any additional details..."></td><td class="border border-gray-200 p-1">${index ? '<button type="button" class="remove-row w-full cursor-pointer rounded-lg bg-red-500 p-2 transition hover:bg-red-600"><i class="fa-solid fa-circle-minus fa-lg text-white"></i></button>' : ''}</td>`;
+        tbody.appendChild(row);
+        if (values.supplier_id) loadSupplierItems(row, values.item_name);
     }
-});
 
-receivingForm.addEventListener('change', function(event) {
-    if (event.target.matches('select[name^="items"][name$="[item_name]"]')) {
-        const selectedItemId = event.target.value;
-        const selectedItem = window.modalData.inventoryItems.find(item => item.id == selectedItemId);
-        
-        console.log('selectedItem', selectedItem);
-        if (selectedItem) {
-            const row = event.target.closest('tr');
-
-            // const categorySelect = row.querySelector('select[name^="items"][name$="[category]"]');
-            // const uomSelect = row.querySelector('select[name^="items"][name$="[uom]"]');
-            // if (categorySelect) {
-            //     categorySelect.value = selectedItem.kind_id;
-            // }
-            // if (uomSelect) {
-            //     uomSelect.value = selectedItem.uom ?? selectedItem.unit_id;
-            // }
-            
-            const categoryInput = row.querySelector('input[name^="items"][name$="[category]"]');
-            const uomInput = row.querySelector('input[name^="items"][name$="[uom]"]');
-            if (categoryInput) {
-                categoryInput.value = selectedItem.kind;
+    async function loadSupplierItems(row, selectedItemId = '') {
+        const supplierId = row.querySelector('.supplier-select').value;
+        const select = row.querySelector('.item-select');
+        row.querySelector('.category-input').value = '';
+        row.querySelector('.uom-input').value = '';
+        select.replaceChildren(new Option(supplierId ? 'Loading items...' : 'Select Item', '', true, true));
+        select.options[0].disabled = true;
+        if (!supplierId) return;
+        try {
+            if (!itemCache.has(supplierId)) {
+                const response = await fetch(`/maintenance/supplier/${supplierId}/items`, {headers: {'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest'}});
+                if (!response.ok) throw new Error('Unable to load supplier items.');
+                itemCache.set(supplierId, await response.json());
             }
-            if (uomInput) {
-                uomInput.value = selectedItem.unit ?? selectedItem.unit;
-            }
-
+            const items = itemCache.get(supplierId);
+            select.replaceChildren(new Option('Select Item', '', true, true));
+            select.options[0].disabled = true;
+            items.forEach(item => select.add(new Option(`${item.name} ${item.variant || ''}`.trim(), item.id, false, String(item.id) === String(selectedItemId))));
+            updateItemDetails(row);
             refreshSelectedItemOptions();
+        } catch (error) {
+            select.replaceChildren(new Option('Unable to load items', '', true, true));
+            select.options[0].disabled = true;
+            console.error(error);
         }
     }
 
-});
+    function updateItemDetails(row) {
+        const items = itemCache.get(row.querySelector('.supplier-select').value) || [];
+        const item = items.find(item => String(item.id) === row.querySelector('.item-select').value);
+        row.querySelector('.category-input').value = item?.kind || '';
+        row.querySelector('.uom-input').value = item?.unit || '';
+    }
 
-function populateItemSelect(select, items) {
-    select.replaceChildren(new Option('Select Item', '', true, true));
-    select.options[0].disabled = true;
-    items.forEach(item => {
-        const option = new Option(
-            (item.name + ' ' + (item.variant || '')).trim(),
-            item.id
-        );
-        option.dataset.category = item.kind;
-        option.dataset.uom = item.uom ?? item.unit;
-        select.add(option);
-    });
-}
-
-function refreshSelectedItemOptions() {
-    const selects = [...receivingForm.querySelectorAll(
-        'select[name^="items"][name$="[item_name]"]'
-    )];
-    const selectedValues = selects
-        .map(select => select.value)
-        .filter(value => value !== '');
-
-    selects.forEach(select => {
-        [...select.options].forEach(option => {
-            option.disabled =
-                option.value !== '' &&
-                option.value !== select.value &&
-                selectedValues.includes(option.value);
+    function refreshSelectedItemOptions() {
+        const selects = [...tbody.querySelectorAll('.item-select')];
+        selects.forEach(select => {
+            const supplierId = select.closest('tr').querySelector('.supplier-select').value;
+            const selected = selects.filter(other => other !== select && other.closest('tr').querySelector('.supplier-select').value === supplierId).map(other => other.value).filter(Boolean);
+            [...select.options].forEach(option => option.disabled = option.value && option.value !== select.value && selected.includes(option.value));
         });
+    }
+
+    tbody.addEventListener('change', event => {
+        const row = event.target.closest('tr');
+        if (event.target.matches('.supplier-select')) loadSupplierItems(row);
+        if (event.target.matches('.item-select')) { updateItemDetails(row); refreshSelectedItemOptions(); }
     });
-}
-
-function resetReceivingRows() {
-    const rows = receivingForm.querySelectorAll('#receivingFormInputs tr');
-
-    rows.forEach((row, index) => {
-        if (index >= 3) {
-            row.remove();
-            return;
-        }
-
-        row.querySelector('input[name$="[quantity]"]').value = '';
-        // row.querySelector('select[name$="[category]"]').value = '';
-        // row.querySelector('select[name$="[uom]"]').value = '';
-        row.querySelector('input[name$="[category]"]').value = '';
-        row.querySelector('input[name$="[uom]"]').value = '';
-        row.querySelector('select[name$="[item_name]"]').value = '';
-    });
-}
-
-function setReceivingRowsLoading(isLoading) {
-    receivingForm.querySelectorAll('#receivingFormInputs tr').forEach(row => {
-        row.classList.toggle('animate-pulse', isLoading);
-        row.classList.toggle('opacity-60', isLoading);
-
-        row.querySelectorAll('input, select').forEach(field => {
-            field.disabled = isLoading;
+    tbody.addEventListener('click', event => { if (event.target.closest('.remove-row') && tbody.children.length > 1) event.target.closest('tr').remove(); });
+    document.getElementById('add-receiving-row').addEventListener('click', () => addRow());
+    oldItems.forEach(item => addRow(item));
+    document.getElementById('receiving-form').addEventListener('submit', function () {
+        let index = 0;
+        [...tbody.querySelectorAll('tr')].forEach(row => {
+            const hasInput = row.querySelector('.item-select').value || row.querySelector('input[name$="[quantity]"]').value || row.querySelector('input[name$="[remarks]"]').value;
+            if (!hasInput) { row.remove(); return; }
+            row.querySelectorAll('[name]').forEach(field => field.name = field.name.replace(/items\[\d+\]/, `items[${index}]`));
+            index++;
         });
-
-        row.querySelectorAll('select[name$="[item_name]"]').forEach(select => {
-            if (isLoading) {
-                select.replaceChildren(new Option('Loading items...', '', true, true));
-                select.options[0].disabled = true;
-            }
-        });
-    });
-}
-
-receivingForm.querySelectorAll('#receivingFormInputs tr:not(:first-child) [name^="items["]').forEach(field => field.removeAttribute('required'));
-receivingForm.addEventListener('submit', function () {
-    const rows = [...this.querySelectorAll('#receivingFormInputs tr')];
-    let itemIndex = 0;
-
-    rows.forEach(row => {
-        const item = row.querySelector('select[name$="[item_name]"]');
-        const quantity = row.querySelector('input[name$="[quantity]"]');
-        const hasInput = item?.value || quantity?.value || row.querySelector('input[name$="[remarks]"]')?.value;
-
-        if (!hasInput) {
-            row.remove();
-            return;
-        }
-
-        row.querySelectorAll('[name]').forEach(field => {
-            field.name = field.name.replace(/items\[\d+\]/, `items[${itemIndex}]`);
-        });
-        itemIndex++;
     });
 });
 </script>

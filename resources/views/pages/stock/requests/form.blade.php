@@ -27,32 +27,52 @@
 
 @push('scripts')
 <script>
-(() => {
-    const suppliers = @json($suppliers->map(fn ($supplier) => ['id' => $supplier->id, 'name' => $supplier->name])->values());
-    const inventoryItems = @json($items->map(fn ($item) => [
-            'id' => $item->id, 
-            'supplier_id' => $item->supplier_id, 
-            'name' => $item->name, 
-            'variant' => $item->variant, 
-            'kind' => $item->kind?->kind, 
-            'unit' => $item->unit?->unit
-        ])->values());
+document.addEventListener('DOMContentLoaded', function () {
+    const suppliers = @json($requestFormSuppliers);
+    const inventoryItems = @json($requestFormItems);
     const tbody = document.getElementById('stockRequestInputs');
-    const oldItems = @json(old('items', [[], [], []]));
+    const oldItems = {{ Illuminate\Support\Js::from(old('items') ?: array_fill(0, 3, [])) }};
     const esc = value => String(value ?? '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
     function addRow(values = {}) {
+        console.log(values.supplier_id);
         const index = tbody.children.length;
         const row = document.createElement('tr');
         row.className = 'text-center';
-        row.innerHTML = `<td class="border border-gray-200 p-1"><select name="items[${index}][supplier_id]" required class="supplier-select w-full rounded-lg border border-gray-300 bg-gray-50 p-2 text-sm focus:border-brand-gold focus:outline-none"><option value="" disabled>Select Supplier</option>${suppliers.map(s => `<option value="${s.id}" ${String(values.supplier_id) === String(s.id) ? 'selected' : ''}>${esc(s.name)}</option>`).join('')}</select></td><td class="border border-gray-200 p-1"><select name="items[${index}][item_id]" required class="item-select w-full rounded-lg border border-gray-300 bg-gray-50 p-2 text-sm focus:border-brand-gold focus:outline-none"></select></td><td class="border border-gray-200 p-1"><input type="text" readonly class="category-input w-full rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-sm" placeholder="Item category"></td><td class="border border-gray-200 p-1"><input type="number" min="1" name="items[${index}][quantity]" required value="${esc(values.quantity || '')}" placeholder="0" class="w-full rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-sm focus:border-brand-gold focus:outline-none"></td><td class="border border-gray-200 p-1"><input type="text" readonly class="uom-input w-full rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-sm" placeholder="Item unit"></td><td class="border border-gray-200 p-1"><input type="text" name="items[${index}][remarks]" value="${esc(values.remarks || '')}" placeholder="Any additional details..." class="w-full rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-sm focus:border-brand-gold focus:outline-none"></td><td class="border border-gray-200 p-1"><button type="button" class="remove-row w-full cursor-pointer rounded-lg bg-red-500 p-2 transition hover:bg-red-600"><i class="fa-solid fa-circle-minus fa-lg text-white"></i></button></td>`;
+        row.innerHTML = `
+            <td class="border border-gray-200 p-1">
+                <select name="items[${index}][supplier_id]" required class="supplier-select w-full rounded-lg border border-gray-300 bg-gray-50 p-2 text-sm focus:border-brand-gold focus:outline-none">
+                    <option value="" disabled selected>Select Supplier</option>
+                    ${suppliers.map(s => 
+                        `<option value="${s.id}" ${String(values.supplier_id) === String(s.id) ? 'selected' : ''}>
+                            ${esc(s.name)}
+                        </option>`).join('')
+                    }
+                </select>
+            </td>
+            <td class="border border-gray-200 p-1">
+                <select name="items[${index}][item_id]" required class="item-select w-full rounded-lg border border-gray-300 bg-gray-50 p-2 text-sm focus:border-brand-gold focus:outline-none"></select>
+            </td>
+            <td class="border border-gray-200 p-1">
+                <input type="text" readonly class="category-input w-full rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-sm" placeholder="Item category">
+            </td>
+            <td class="border border-gray-200 p-1"><input type="number" min="1" name="items[${index}][quantity]" required value="${esc(values.quantity || '')}" placeholder="0" class="w-full rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-sm focus:border-brand-gold focus:outline-none"></td><td class="border border-gray-200 p-1">
+                <input type="text" readonly class="uom-input w-full rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-sm" placeholder="Item unit">
+            </td>
+            <td class="border border-gray-200 p-1"><input type="text" name="items[${index}][remarks]" value="${esc(values.remarks || '')}" placeholder="Any additional details..." class="w-full rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-sm focus:border-brand-gold focus:outline-none"></td>
+            <td class="border border-gray-200 p-1">
+                ${index != 0 ? `
+                <button type="button" class="remove-row w-full cursor-pointer rounded-lg bg-red-500 p-2 transition hover:bg-red-600">
+                    <i class="fa-solid fa-circle-minus fa-lg text-white"></i>
+                </button>` : ''}
+            </td>`;
         tbody.appendChild(row);
         updateItems(row, values.item_id);
     }
     function updateItems(row, selected = '') {
         const supplierId = row.querySelector('.supplier-select').value;
         const select = row.querySelector('.item-select');
-        select.innerHTML = '<option value="" disabled>Select Item</option>' + inventoryItems.filter(item => String(item.supplier_id) === String(supplierId)).map(item => `<option value="${item.id}" ${String(selected) === String(item.id) ? 'selected' : ''}>${esc([item.name, item.variant].filter(Boolean).join(' '))}</option>`).join('');
+        select.innerHTML = '<option value="" disabled selected>Select Item</option>' + inventoryItems.filter(item => String(item.supplier_id) === String(supplierId)).map(item => `<option value="${item.id}" ${String(selected) === String(item.id) ? 'selected' : ''}>${esc([item.name, item.variant].filter(Boolean).join(' '))}</option>`).join('');
         updateItemDetails(row);
     }
     function updateItemDetails(row) {
@@ -68,6 +88,6 @@
     tbody.addEventListener('click', event => { if (event.target.closest('.remove-row') && tbody.children.length > 1) event.target.closest('tr').remove(); });
     document.getElementById('add-request-row').addEventListener('click', () => addRow());
     oldItems.forEach(item => addRow(item));
-})();
+});
 </script>
 @endpush
