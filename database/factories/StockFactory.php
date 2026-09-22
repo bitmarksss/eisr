@@ -46,13 +46,13 @@ class StockFactory extends Factory
     {
         return $this->state(fn (array $attributes) => [
             'status' => 'approved',
-            'prepared_by' => User::inRandomOrder()->first()?->id ?? User::factory(),
-            'reviewed_by' => User::inRandomOrder()->first()?->id ?? User::factory(),
-            'noted_by' => User::inRandomOrder()->first()?->id ?? User::factory(),
-            'endorsed_by' => User::inRandomOrder()->first()?->id ?? User::factory(),
-            'approved_by' => User::inRandomOrder()->first()?->id ?? User::factory(),
-            'noted_by_2' => User::inRandomOrder()->first()?->id ?? User::factory(),
-            'approved_by_2' => User::inRandomOrder()->first()?->id ?? User::factory(),
+            // 'prepared_by' => User::inRandomOrder()->first()?->id ?? User::factory(),
+            // 'reviewed_by' => User::inRandomOrder()->first()?->id ?? User::factory(),
+            // 'noted_by' => User::inRandomOrder()->first()?->id ?? User::factory(),
+            // 'endorsed_by' => User::inRandomOrder()->first()?->id ?? User::factory(),
+            // 'approved_by' => User::inRandomOrder()->first()?->id ?? User::factory(),
+            // 'noted_by_2' => User::inRandomOrder()->first()?->id ?? User::factory(),
+            // 'approved_by_2' => User::inRandomOrder()->first()?->id ?? User::factory(),
         ]);
     }
 }

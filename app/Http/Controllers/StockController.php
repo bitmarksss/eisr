@@ -283,12 +283,19 @@ class StockController extends Controller
 
     public function stockRequestsIndex()
     {
-        $stockRequests = StockMovement::with(['user', 'level', 'items.item.kind', 'items.item.unit', 'items.item.supplier', 'approvals.user'])
+        $stockRequests = StockMovement::with([
+                'user', 
+                'level', 
+                'items.item.kind', 'items.item.unit', 'items.item.supplier', 
+                'approvals.user'
+            ])
             ->where('type', 'issuance')
             ->latest('movement_date')
             ->latest('id')
             ->paginate(15);
         $this->attachApprovalState($stockRequests);
+
+        // dd('stockRequests', $stockRequests->getCollection());
 
         return view('pages.stock.requests.index', compact('stockRequests'));
     }

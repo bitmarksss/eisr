@@ -29,6 +29,8 @@
                     $breadcrumb[] = ['label' => 'Issuance', 'url' => route('surface.stock.issuance.index')];
                 } elseif (request()->routeIs('surface.stock.logs')) {
                     $breadcrumb[] = ['label' => 'Stock Logs', 'url' => route('surface.stock.logs')];
+                } elseif (request()->routeIs('surface.stock.requests.index')) {
+                    $breadcrumb[] = ['label' => 'Stock Requests', 'url' => route('surface.stock.requests.index')];
                 } elseif (request()->routeIs('surface.stock.*')) {
                     $breadcrumb[] = ['label' => 'Stocks', 'url' => route('surface.stock.index')];
                 }
@@ -48,6 +50,9 @@
                 }
             } elseif (request()->routeIs('maintenance.*')) {
                 $breadcrumb[] = ['label' => 'Maintenance', 'url' => route('maintenance.inventory.index')];
+                if (request()->routeIs('maintenance.supplier.*')) {
+                    $breadcrumb[] = ['label' => 'Suppliers', 'url' => route('maintenance.supplier.index')];
+                }
             } elseif (request()->routeIs('admin.*')) {
                 $breadcrumb[] = ['label' => 'Admin Controls', 'url' => route('admin.users.index')];
             }

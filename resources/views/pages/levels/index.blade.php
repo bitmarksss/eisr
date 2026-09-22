@@ -109,10 +109,18 @@
 
                             <!-- Action Trigger Elements -->
                             <td class="px-6 py-4 text-right whitespace-nowrap">
-                                <button onclick="editLevelModal('{{ $level->id }}', '{{ addslashes($level->name) }}', '{{ addslashes($level->code) }}', '{{ $level->sort_order }}', '{{ addslashes($level->description) }}', {{ $level->is_active ? 'true' : 'false' }})" 
-                                    class="text-brand-gold hover:underline text-xs font-bold cursor-pointer">
-                                    Edit
-                                </button>
+                                
+                                <!-- Edit -->
+                                <x-tooltip text="Edit"
+                                    bg_color="bg brand navy"
+                                    text_color="text-white"
+                                >
+                                    <button onclick="editLevelModal('{{ $level->id }}', '{{ addslashes($level->name) }}', '{{ addslashes($level->code) }}', '{{ $level->sort_order }}', '{{ addslashes($level->description) }}', {{ $level->is_active ? 'true' : 'false' }})" 
+                                        class="rounded-lg bg-amber-500 py-2 px-2.5 text-white hover:underline text-xs font-bold cursor-pointer">
+                                        <i class="fa-solid fa-pen-to-square"></i>
+                                    </button>
+
+                                </x-tooltip>
                             </td>
                         </tr>
                     @empty

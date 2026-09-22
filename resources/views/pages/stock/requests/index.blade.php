@@ -34,6 +34,7 @@
                         <th class="px-6 py-4 bg-gray-50 text-xs font-bold text-brand-navy uppercase tracking-wider border-b border-gray-200">Reference</th>
                         <th class="px-6 py-4 bg-gray-50 text-xs font-bold text-brand-navy uppercase tracking-wider border-b border-gray-200">Items</th>
                         <th class="px-6 py-4 bg-gray-50 text-xs font-bold text-brand-navy uppercase tracking-wider border-b border-gray-200">Status</th>
+                        <th class="px-6 py-4 bg-gray-50 text-xs font-bold text-brand-navy uppercase tracking-wider border-b border-gray-200 text-right">Actions</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-100 text-sm text-gray-700">
@@ -46,6 +47,15 @@
                                 <span class="px-2.5 py-1 rounded-full text-xs font-bold border {{ $request->status === 'approved' ? 'bg-green-50 text-brand-green border-brand-green/20' : 'bg-amber-50 text-brand-gold border-brand-gold/20' }}">
                                     {{ ucwords(str_replace('_', ' ', $request->status)) }}
                                 </span>
+                            </td>
+                            <td class="px-6 py-4 text-right whitespace-nowrap space-x-2">
+                                <!-- View -->
+                                <x-tooltip text="View Record"
+                                    bg_color="bg brand navy"
+                                    text_color="text-white"
+                                >
+                                    <button type="button" class="view-request py-2 px-2.5 bg-brand-navy text-white rounded-lg hover:underline text-xs font-bold cursor-pointer" data-request='@json($request)'><i class="fa-solid fa-eye"></i></button>
+                                </x-tooltip>
                             </td>
                         </tr>
                     @empty

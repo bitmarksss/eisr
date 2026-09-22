@@ -19,6 +19,7 @@ class InventoryItem extends Model
         'name',
         'variant',
         'kind_id',
+        'type_id',
         'cost',
         'uom',
         // 'quantity',
@@ -38,6 +39,11 @@ class InventoryItem extends Model
     public function kind(): BelongsTo
     {
         return $this->belongsTo(InventoryKind::class);
+    }
+
+    public function type(): BelongsTo
+    {
+        return $this->belongsTo(InventoryType::class);
     }
 
     public function unit(): BelongsTo

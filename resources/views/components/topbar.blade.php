@@ -56,6 +56,7 @@
                 </button>
                 <div class="topbar-dropdown">
                     <a href="{{ route('maintenance.inventory.index') }}">Inventory Items</a>
+                    <a href="{{ route('maintenance.supplier.index') }}">Suppliers</a>
                     <a href="{{ route('maintenance.levels.index') }}">Levels</a>
                     <a href="{{ route('maintenance.stock-approvers.index') }}">Stock Approvers</a>
                 </div>

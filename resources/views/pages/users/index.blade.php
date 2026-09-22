@@ -184,9 +184,11 @@
                             </span>
                         </td>
                         <td class="px-6 py-4 text-right space-x-3">
-                            <button onclick="window.openEditUserModal('{{ $user->id }}', '{{ $user->first_name }}', '{{ $user->middle_name }}', '{{ $user->last_name }}', '{{ $user->username }}', '{{ $user->email }}', '{{ $user->role_id }}', )"
-                            class="text-brand-navy hover:underline text-xs font-semibold cursor-pointer">Edit</button>
-                            <button class="text-gray-400 hover:text-red-600 text-xs transition cursor-pointer">Remove</button>
+                            @if($user->id != 1)
+                                <button onclick="window.openEditUserModal('{{ $user->id }}', '{{ $user->first_name }}', '{{ $user->middle_name }}', '{{ $user->last_name }}', '{{ $user->username }}', '{{ $user->email }}', '{{ $user->role_id }}', )"
+                                class="text-brand-navy hover:underline text-xs font-semibold cursor-pointer">Edit</button>
+                                <button class="text-gray-400 hover:text-red-600 text-xs transition cursor-pointer">Remove</button>
+                            @endif
                         </td>
                     </tr>
                 @empty

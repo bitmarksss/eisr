@@ -42,6 +42,11 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
     
         // SUPPLIERS
         Route::prefix('supplier')->name('supplier.')->group(function () {
+            Route::get('/', [SupplierController::class, 'index'])->name('index');
+            Route::get('/create', [SupplierController::class, 'create'])->name('create');
+            Route::post('/', [SupplierController::class, 'store'])->name('store');
+            Route::get('/{supplier}/edit', [SupplierController::class, 'edit'])->name('edit');
+            Route::put('/{supplier}', [SupplierController::class, 'update'])->name('update');
             Route::get('/{supplier}/items', [SupplierController::class, 'supplierItems'])->name('suppliers.items');
         });
         
