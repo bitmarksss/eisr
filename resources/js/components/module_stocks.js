@@ -57,6 +57,7 @@ function createRow(modalPrefix, index, inventoryItems, categories, uoms) {
     row.className = 'text-center max-h-9';
     row.dataset.index = index;
 
+    const readOnlyInput = "cursor-default focus:outline-1 focus:outline-gray-200";
 
     // =========================================================
     // Quantity
@@ -140,7 +141,7 @@ function createRow(modalPrefix, index, inventoryItems, categories, uoms) {
     categoryInput.type = 'text';
     categoryInput.name = `items[${index}][category]`;
     categoryInput.placeholder = 'Item category...';
-    categoryInput.className = "w-full bg-gray-50 border-gray-300 border rounded-lg px-3 py-2 text-sm focus:border-brand-gold focus:outline-none transition";
+    categoryInput.className = `w-full bg-gray-50 border-gray-300 border rounded-lg px-3 py-2 text-sm transition ${readOnlyInput}`;
     categoryCell.appendChild(categoryInput);
 
     row.appendChild(categoryCell);
@@ -169,7 +170,7 @@ function createRow(modalPrefix, index, inventoryItems, categories, uoms) {
     uomInput.type = 'text';
     uomInput.name = `items[${index}][uom]`;
     uomInput.placeholder = 'Item unit...';
-    uomInput.className = "w-full bg-gray-50 border-gray-300 border rounded-lg px-3 py-2 text-sm focus:border-brand-gold focus:outline-none transition";
+    uomInput.className = `w-full bg-gray-50 border-gray-300 border rounded-lg px-3 py-2 text-sm focus:border-brand-gold focus:outline-none transition ${readOnlyInput}`;
     uomCell.appendChild(uomInput);
 
     row.appendChild(uomCell);

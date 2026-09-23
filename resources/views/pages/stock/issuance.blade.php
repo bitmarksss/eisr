@@ -70,7 +70,7 @@
                 <!-- Date Received -->
                 <div>
                     <label for="issuance-date" class="block text-xs font-bold text-brand-dark uppercase tracking-wider mb-1">Issuance Date</label>
-                    <input type="date" id="issuance-date" name="issuance_date" value="{{ old('issuance_date') }}" required
+                    <input type="date" id="issuance-date" name="issuance_date" value="{{ old('issuance_date', now()->toDateString()) }}" required
                         class="w-full bg-gray-50 border @error('issuance_date') border-red-500 @else border-gray-300 @enderror rounded-lg px-3 py-2 text-sm focus:border-brand-gold focus:outline-none transition focus:ring-2 focus:ring-brand-gold/20">
                     @error('issuance_date') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                 </div>   
@@ -223,7 +223,6 @@ issuanceForm.addEventListener('change', function(event) {
         const selectedItemId = event.target.value;
         const selectedItem = window.modalData.inventoryItems.find(item => item.id == selectedItemId);
         
-        console.log('selectedItem', selectedItem);
         if (selectedItem) {
             const row = event.target.closest('tr');
             const currentQuantityInput = row.querySelector('input[name$="[current_quantity]"]');

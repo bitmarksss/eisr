@@ -225,7 +225,7 @@
 
                         <!-- Protected Actions Triggering adjustments -->
                         @if(auth()->user()?->role->role == 'admin')
-                        <td class="px-6 py-4 text-right whitespace-nowrap space-x-3">
+                        <td class="px-6 py-4 text-right whitespace-nowrap space-x-2">
 
                             <!-- Update & Record -->
                             @if(request()->routeIs('surface.*'))

@@ -2,6 +2,7 @@
 
 @section('page-title', 'Surface Stock')
 @section('sidebar') @include('components.sidebar') @endsection
+@section('modals') @include('components.stock.receiving-stock-request-modal') @endsection
 
 @section('content')
 <div class="space-y-6">
@@ -13,12 +14,15 @@
     @endif
 
     <div class="w-full overflow-hidden rounded-2xl bg-white">
-        <div class="flex items-center px-6 py-4 text-brand-navy"><h3 class="w-full border-b border-brand-green px-4 text-2xl font-bold tracking-wide">Item Receiving Form</h3></div>
+        <div class="flex items-center justify-between px-6 py-4 text-brand-navy">
+            <h3 class="w-full border-b border-brand-green px-4 text-2xl font-bold tracking-wide">Item Receiving Form</h3>
+            <button type="button" id="open-stock-request-modal" class="whitespace-nowrap rounded-lg bg-brand-navy px-4 py-2 text-sm font-bold text-white shadow transition hover:bg-brand-dark"><i class="fa-solid fa-file-import mr-1"></i> Load Stock Request</button>
+        </div>
         <form action="{{ route('surface.stock.receive.store') }}" method="POST" id="receiving-form" class="w-full space-y-4 p-6">
             @csrf
             <div class="grid grid-cols-1 gap-2 md:grid-cols-2">
                 <div><label for="receiving-no" class="mb-1 block text-xs font-bold uppercase tracking-wider text-brand-dark">Receipt No.</label><input type="text" id="receiving-no" name="receiving_no" required value="{{ old('receiving_no') }}" placeholder="e.g., 1234" class="w-full rounded-lg border @error('receiving_no') border-red-500 @else border-gray-300 @enderror bg-gray-50 px-3 py-2 text-sm focus:border-brand-gold focus:outline-none focus:ring-2 focus:ring-brand-gold/20"></div>
-                <div><label for="receiving-date" class="mb-1 block text-xs font-bold uppercase tracking-wider text-brand-dark">Receiving Date</label><input type="date" id="receiving-date" name="receiving_date" required value="{{ old('receiving_date') }}" class="w-full rounded-lg border @error('receiving_date') border-red-500 @else border-gray-300 @enderror bg-gray-50 px-3 py-2 text-sm focus:border-brand-gold focus:outline-none focus:ring-2 focus:ring-brand-gold/20"></div>
+                <div><label for="receiving-date" class="mb-1 block text-xs font-bold uppercase tracking-wider text-brand-dark">Receiving Date</label><input type="date" id="receiving-date" name="receiving_date" required value="{{ old('receiving_date', now()->toDateString()) }}" class="w-full rounded-lg border @error('receiving_date') border-red-500 @else border-gray-300 @enderror bg-gray-50 px-3 py-2 text-sm focus:border-brand-gold focus:outline-none focus:ring-2 focus:ring-brand-gold/20"></div>
             </div>
             <div class="overflow-x-auto"><table class="w-full min-w-[1050px] rounded-xl border border-gray-200 text-left text-xs font-medium uppercase text-gray-600"><thead class="sticky top-0 z-10 bg-gray-50 text-center"><tr>
                 <th class="border border-gray-200 p-2 text-brand-navy">Supplier</th><th class="border border-gray-200 p-2 text-brand-navy">Item Name</th><th class="border border-gray-200 p-2 text-brand-navy">Category</th><th class="w-[10%] border border-gray-200 p-2 text-brand-navy">Quantity</th><th class="border border-gray-200 p-2 text-brand-navy">UOM</th><th class="border border-gray-200 p-2 text-brand-navy">Remarks</th><th class="w-[1%] border border-gray-200 p-2 text-brand-navy"><button type="button" id="add-receiving-row" class="whitespace-nowrap rounded-lg bg-brand-green px-5 py-2 text-sm font-bold text-white shadow-xs transition hover:bg-brand-green-hover"><i class="fa-solid fa-circle-plus"></i> Add Row</button></th>
@@ -46,6 +50,18 @@ document.addEventListener('DOMContentLoaded', () => {
         tbody.appendChild(row);
         if (values.supplier_id) loadSupplierItems(row, values.item_name);
     }
+
+    window.loadReceivingStockRequest = async function (request) {
+        tbody.replaceChildren();
+        (request.items || []).forEach(line => addRow({
+            supplier_id: line.item?.supplier_id || line.item?.supplier?.id,
+            item_name: line.item_id,
+            quantity: line.quantity,
+            remarks: line.remarks || '',
+        }));
+        if (!request.items?.length) addRow();
+        document.getElementById('receiving-stock-request-modal').classList.add('hidden');
+    };
 
     async function loadSupplierItems(row, selectedItemId = '') {
         const supplierId = row.querySelector('.supplier-select').value;

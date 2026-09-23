@@ -6,11 +6,17 @@
                 <h3 id="stockRequestModalTitle" class="text-lg font-bold">Stock Request Details</h3>
                 <p id="stockRequestModalSubtitle" class="mt-0.5 text-xs text-white/70"></p>
             </div>
-            <button type="button" data-close-stock-request-modal class="cursor-pointer p-1 text-xl font-bold text-white/70 hover:text-white" aria-label="Close stock request details">&times;</button>
+            <button type="button" data-close-stock-request-modal class="cursor-pointer p-1 text-xl font-bold text-white/70 hover:text-white" aria-label="Close stock request details">✕</button>
         </div>
         <div id="stockRequestModalBody" class="max-h-[calc(90vh-132px)] space-y-5 overflow-y-auto p-6"></div>
         <div class="flex justify-end border-t border-gray-100 px-6 py-4">
             <button type="button" data-close-stock-request-modal class="cursor-pointer px-4 py-2 text-sm font-semibold text-gray-500 transition hover:text-gray-700">Close</button>
+
+            <a class="view-request flex items-center gap-1 cursor-pointer rounded-lg bg-brand-green px-2.5 py-2 text-xs font-bold text-white
+                hover:bg-brand-green-hover"
+                href="{{ route('file.print') }}" target="_blank">
+                <i class="fa-solid fa-print"></i> Print
+            </a>
         </div>
     </div>
 </div>

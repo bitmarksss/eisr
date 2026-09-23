@@ -89,6 +89,7 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
                 
                 Route::get('/record', [StockController::class, 'receiveForm'])->name('form');
                 Route::post('/receive/store', [StockController::class, 'receivingStore'])->name('store');
+                Route::get('/stock-requests', [StockController::class, 'receivingStockRequests'])->name('stock-requests');
             });
             
             Route::prefix('issuance')->name('issuance.')->group(function () {
@@ -190,10 +191,12 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
     });
 
 
-    Route::prefix('file')->group(function () {
-        Route::get('/', [FileController::class, 'index'])->name('file.index');
-        Route::post('/upload', [FileController::class, 'upload'])->name('file.upload');
+    Route::prefix('file')->name('file.')->group(function () {
+        Route::get('/', [FileController::class, 'index'])->name('index');
+        Route::post('/upload', [FileController::class, 'upload'])->name('upload');
 
+        Route::get('/view', [FileController::class, 'viewPDF'])->name('view');
+        Route::get('/print', [FileController::class, 'print'])->name('print');
     });
     
     Route::prefix('admin')->name('admin.')->group(function () {

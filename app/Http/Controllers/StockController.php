@@ -10,6 +10,7 @@ use App\Models\{
     InventoryStock, 
     Level,
     Stock,
+    StockMovementApproverAssignment,
     StockMovement,
     StockMovementItem,
     StockRequest,
@@ -17,7 +18,6 @@ use App\Models\{
     UploadedFile, 
     UnitOfMeasurement
 };
-use App\Models\StockMovementApproverAssignment;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -97,6 +97,18 @@ class StockController extends Controller
         $uoms = UnitOfMeasurement::get();
 
         return view('pages.stock.receiving', compact('items', 'categories', 'levels', 'suppliers', 'uoms'));
+    }
+
+    public function receivingStockRequests()
+    {
+        $stockRequests = StockRequest::with([
+            'items.item.kind', 'items.item.unit', 'items.item.supplier',
+        ])
+            ->latest('date')
+            ->latest('id')
+            ->paginate(10);
+
+        return response()->json($stockRequests);
     }
 
     public function receivingStore(Request $request)

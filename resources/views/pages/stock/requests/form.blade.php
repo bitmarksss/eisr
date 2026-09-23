@@ -54,10 +54,15 @@ document.addEventListener('DOMContentLoaded', function () {
                 <select name="items[${index}][item_id]" required class="item-select w-full rounded-lg border border-gray-300 bg-gray-50 p-2 text-sm focus:border-brand-gold focus:outline-none"></select>
             </td>
             <td class="border border-gray-200 p-1">
-                <input type="text" readonly class="category-input w-full rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-sm" placeholder="Item category">
+                <input type="text" readonly 
+                    class="category-input w-full rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-sm 
+                    cursor-default focus:outline-1 focus:outline-gray-200" 
+                    placeholder="Item category">
             </td>
             <td class="border border-gray-200 p-1"><input type="number" min="1" name="items[${index}][quantity]" required value="${esc(values.quantity || '')}" placeholder="0" class="w-full rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-sm focus:border-brand-gold focus:outline-none"></td><td class="border border-gray-200 p-1">
-                <input type="text" readonly class="uom-input w-full rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-sm" placeholder="Item unit">
+                <input type="text" readonly class="uom-input w-full rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-sm
+                    cursor-default focus:outline-1 focus:outline-gray-200" 
+                    placeholder="Item unit">
             </td>
             <td class="border border-gray-200 p-1"><input type="text" name="items[${index}][remarks]" value="${esc(values.remarks || '')}" placeholder="Any additional details..." class="w-full rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-sm focus:border-brand-gold focus:outline-none"></td>
             <td class="border border-gray-200 p-1">
@@ -88,6 +93,16 @@ document.addEventListener('DOMContentLoaded', function () {
     tbody.addEventListener('click', event => { if (event.target.closest('.remove-row') && tbody.children.length > 1) event.target.closest('tr').remove(); });
     document.getElementById('add-request-row').addEventListener('click', () => addRow());
     oldItems.forEach(item => addRow(item));
+
+    document.getElementById('stock-request-form').addEventListener('submit', function () {
+        let index = 0;
+        [...tbody.querySelectorAll('tr')].forEach(row => {
+            const hasInput = row.querySelector('.supplier-select').value || row.querySelector('.item-select').value || row.querySelector('input[name$="[quantity]"]').value || row.querySelector('input[name$="[remarks]"]').value;
+            if (!hasInput) { row.remove(); return; }
+            row.querySelectorAll('[name]').forEach(field => field.name = field.name.replace(/items\[\d+\]/, `items[${index}]`));
+            index++;
+        });
+    });
 });
 </script>
 @endpush

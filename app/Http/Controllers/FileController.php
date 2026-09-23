@@ -6,6 +6,7 @@ use App\Models\UploadedFile;
 use App\Services\UploadExcelService;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
 class FileController extends Controller
@@ -83,4 +84,35 @@ class FileController extends Controller
             return back()->with('errors', [$e->getMessage()]);
         }
     }
+
+    public function print() 
+    {
+        $path = 'samples/WITHDRAWAL_REQUEST.pdf'; 
+
+        // Check if the file actually exists in storage/app/public/samples/
+        if (!Storage::disk('public')->exists($path)) {
+            abort(404, 'The requested file does not exist.');
+        }
+
+        // Generate the public URL
+        $fileUrl = Storage::disk('public')->url($path);
+        
+        return view('components.print', compact('fileUrl'));
+    }
+
+    public function viewPDF() 
+    {
+        $path = 'samples/WITHDRAWAL_REQUEST.pdf'; 
+
+        // Check if the file actually exists in storage/app/public/samples/
+        if (!Storage::disk('public')->exists($path)) {
+            abort(404, 'The requested file does not exist.');
+        }
+
+        // Generate the public URL
+        $fileUrl = Storage::disk('public')->url($path);
+        
+        return view('components.view-pdf', compact('fileUrl'));
+    }
+
 }
