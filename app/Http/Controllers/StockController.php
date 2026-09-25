@@ -348,6 +348,9 @@ class StockController extends Controller
         $data = $request->validate([
             'reference_no' => ['required', 'string', 'max:100', Rule::unique('stock_request_headers', 'reference_no')],
             'date' => ['required', 'date'],
+            'notes' => ['nullable', 'array'],
+            'notes.*' => ['nullable', 'string', 'max:1000'],
+            'no_additional_notes' => ['nullable', 'boolean'],
             'items' => ['required', 'array', 'min:1'],
             'items.*.supplier_id' => ['required', 'integer', 'exists:suppliers,id'],
             'items.*.item_id' => ['required', 'integer', 'exists:inventory_items,id'],
@@ -370,6 +373,8 @@ class StockController extends Controller
                 'reference_no' => $data['reference_no'],
                 'date' => $data['date'],
                 'requested_by' => auth()->id(),
+                'notes' => collect($data['notes'] ?? [])->filter(fn ($note) => filled($note))->values()->all(),
+                'no_additional_notes' => (bool) ($data['no_additional_notes'] ?? false),
             ]);
 
             foreach ($data['items'] as $item) {

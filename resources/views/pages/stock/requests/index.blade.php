@@ -87,7 +87,7 @@
                 <td class="px-4 py-3 text-gray-600">${esc(line.remarks || '—')}</td>
             </tr>`; }).join('');
         
-        return `
+        const base = `
             <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
                 ${[['Reference number', request.reference_no], ['Request date', formatDate(request.date)], ['Requested by', name(request.requester)]]
                 .map(([label, value]) => `
@@ -122,6 +122,16 @@
                     </table>
                 </div>
             </section>`;
+            const notes = Array.isArray(request.notes) ? request.notes.filter(Boolean) : [];
+            return `${base}${request.no_additional_notes ? `
+                <section>
+                    <h4 class="mb-2 text-sm font-bold uppercase tracking-wider text-brand-navy">Notes</h4>
+                    <p class="text-sm text-gray-600">No additional notes</p>
+                </section>` : notes.length ? `
+                <section>
+                    <h4 class="mb-2 text-sm font-bold uppercase tracking-wider text-brand-navy">Notes</h4>
+                    <ol class="list-decimal space-y-1 pl-5 text-sm text-gray-600">${notes.map(note => `<li>${esc(note)}</li>`).join('')}</ol>
+                </section>` : ''}`;
     };
     const close = () => modal.classList.add('hidden');
     document.querySelectorAll('.view-request').forEach(button => button.addEventListener('click', () => { const request = JSON.parse(button.dataset.request); subtitle.textContent = `Request ${request.reference_no || ''}`; body.innerHTML = render(request); modal.classList.remove('hidden'); }));

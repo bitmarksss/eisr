@@ -19,6 +19,17 @@
             <div class="overflow-x-auto"><table class="w-full min-w-[950px] rounded-xl border border-gray-200 text-left text-xs font-medium uppercase text-gray-600"><thead class="sticky top-0 z-10 bg-gray-50 text-center"><tr>
                 <th class="border border-gray-200 p-2 text-brand-navy">Supplier</th><th class="border border-gray-200 p-2 text-brand-navy">Item Name</th><th class="border border-gray-200 p-2 text-brand-navy">Category</th><th class="w-[10%] border border-gray-200 p-2 text-brand-navy">Quantity</th><th class="border border-gray-200 p-2 text-brand-navy">UOM</th><th class="border border-gray-200 p-2 text-brand-navy">Remarks</th><th class="w-[1%] border border-gray-200 p-2 text-brand-navy"><button type="button" id="add-request-row" class="whitespace-nowrap rounded-lg bg-brand-green px-5 py-2 text-sm font-bold text-white shadow-xs transition hover:bg-brand-green-hover"><i class="fa-solid fa-circle-plus"></i> Add Row</button></th>
             </tr></thead><tbody id="stockRequestInputs" class="divide-y divide-gray-200 bg-white"></tbody></table></div>
+            <section class="space-y-3 border-t border-gray-100 pt-4">
+                <div class="flex flex-wrap items-center justify-between gap-3">
+                    <label class="text-sm font-bold uppercase tracking-wider text-brand-navy" for="no-additional-notes">Notes</label>
+                    <label class="flex cursor-pointer items-center gap-2 text-sm font-medium text-gray-600">
+                        <input id="no-additional-notes" type="checkbox" name="no_additional_notes" value="1" @checked(old('no_additional_notes')) class="h-4 w-4 rounded border-gray-300 text-brand-green focus:ring-brand-green">
+                        No additional notes
+                    </label>
+                </div>
+                <ol id="stockRequestNotes" class="space-y-2"></ol>
+                <button type="button" id="add-note-row" class="rounded-lg bg-brand-green px-3 py-2 text-xs font-bold text-white shadow-xs transition hover:bg-brand-green-hover"><i class="fa-solid fa-circle-plus"></i> Add Note</button>
+            </section>
             <div class="flex justify-end space-x-3 border-t border-gray-100 pt-4"><button type="button" onclick="window.history.back()" class="cursor-pointer px-4 py-2 text-sm font-semibold text-gray-500 hover:text-gray-700">Cancel</button><button type="submit" class="cursor-pointer rounded-lg bg-brand-gold px-5 py-2 text-sm font-bold text-white shadow-xs transition hover:bg-brand-gold-hover">Confirm</button></div>
         </form>
     </div>
@@ -32,6 +43,15 @@ document.addEventListener('DOMContentLoaded', function () {
     const inventoryItems = @json($requestFormItems);
     const tbody = document.getElementById('stockRequestInputs');
     const oldItems = {{ Illuminate\Support\Js::from(old('items') ?: array_fill(0, 3, [])) }};
+    const notesList = document.getElementById('stockRequestNotes');
+    const noAdditionalNotes = document.getElementById('no-additional-notes');
+    const defaultNotes = [
+        'The stocks for delivery should not be expired and consumable until February 2027.',
+        'The 50-50% Supply sharing agreement is strictly observed.',
+        'The breakdown of items and (PMC and Suppliers) inventory is on the attached list.',
+        'Name and Brand per items is on attached list.'
+    ];
+    const oldNotes = {{ Illuminate\Support\Js::from(old('notes', null) ?: []) }};
     const esc = value => String(value ?? '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
     function addRow(values = {}) {
@@ -85,6 +105,24 @@ document.addEventListener('DOMContentLoaded', function () {
         row.querySelector('.category-input').value = item?.kind || '';
         row.querySelector('.uom-input').value = item?.unit || '';
     }
+    function renumberNotes() {
+        [...notesList.children].forEach((row, index) => {
+            row.querySelector('input').name = `notes[${index}]`;
+            row.querySelector('.note-number').textContent = `${index + 1}.`;
+            row.querySelector('.remove-note').classList.toggle('hidden', notesList.children.length <= 1);
+        });
+    }
+    function addNoteRow(value = '') {
+        const row = document.createElement('li');
+        row.className = 'flex items-center gap-2';
+        row.innerHTML = `<span class="note-number w-6 text-right text-sm font-bold text-brand-navy"></span><input type="text" name="notes[]" value="${esc(value)}" maxlength="1000" class="note-input w-full rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-sm focus:border-brand-gold focus:outline-none focus:ring-2 focus:ring-brand-gold/20"><button type="button" class="remove-note rounded-lg bg-red-500 px-3 py-2 text-sm font-bold text-white hover:bg-red-600"><i class="fa-solid fa-minus"></i></button>`;
+        notesList.appendChild(row);
+        renumberNotes();
+    }
+    function toggleNotes() {
+        notesList.querySelectorAll('.note-input').forEach(input => { input.disabled = noAdditionalNotes.checked; });
+        document.getElementById('add-note-row').disabled = noAdditionalNotes.checked;
+    }
     tbody.addEventListener('change', event => {
         const row = event.target.closest('tr');
         if (event.target.matches('.supplier-select')) updateItems(row);
@@ -92,7 +130,12 @@ document.addEventListener('DOMContentLoaded', function () {
     });
     tbody.addEventListener('click', event => { if (event.target.closest('.remove-row') && tbody.children.length > 1) event.target.closest('tr').remove(); });
     document.getElementById('add-request-row').addEventListener('click', () => addRow());
+    document.getElementById('add-note-row').addEventListener('click', () => addNoteRow());
+    notesList.addEventListener('click', event => { if (event.target.closest('.remove-note') && notesList.children.length > 1) { event.target.closest('li').remove(); renumberNotes(); } });
+    noAdditionalNotes.addEventListener('change', toggleNotes);
     oldItems.forEach(item => addRow(item));
+    (oldNotes.length ? oldNotes : defaultNotes).forEach(note => addNoteRow(note));
+    toggleNotes();
 
     document.getElementById('stock-request-form').addEventListener('submit', function () {
         let index = 0;

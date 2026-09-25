@@ -18,10 +18,14 @@ class StockRequest extends Model
         'reference_no',
         'date',
         'requested_by',
+        'notes',
+        'no_additional_notes',
     ];
 
     protected $casts = [
         'date' => 'date',
+        'notes' => 'array',
+        'no_additional_notes' => 'boolean',
     ];
 
     public function requester(): BelongsTo
