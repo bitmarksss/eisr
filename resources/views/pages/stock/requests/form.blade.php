@@ -55,7 +55,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const esc = value => String(value ?? '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
     function addRow(values = {}) {
-        console.log(values.supplier_id);
         const index = tbody.children.length;
         const row = document.createElement('tr');
         row.className = 'text-center';
@@ -121,7 +120,10 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     function toggleNotes() {
         notesList.querySelectorAll('.note-input').forEach(input => { input.disabled = noAdditionalNotes.checked; });
-        document.getElementById('add-note-row').disabled = noAdditionalNotes.checked;
+        const addNoteButton = document.getElementById('add-note-row');
+        addNoteButton.disabled = noAdditionalNotes.checked;
+        addNoteButton.classList.toggle('cursor-not-allowed', noAdditionalNotes.checked);
+        addNoteButton.classList.toggle('opacity-50', noAdditionalNotes.checked);
     }
     tbody.addEventListener('change', event => {
         const row = event.target.closest('tr');
